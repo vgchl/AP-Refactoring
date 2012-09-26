@@ -6,3 +6,5 @@
 *.ear
 *.iws
 *.idea
+*target/*
+*.iml*
