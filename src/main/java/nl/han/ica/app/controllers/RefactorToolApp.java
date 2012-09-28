@@ -24,6 +24,7 @@ import java.util.Iterator;
 import static org.apache.log4j.Logger.getLogger;
 
 public class RefactorToolApp extends Application {
+    private static final String APP_TITLE = "ART (Awesome Refactor Tool) - 0.1";
     private static final int APP_WIDTH = 800;
     private static final int APP_HEIGHT = 600;
 
@@ -39,7 +40,7 @@ public class RefactorToolApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         stage.setResizable(false);
-
+        stage.setTitle(APP_TITLE);
         Group root = new Group();
 
         HBox hBox = new HBox();
@@ -56,7 +57,7 @@ public class RefactorToolApp extends Application {
                 try {
                     output.setText(checkFile());
                 } catch (FileNotFoundException e) {
-
+                    logger.fatal("Cannot open File.");
                 }
             }
         });
