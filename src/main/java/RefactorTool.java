@@ -29,7 +29,7 @@ public class RefactorTool extends Application {
     private static final int APP_WIDTH = 800;
     private static final int APP_HEIGHT = 600;
 
-    public static void main(String[] args) throws PMDException, IOException  {
+    public static void main(String[] args) {
         launch(args);
     }
 
@@ -40,6 +40,8 @@ public class RefactorTool extends Application {
 
         stage.setWidth(APP_WIDTH);
         stage.setHeight(APP_HEIGHT);
+
+        RefactorToolApp refactorToolApp = new RefactorToolApp(stage);
 
         stage.show();
     }
