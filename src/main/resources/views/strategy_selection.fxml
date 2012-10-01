@@ -2,6 +2,7 @@
 
 <?language javascript?>
 <?import java.lang.*?>
+<?import java.net.*?>
 <?import java.util.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -9,11 +10,11 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane fx:id="strategySelection" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml" fx:controller="nl.han.ica.app.controllers.StrategySelection">
+<BorderPane fx:id="strategySelection" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml" fx:controller="nl.han.ica.app.controllers.StrategySelection" stylesheets="resources/style.css">
   <bottom>
     <HBox fx:id="statusBox" minHeight="25.0" prefHeight="25.0" prefWidth="800.0">
       <children>
-        <Label text="Status: Idle" />
+        <Label id="test" text="Status: Idle" />
       </children>
       <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />

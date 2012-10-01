@@ -1,26 +1,11 @@
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import net.sourceforge.pmd.*;
-import net.sourceforge.pmd.dfa.report.ReportTree;
-import nl.han.ica.app.controllers.RefactorToolApp;
-import org.apache.log4j.Logger;
 
 
 import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Iterator;
 
 import static org.apache.log4j.Logger.getLogger;
 
