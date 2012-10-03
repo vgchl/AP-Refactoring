@@ -30,11 +30,7 @@
             <artifactId>core</artifactId>
             <version>3.2.0.666</version>
         </dependency>
-        <dependency>
-            <groupId>javafx</groupId>
-            <artifactId>javafx</artifactId>
-            <version>${jfx-version}</version>
-        </dependency>
+
      </dependencies>
 
 
