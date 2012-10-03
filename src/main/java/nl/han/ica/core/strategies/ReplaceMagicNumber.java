@@ -9,7 +9,8 @@ import org.eclipse.jdt.core.dom.AST;
  * Time: 10:53
  * To change this template use File | Settings | File Templates.
  */
-public class ReplaceMagicNumber extends Strategy implements IStrategy {
+public class ReplaceMagicNumber extends Strategy {
+
 
     @Override
     public void rewriteAST(AST ast) {
