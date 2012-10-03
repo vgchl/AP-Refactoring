@@ -3,24 +3,25 @@ package nl.han.ica.app.controllers;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.dfa.report.ReportTree;
 import org.apache.log4j.Logger;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Iterator;
 
 import static org.apache.log4j.Logger.getLogger;
 
-public class StrategySelection {
+public class StrategySelectionController extends BaseController {
     private File file;
-    private Logger logger = getLogger(getClass().getName());
+    private Stage stage;
 
     @FXML
     private Label selectedFile;
@@ -30,6 +31,11 @@ public class StrategySelection {
 
     @FXML
     private Button analyzeButton;
+
+    public StrategySelectionController(Stage stage) {
+        super("/views/strategy_selection.fxml");
+        this.stage = stage;
+    }
 
     @FXML
     protected void browse(ActionEvent event) {
@@ -47,8 +53,14 @@ public class StrategySelection {
     }
 
     @FXML
-    protected void analyze(ActionEvent event) throws FileNotFoundException {
-        System.out.println(checkFile());
+    protected void analyze(ActionEvent event) throws IOException {
+        ResolveIssuesController resolveIssuesController = new ResolveIssuesController();
+        Scene s = resolveIssuesController.getScene();
+
+//        stage.hide();
+        stage.setScene(null);
+        stage.setScene(s);
+//        stage.show();
     }
 
     @FXML
@@ -56,7 +68,7 @@ public class StrategySelection {
         System.out.println("Replace Magic Num with Symbolic Content Clicked.");
     }
 
-    private String checkFile() throws FileNotFoundException {
+    private String checkFile() throws IOException {
 
         StringBuffer stringBuffer = new StringBuffer();
         try {

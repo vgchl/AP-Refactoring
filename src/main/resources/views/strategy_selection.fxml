@@ -10,11 +10,11 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane fx:id="strategySelection" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml" fx:controller="nl.han.ica.app.controllers.StrategySelection" stylesheets="resources/style.css">
+<BorderPane fx:id="strategySelectionController" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml" stylesheets="style.css">
   <bottom>
     <HBox fx:id="statusBox" minHeight="25.0" prefHeight="25.0" prefWidth="800.0">
       <children>
-        <Label id="test" text="Status: Idle" />
+        <Label id="tests" text="Status: Idle" />
       </children>
       <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
@@ -53,7 +53,7 @@
         <CheckBox fx:id="remAssignmParam" mnemonicParsing="false" text="Remove assignments to parameter" />
         <CheckBox fx:id="remControlFlag" mnemonicParsing="false" text="Remove Control Flag" />
         <Separator prefWidth="200.0" />
-        <Button fx:id="analyzeButton" disable="true" mnemonicParsing="false" onAction="#analyze" prefWidth="326.0" text="Analyze" />
+        <Button fx:id="analyzeButton" disable="false" mnemonicParsing="false" onAction="#analyze" prefWidth="326.0" text="Analyze" />
       </children>
     </VBox>
   </right>
