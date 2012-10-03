@@ -8,6 +8,32 @@
     <artifactId>refactor-tool</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <build>
+    <plugins>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>nbm-maven-plugin</artifactId>
+            <version>3.7</version>
+            <extensions>true</extensions>
+            <configuration>
+                <useOSGiDependencies>true</useOSGiDependencies>
+                <publicPackages>
+                    <publicPackage>javafx.scene.layout</publicPackage>
+                    <publicPackage>javafx.application</publicPackage>
+                    <publicPackage>javafx.collections</publicPackage>
+                    <publicPackage>javafx.scene.control</publicPackage>
+                    <publicPackage>javafx.event</publicPackage>
+                    <publicPackage>javafx.geometry</publicPackage>
+                    <publicPackage>javafx.beans.property</publicPackage>
+                    <publicPackage>javafx.beans.value</publicPackage>
+                    <publicPackage>javafx.concurrent</publicPackage>
+                    <publicPackage>javafx.scene.web</publicPackage>
+                    <publicPackage>javafx.fxml</publicPackage>
+                </publicPackages>
+            </configuration>
+        </plugin>
+    </plugins>
+    </build>
     <dependencies>
         <dependency>
             <groupId>pmd</groupId>
@@ -24,6 +50,9 @@
             <artifactId>core</artifactId>
             <version>3.2.0.666</version>
         </dependency>
+
     </dependencies>
+
+
 
 </project>
