@@ -8,18 +8,18 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<SplitPane dividerPositions="0.31704260651629074" focusTraversable="true" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml">
+<SplitPane dividerPositions="0.2817371937639198" focusTraversable="true" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml">
   <items>
     <AnchorPane maxWidth="250.0" minHeight="0.0" minWidth="250.0" prefHeight="598.0" prefWidth="250.0">
       <children>
-        <VBox layoutY="5.0" prefHeight="598.0" prefWidth="236.0" spacing="5.0">
+        <VBox prefHeight="598.0" prefWidth="236.0" spacing="5.0" AnchorPane.bottomAnchor="-839.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
           <children>
             <Label text="Detected Issues">
               <font>
                 <Font name="System Bold" size="18.0" fx:id="x1" />
               </font>
             </Label>
-            <ListView maxWidth="250.0" minWidth="250.0" prefHeight="1000.0" prefWidth="250.0" VBox.vgrow="ALWAYS" />
+            <ListView maxWidth="250.0" minHeight="200.0" minWidth="250.0" prefHeight="200.0" prefWidth="250.0" VBox.vgrow="ALWAYS" />
           </children>
           <padding>
             <Insets bottom="5.0" />
@@ -29,13 +29,48 @@
     </AnchorPane>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
       <children>
-        <VBox prefHeight="598.0" prefWidth="556.0" spacing="5.0">
+        <VBox prefHeight="698.0" prefWidth="642.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
           <children>
             <Label font="$x1" text="Issue Name" />
             <Label text="in FILENAME at line LINENUMBER" />
+            <SplitPane dividerPositions="0.5" focusTraversable="true" prefHeight="645.0" prefWidth="632.0" VBox.vgrow="ALWAYS">
+              <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                  <children>
+                    <VBox prefHeight="617.0" prefWidth="311.0" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                      <children>
+                        <Label text="Before">
+                          <font>
+                            <Font name="System Bold" size="13.0" fx:id="x2" />
+                          </font>
+                        </Label>
+                      </children>
+                      <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x3" />
+                      </padding>
+                    </VBox>
+                  </children>
+                </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                  <children>
+                    <VBox padding="$x3" prefHeight="630.0" prefWidth="311.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                      <children>
+                        <Label font="$x2" text="After" />
+                      </children>
+                    </VBox>
+                  </children>
+                </AnchorPane>
+              </items>
+            </SplitPane>
+            <HBox alignment="TOP_RIGHT" prefHeight="22.0" prefWidth="632.0" spacing="5.0">
+              <children>
+                <Button mnemonicParsing="false" text="Ignore this issue" HBox.hgrow="NEVER" />
+                <Button mnemonicParsing="false" text="Apply refactoring" />
+              </children>
+            </HBox>
           </children>
           <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x3" />
           </padding>
         </VBox>
       </children>

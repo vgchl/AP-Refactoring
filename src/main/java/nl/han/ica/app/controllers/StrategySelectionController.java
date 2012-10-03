@@ -57,10 +57,10 @@ public class StrategySelectionController extends BaseController {
         ResolveIssuesController resolveIssuesController = new ResolveIssuesController();
         Scene s = resolveIssuesController.getScene();
 
-//        stage.hide();
+        stage.hide();
         stage.setScene(null);
         stage.setScene(s);
-//        stage.show();
+        stage.show();
     }
 
     @FXML

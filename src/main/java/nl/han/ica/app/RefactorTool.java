@@ -19,7 +19,6 @@ public class RefactorTool extends Application {
     @Override
     public void start(Stage stage) throws IOException, InterruptedException {
 
-        stage.setResizable(false);
         stage.setTitle(APP_TITLE);
 
         BaseController strategySelectionController = new StrategySelectionController(stage);
