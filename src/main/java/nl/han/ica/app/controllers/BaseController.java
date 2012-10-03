@@ -20,6 +20,7 @@ public abstract class BaseController {
         }
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(viewPath));
+
         fxmlLoader.setController(this);
 
         try {
