@@ -1,5 +1,7 @@
 package nl.han.ica.core.strategies;
 
+import net.sourceforge.pmd.*;
+import net.sourceforge.pmd.rules.basic.AvoidUsingHardCodedIP;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,13 +13,20 @@ import org.junit.Test;
  * To change this template use File | Settings | File Templates.
  */
 public class StrategyTest {
+
+    Strategy strategy;
+    RuleViolation testViolation;
+
     @Before
     public void setUp() throws Exception {
+        strategy = new Strategy();
+        RuleSetFactory factory = new RuleSetFactory();
+
 
     }
 
     @Test
     public void testBuildAST() throws Exception {
-
+        strategy.buildAST(testViolation);
     }
 }

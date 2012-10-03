@@ -1,5 +1,6 @@
 package nl.han.ica.app.controllers;
 
+import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.RuleViolation;
 
 import java.io.File;
@@ -14,11 +15,11 @@ import java.util.ArrayList;
  */
 public class PMDConnector {
 
+    private PMD pmd = new PMD();
+
     public void runPMD(File file){
 
     }
 
-    public void processResults(ArrayList<RuleViolation> violations){
-
-    }
+    public void processResults(ArrayList<RuleViolation> violations){}
 }
