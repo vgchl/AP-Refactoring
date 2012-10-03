@@ -1,6 +1,7 @@
 package nl.han.ica.core.strategies;
 
-import org.eclipse.jdt.core.dom.AST;
+
+import japa.parser.ast.CompilationUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,9 +12,14 @@ import org.eclipse.jdt.core.dom.AST;
  */
 public class ReplaceMagicNumber extends Strategy {
 
+    private String replaceName = "MAGIC";
 
     @Override
-    public void rewriteAST(AST ast) {
+    public void rewriteAST() {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void setReplaceName(String replaceName) {
+        this.replaceName = replaceName;
     }
 }

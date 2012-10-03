@@ -1,5 +1,7 @@
 package nl.han.ica.app.controllers;
 
+import junit.framework.Assert;
+import nl.han.ica.core.strategies.TestInputFile;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,20 +18,25 @@ import java.nio.file.Files;
  */
 public class PMDConnectorTest {
 
-    PMDConnector pmdConnector;
+    private PMDConnector pmdConnector;
+    private File file;
 
     @Before
     public void setUp() throws Exception {
         pmdConnector = new PMDConnector();
+        file = TestInputFile.createTempFile();
     }
 
     @Test
     public void testRunPMD() throws Exception {
-
+        pmdConnector.runPMD(file);
+        Assert.assertNotNull(pmdConnector.getReportTree());
     }
 
     @Test
     public void testProcessResults() throws Exception {
-
+        pmdConnector.processResults();
+        pmdConnector.runPMD(file);
+        Assert.assertNull(pmdConnector.getReportTree());
     }
 }

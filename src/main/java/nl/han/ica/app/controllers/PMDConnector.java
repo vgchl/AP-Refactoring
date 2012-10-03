@@ -2,6 +2,7 @@ package nl.han.ica.app.controllers;
 
 import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.RuleViolation;
+import net.sourceforge.pmd.dfa.report.ReportTree;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,10 +17,17 @@ import java.util.ArrayList;
 public class PMDConnector {
 
     private PMD pmd = new PMD();
+    private ReportTree reportTree = null;
 
     public void runPMD(File file){
 
     }
 
-    public void processResults(ArrayList<RuleViolation> violations){}
+    public void processResults(){
+
+    }
+
+    public ReportTree getReportTree() {
+        return reportTree;
+    }
 }
