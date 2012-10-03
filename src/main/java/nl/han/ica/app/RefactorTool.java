@@ -1,12 +1,12 @@
 package nl.han.ica.app;
 
 import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import nl.han.ica.app.controllers.BaseController;
-import nl.han.ica.app.controllers.ResolveIssuesController;
 import nl.han.ica.app.controllers.StrategySelectionController;
 
-import java.io.*;
+import java.io.IOException;
 
 public class RefactorTool extends Application {
 
@@ -18,12 +18,13 @@ public class RefactorTool extends Application {
 
     @Override
     public void start(Stage stage) throws IOException, InterruptedException {
+        Scene scene = new Scene(null);
 
+        BaseController strategySelectionController = new StrategySelectionController(scene);
+        scene.setRoot(strategySelectionController.getView());
+
+        stage.setScene(scene);
         stage.setTitle(APP_TITLE);
-
-        BaseController strategySelectionController = new StrategySelectionController(stage);
-        stage.setScene(strategySelectionController.getScene());
-
         stage.show();
     }
 }

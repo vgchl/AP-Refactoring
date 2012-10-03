@@ -17,9 +17,10 @@ public class PMDConnector {
 
     private PMD pmd = new PMD();
 
-    public void runPMD(File file){
+    public void runPMD(File file) {
 
     }
 
-    public void processResults(ArrayList<RuleViolation> violations){}
+    public void processResults(ArrayList<RuleViolation> violations) {
+    }
 }
