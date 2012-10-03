@@ -2,14 +2,10 @@ package nl.han.ica.app.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
-import javafx.scene.Scene;
+import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.dfa.report.ReportTree;
 import org.apache.log4j.Logger;
@@ -22,69 +18,42 @@ import java.util.Iterator;
 
 import static org.apache.log4j.Logger.getLogger;
 
-public class RefactorToolApp  {
-
-    private Stage stage;
-
+public class StrategySelection {
     private File file;
-    private Label output = new Label("");
-
     private Logger logger = getLogger(getClass().getName());
 
-    public RefactorToolApp(Stage stage) {
-        this.stage = stage;
-        start();
+    @FXML
+    private Label selectedFile;
+
+    @FXML
+    private Label selectedFilePath;
+
+    @FXML
+    private Button analyzeButton;
+
+    @FXML
+    protected void browse(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+
+        //Show open file dialog
+        file = fileChooser.showOpenDialog(null);
+
+        if(file != null) {
+            selectedFilePath.setText(file.getPath());
+            selectedFilePath.setVisible(true);
+            selectedFile.setVisible(true);
+            analyzeButton.setDisable(false);
+        }
     }
 
-    public void start() {
-
-        Group root = new Group();
-
-        Scene scene = new Scene(root, stage.getWidth(), stage.getHeight());
-        stage.setScene(scene);
-
-        HBox hBox = new HBox();
-        Label label = new Label();
-        VBox vBox = new VBox();
-        vBox.getChildren().addAll(getBrowseButton(label), label, output);
-        Button analyzeButton = new Button("Analyze");
-        analyzeButton.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    output.setText(checkFile());
-                } catch (FileNotFoundException e) {
-                    logger.fatal("Cannot open File.");
-                }
-            }
-        });
-
-        hBox.getChildren().addAll(vBox, analyzeButton);
-
-        root.getChildren().add(hBox);
-
+    @FXML
+    protected void analyze(ActionEvent event) throws FileNotFoundException {
+        System.out.println(checkFile());
     }
 
-    private Button getBrowseButton(final Label chosenFilePathLabel) {
-        Button button = new Button();
-        button.setText("Browse...");
-
-        button.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                FileChooser fileChooser = new FileChooser();
-
-                //Show open file dialog
-                file = fileChooser.showOpenDialog(null);
-
-                chosenFilePathLabel.setText(file.getPath());
-                logger.info("Test");
-            }
-        });
-
-        return button;
+    @FXML
+    protected void replMagNumClick(ActionEvent event) {
+        System.out.println("Replace Magic Num with Symbolic Content Clicked.");
     }
 
     private String checkFile() throws FileNotFoundException {
