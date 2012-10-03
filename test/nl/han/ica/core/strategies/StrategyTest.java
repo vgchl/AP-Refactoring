@@ -19,7 +19,7 @@ public class StrategyTest {
 
     @Before
     public void setUp() throws Exception {
-        strategy = new Strategy();
+
         RuleSetFactory factory = new RuleSetFactory();
 
 
