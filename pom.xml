@@ -5,15 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>nl.han</groupId>
-    <artifactId>refactor-tool</artifactId>
+    <artifactId>Refactor-Tool</artifactId>
     <version>1.0-SNAPSHOT</version>
-
-    <properties>
-        <jfx-version>2.2</jfx-version>
-        <jfx-runtime>C:\Program Files\Java\jdk1.7.0_07\jre</jfx-runtime>
-    </properties>
-
-
 
     <dependencies>
         <dependency>
