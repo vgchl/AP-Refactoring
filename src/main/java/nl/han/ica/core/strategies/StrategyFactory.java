@@ -1,5 +1,7 @@
 package nl.han.ica.core.strategies;
 
+import net.sourceforge.pmd.RuleViolation;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Corne
@@ -9,7 +11,8 @@ package nl.han.ica.core.strategies;
  */
 public class StrategyFactory {
 
-    public static Strategy createStrategy(String violationType){
+    public static Strategy createStrategy(RuleViolation violation){
+
 
         return null;
     }

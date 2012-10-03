@@ -1,19 +1,21 @@
 package nl.han.ica.core.strategies;
 
+import japa.parser.JavaParser;
+import japa.parser.ast.CompilationUnit;
 import net.sourceforge.pmd.RuleViolation;
-import org.eclipse.jdt.core.dom.AST;
 
 public abstract class Strategy  {
 
-    private AST ast = null;
+    private CompilationUnit compilationUnit = null;
 
-    public abstract void rewriteAST(AST ast);
+    public abstract void rewriteAST();
 
     public void buildAST(RuleViolation ruleViolation) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
+        //compilationUnit = JavaParser.parse(ruleViolation.get)
     }
 
-    public AST getAst() {
-        return ast;
+    public CompilationUnit getCompilationUnit() {
+        return compilationUnit;
     }
 }

@@ -12,6 +12,12 @@ public class UnusedCodeTester {
     private String unused(String a,
                           String b,
                           String c) {
+        int i =0;
+        if(i == 0){
+
+        }else if(i == 23){
+
+        }
 
     	return "YES";
     	

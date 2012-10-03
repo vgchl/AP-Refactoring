@@ -1,16 +1,5 @@
 package nl.han.ica.core.strategies;
 
-import japa.parser.JavaParser;
-import japa.parser.ast.CompilationUnit;
-import junit.framework.Assert;
-import net.sourceforge.pmd.RuleContext;
-import net.sourceforge.pmd.RuleViolation;
-import net.sourceforge.pmd.ast.SimpleJavaNode;
-import net.sourceforge.pmd.rules.XPathRule;
-import net.sourceforge.pmd.symboltable.SourceFileScope;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -19,52 +8,13 @@ import java.io.IOException;
 /**
  * Created with IntelliJ IDEA.
  * User: Corne
- * Date: 1-10-12
- * Time: 12:20
+ * Date: 3-10-12
+ * Time: 15:40
  * To change this template use File | Settings | File Templates.
  */
-public class ReplaceMagicNumberTest {
+public class TestInputFile {
 
-    private  ReplaceMagicNumber replaceMagicNumber;
-    private File file;
-
-    @Before
-    public void setUp() throws Exception {
-        replaceMagicNumber = new ReplaceMagicNumber();
-
-        XPathRule magicNumberRule = new XPathRule();
-
-        //AvoidLiteralsInIfCondition
-        RuleContext context = new RuleContext();
-
-        File file = TestInputFile.createTempFile();
-
-        context.setSourceCodeFilename(file.getAbsolutePath());
-        SimpleJavaNode node = new SimpleJavaNode(1);
-
-        SourceFileScope scope = new SourceFileScope(file.getAbsolutePath());
-        node.setScope(scope);
-
-        node.testingOnly__setBeginColumn(1);
-        node.testingOnly__setBeginLine(1);
-
-        RuleViolation ruleViolation = new RuleViolation(magicNumberRule, context, node);
-        replaceMagicNumber.buildAST(ruleViolation);
-    }
-
-    @Test
-    public void testRewriteAST() throws Exception {
-
-        replaceMagicNumber.setReplaceName("MAGICINT");
-        replaceMagicNumber.rewriteAST();
-
-
-        CompilationUnit unit = JavaParser.parse(rewritedFile());
-        Assert.assertEquals(replaceMagicNumber.getCompilationUnit(), unit);
-
-    }
-
-    private static File rewritedFile(){
+    public static File createTempFile(){
         File file = null;
         try {
             file = File.createTempFile("TempFile.txt", ".tmp");
@@ -73,7 +23,6 @@ public class ReplaceMagicNumberTest {
             BufferedWriter out = new BufferedWriter(new FileWriter(file));
             out.write("public class UnusedCodeTester {\n" +
                     "\n" +
-                    "\tprivate static final int MAGICINT = 0;\n" +
                     "\tpublic static String string1 = \"Si!\";\n" +
                     " \tpublic static String string2 = \"No!\";\n" +
                     "    public static String MYvariBal = \"x\";\n" +
@@ -87,7 +36,7 @@ public class ReplaceMagicNumberTest {
                     "                          String b,\n" +
                     "                          String c) {\n" +
                     "        int i =0;\n" +
-                    "        if(i == MAGICINT){\n" +
+                    "        if(i == 0){\n" +
                     "\n" +
                     "        }else if(i == 23){\n" +
                     "\n" +
@@ -106,5 +55,6 @@ public class ReplaceMagicNumberTest {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         return file;
+
     }
 }
