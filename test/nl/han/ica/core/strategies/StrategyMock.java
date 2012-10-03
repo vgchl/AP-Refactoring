@@ -5,13 +5,11 @@ import org.eclipse.jdt.core.dom.AST;
 /**
  * Created with IntelliJ IDEA.
  * User: Corne
- * Date: 1-10-12
- * Time: 10:53
+ * Date: 3-10-12
+ * Time: 9:44
  * To change this template use File | Settings | File Templates.
  */
-public class ReplaceMagicNumber extends Strategy {
-
-
+public class StrategyMock extends Strategy {
     @Override
     public void rewriteAST(AST ast) {
         //To change body of implemented methods use File | Settings | File Templates.

@@ -1,5 +1,6 @@
 package nl.han.ica.core.strategies;
 
+import net.sourceforge.pmd.RuleViolation;
 import org.eclipse.jdt.core.dom.AST;
 
 /**
@@ -9,15 +10,17 @@ import org.eclipse.jdt.core.dom.AST;
  * Time: 11:56
  * To change this template use File | Settings | File Templates.
  */
-public class Strategy  {
+public abstract class Strategy  {
 
-    protected Strategy(){
+    private AST ast = null;
 
-    }
+    public abstract void rewriteAST(AST ast);
 
-    public void buildAST() {
+    public void buildAST(RuleViolation ruleViolation) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-
+    public AST getAst() {
+        return ast;
+    }
 }

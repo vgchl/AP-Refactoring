@@ -8,6 +8,13 @@
     <artifactId>refactor-tool</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <jfx-version>2.2</jfx-version>
+        <jfx-runtime>C:\Program Files\Java\jdk1.7.0_07\jre</jfx-runtime>
+    </properties>
+
+
+
     <dependencies>
         <dependency>
             <groupId>pmd</groupId>
@@ -24,6 +31,77 @@
             <artifactId>core</artifactId>
             <version>3.2.0.666</version>
         </dependency>
-    </dependencies>
+        <dependency>
+            <groupId>javafx</groupId>
+            <artifactId>javafx</artifactId>
+            <version>2.2</version>
+        </dependency>
+
+     </dependencies>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+
+            </plugin>
+
+                <!--<plugin>-->
+                    <!--<groupId>org.apache.maven.plugins</groupId>-->
+                    <!--<artifactId>maven-install-plugin</artifactId>-->
+                    <!--<version>2.3.1</version>-->
+                    <!--<executions>-->
+                        <!--<execution>-->
+                            <!--<id>install-javafx</id>-->
+                            <!--<goals>-->
+                                <!--<goal>install-file</goal>-->
+                            <!--</goals>-->
+                            <!--<phase>validate</phase>-->
+                            <!--<configuration>-->
+                                <!--<file>${jfx-runtime}\lib\jfxrt.jar</file>-->
+                                <!--<groupId>javafx</groupId>-->
+                                <!--<artifactId>javafx</artifactId>-->
+                                <!--<version>${jfx-version}</version>-->
+                                <!--<packaging>jar</packaging>-->
+                                <!--<javadoc>${jfx-runtime}\..\docs\api.zip</javadoc>-->
+                                <!--&lt;!&ndash;<sources>no source available</sources>&ndash;&gt;-->
+                            <!--</configuration>-->
+                        <!--</execution>-->
+                    <!--</executions>-->
+                <!--</plugin>-->
+                <!--<plugin>-->
+                    <!--<artifactId>maven-resources-plugin</artifactId>-->
+                    <!--<executions>-->
+                        <!--<execution>-->
+                            <!--<id>install-javafx-bin</id>-->
+                            <!--<phase>validate</phase>-->
+                            <!--<goals>-->
+                                <!--<goal>copy-resources</goal>-->
+                            <!--</goals>-->
+                            <!--<configuration>-->
+                                <!--<outputDirectory>${settings.localRepository}\javafx\javafx</outputDirectory>-->
+                                <!--<useBuildFilters>false</useBuildFilters>-->
+                                <!--<resources>-->
+                                    <!--<resource>-->
+                                        <!--<directory>${jfx-runtime}</directory>-->
+                                        <!--<includes>-->
+                                            <!--<include>bin\*.dll</include>-->
+                                            <!--<include>lib\*.dylib</include>-->
+                                        <!--</includes>-->
+                                    <!--</resource>-->
+                                <!--</resources>-->
+                            <!--</configuration>-->
+                        <!--</execution>-->
+                    <!--</executions>-->
+                <!--</plugin>-->
+        </plugins>
+        </build>
+
 
 </project>

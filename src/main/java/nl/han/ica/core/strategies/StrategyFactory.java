@@ -10,6 +10,7 @@ package nl.han.ica.core.strategies;
 public class StrategyFactory {
 
     public static Strategy createStrategy(String violationType){
+
         return null;
     }
 }
