@@ -1,35 +1,39 @@
 package nl.han.ica.app.controllers;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.dfa.report.ReportTree;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
-import static org.apache.log4j.Logger.getLogger;
-
-public class StrategySelection {
+public class StrategySelectionController extends BaseController {
     private File file;
-    private Logger logger = getLogger(getClass().getName());
-
+    private Scene scene;
     @FXML
     private Label selectedFile;
-
     @FXML
     private Label selectedFilePath;
-
     @FXML
     private Button analyzeButton;
+
+    public StrategySelectionController(Scene scene) {
+        this.scene = scene;
+    }
+
+    @Override
+    public Parent getView() {
+        return buildView("/views/strategy_selection.fxml");
+    }
 
     @FXML
     protected void browse(ActionEvent event) {
@@ -38,7 +42,7 @@ public class StrategySelection {
         //Show open file dialog
         file = fileChooser.showOpenDialog(null);
 
-        if(file != null) {
+        if (file != null) {
             selectedFilePath.setText(file.getPath());
             selectedFilePath.setVisible(true);
             selectedFile.setVisible(true);
@@ -47,8 +51,11 @@ public class StrategySelection {
     }
 
     @FXML
-    protected void analyze(ActionEvent event) throws FileNotFoundException {
-        System.out.println(checkFile());
+    protected void analyze(ActionEvent event) throws IOException {
+        ResolveIssuesController resolveIssuesController = new ResolveIssuesController();
+        scene.setRoot(resolveIssuesController.getView());
+
+        event.consume();
     }
 
     @FXML
@@ -56,7 +63,7 @@ public class StrategySelection {
         System.out.println("Replace Magic Num with Symbolic Content Clicked.");
     }
 
-    private String checkFile() throws FileNotFoundException {
+    private String checkFile() throws IOException {
 
         StringBuffer stringBuffer = new StringBuffer();
         try {
@@ -79,7 +86,7 @@ public class StrategySelection {
 
             ReportTree reportTree = rc.getReport().getViolationTree();
             Iterator it = reportTree.iterator();
-            while(it.hasNext()) {
+            while (it.hasNext()) {
                 RuleViolation ruleViolation = (RuleViolation) it.next();
 
                 stringBuffer.append("Class name:\t" + ruleViolation.getClassName() + "\n");
