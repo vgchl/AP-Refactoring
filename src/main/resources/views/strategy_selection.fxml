@@ -25,7 +25,8 @@
     <VBox alignment="CENTER" padding="$x1" prefHeight="200.0" prefWidth="100.0" spacing="5.0">
       <children>
         <Label fx:id="browseHelpText" text="Select a file, source folder or zip file to scan." />
-        <Button fx:id="browseButton" mnemonicParsing="false" onAction="#browse" text="Browse..." />
+        <Button fx:id="browseButton" mnemonicParsing="false" onAction="#selectSourceFiles" text="Select files…" />
+        <Button fx:id="browseButton" mnemonicParsing="false" onAction="#selectSourceDirectory" text="Select folder…" />
         <Separator prefWidth="200.0">
           <VBox.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
@@ -49,7 +50,7 @@
           </font>
         </Label>
         <Separator prefWidth="200.0" />
-        <CheckBox fx:id="replMagNum" mnemonicParsing="false" onAction="#replMagNumClick" selected="true" text="Replace Magic Number with Symbolic Constant" />
+        <CheckBox fx:id="replMagNum" mnemonicParsing="false" selected="true" text="Replace Magic Number with Symbolic Constant" />
         <CheckBox fx:id="remAssignmParam" mnemonicParsing="false" text="Remove assignments to parameter" />
         <CheckBox fx:id="remControlFlag" mnemonicParsing="false" text="Remove Control Flag" />
         <Separator prefWidth="200.0" />
