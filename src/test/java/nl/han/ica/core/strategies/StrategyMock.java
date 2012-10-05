@@ -1,6 +1,7 @@
 package nl.han.ica.core.strategies;
 
-import org.eclipse.jdt.core.dom.AST;
+
+import japa.parser.ast.CompilationUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,8 +11,9 @@ import org.eclipse.jdt.core.dom.AST;
  * To change this template use File | Settings | File Templates.
  */
 public class StrategyMock extends Strategy {
+
     @Override
-    public void rewriteAST(AST ast) {
+    public void rewriteAST() {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 }

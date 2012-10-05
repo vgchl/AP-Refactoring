@@ -1,18 +1,22 @@
 package nl.han.ica.core.strategies;
 
+import japa.parser.JavaParser;
+import japa.parser.ast.CompilationUnit;
 import net.sourceforge.pmd.Rule;
 import net.sourceforge.pmd.RuleContext;
 import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.ast.SimpleJavaNode;
 import net.sourceforge.pmd.rules.UnusedLocalVariableRule;
 import net.sourceforge.pmd.symboltable.SourceFileScope;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.net.URL;
-import java.util.Enumeration;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,8 +27,9 @@ import java.util.Enumeration;
  */
 public class StrategyTest {
 
-    Strategy strategy;
-    RuleViolation testViolation;
+    private Strategy strategy;
+    private File file;
+    private RuleViolation testViolation;
 
     @Before
     public void setUp() throws Exception {
@@ -32,10 +37,8 @@ public class StrategyTest {
 
         Rule rule = new UnusedLocalVariableRule();
         RuleContext context = new RuleContext();
-        Enumeration<URL> url = this.getClass().getClassLoader().getResources("nl/han/ica/core/strategies/StrategyTest.class");
 
-        File file = new File(url.nextElement().toURI());
-        System.out.println(file.getAbsolutePath());
+        file = TestInputFile.createTempFile();
 
         context.setSourceCodeFilename(file.getAbsolutePath());
         SimpleJavaNode node = new SimpleJavaNode(1);
@@ -50,10 +53,16 @@ public class StrategyTest {
 
     }
 
+
+
     @Test
     public void testBuildAST() throws Exception {
         strategy.buildAST(testViolation);
-        Assert.assertNull(strategy.getAst());
+
+        CompilationUnit unit = JavaParser.parse(file);
+
+        Assert.assertNotNull(strategy.getCompilationUnit());
+        Assert.assertEquals(strategy.getCompilationUnit(), unit);
 
     }
 }
