@@ -1,23 +1,30 @@
 package nl.han.ica.app.controllers;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import net.sourceforge.pmd.*;
-import net.sourceforge.pmd.dfa.report.ReportTree;
+import nl.han.ica.core.Job;
 
+import java.awt.*;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.List;
 
+/**
+ * Handles all interaction on the source and strategy selection screen.
+ */
 public class StrategySelectionController extends BaseController {
-    private File file;
+
+    private Job job;
     private Scene scene;
     @FXML
     private Label selectedFile;
@@ -26,6 +33,11 @@ public class StrategySelectionController extends BaseController {
     @FXML
     private Button analyzeButton;
 
+    /**
+     * Initialize a new StrategySelectionController.
+     *
+     * @param scene The scene in which the controller's view is located.
+     */
     public StrategySelectionController(Scene scene) {
         this.scene = scene;
     }
@@ -36,73 +48,57 @@ public class StrategySelectionController extends BaseController {
     }
 
     @FXML
-    protected void browse(ActionEvent event) {
+    private void selectSourceFiles(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select source files");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Java Source Files", "*.java"));
 
-        //Show open file dialog
-        file = fileChooser.showOpenDialog(null);
+        job.setFiles(fileChooser.showOpenMultipleDialog(null));
 
-        if (file != null) {
-            selectedFilePath.setText(file.getPath());
+        onSourceFilesSelected();
+    }
+
+    @FXML
+    private void selectSourceDirectory(ActionEvent event) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Select source directory");
+
+        File directory = directoryChooser.showDialog(null);
+        job.setFiles(findSourceFilesInDirectory(directory));
+
+        onSourceFilesSelected();
+    }
+
+    @FXML
+    private void analyze(ActionEvent event) throws IOException {
+        ResolveIssuesController resolveIssuesController = new ResolveIssuesController(job);
+        scene.setRoot(resolveIssuesController.getView());
+    }
+
+    private void onSourceFilesSelected() {
+        if (job.getFiles().size() > 0) {
+            StringBuilder selectedFiles = new StringBuilder();
+            for (File file : job.getFiles()) {
+                selectedFiles.append(file.getName() + "\n");
+            }
+            selectedFilePath.setText(selectedFiles.toString());
             selectedFilePath.setVisible(true);
             selectedFile.setVisible(true);
             analyzeButton.setDisable(false);
+        } else {
+            selectedFilePath.setVisible(false);
+            selectedFile.setVisible(false);
+            analyzeButton.setDisable(true);
         }
     }
 
-    @FXML
-    protected void analyze(ActionEvent event) throws IOException {
-        ResolveIssuesController resolveIssuesController = new ResolveIssuesController();
-        scene.setRoot(resolveIssuesController.getView());
-
-        event.consume();
-    }
-
-    @FXML
-    protected void replMagNumClick(ActionEvent event) {
-        System.out.println("Replace Magic Num with Symbolic Content Clicked.");
-    }
-
-    private String checkFile() throws IOException {
-
-        StringBuffer stringBuffer = new StringBuffer();
-        try {
-            PMD pmd = new PMD();
-
-            InputStream inputStream = new FileInputStream(file);
-            RuleSet ruleSet = new RuleSet();
-
-            InputStream rs = pmd.getClassLoader().getResourceAsStream("rulesets/unusedcode.xml");
-            InputStream rs2 = pmd.getClassLoader().getResourceAsStream("rulesets/naming.xml");
-
-            RuleSetFactory ruleSetFactory = new RuleSetFactory();
-            ruleSet.addRuleSet(ruleSetFactory.createRuleSet(rs, pmd.getClassLoader()));
-            ruleSet.addRuleSet(ruleSetFactory.createRuleSet(rs2, pmd.getClassLoader()));
-
-            RuleContext rc = new RuleContext();
-            rc.setSourceCodeFilename(file.getAbsolutePath());
-
-            pmd.processFile(inputStream, ruleSet, rc);
-
-            ReportTree reportTree = rc.getReport().getViolationTree();
-            Iterator it = reportTree.iterator();
-            while (it.hasNext()) {
-                RuleViolation ruleViolation = (RuleViolation) it.next();
-
-                stringBuffer.append("Class name:\t" + ruleViolation.getClassName() + "\n");
-                stringBuffer.append("Description:\t" + ruleViolation.getDescription() + "\n");
-                stringBuffer.append("Line num:\t\t" + ruleViolation.getBeginLine() + "\n");
-                stringBuffer.append("Column num:\t" + ruleViolation.getBeginColumn() + "\n");
-                stringBuffer.append("End line num:\t" + ruleViolation.getEndLine() + "\n");
-                stringBuffer.append("Var name:\t" + ruleViolation.getVariableName() + "\n");
-                stringBuffer.append("\n");
+    private List<File> findSourceFilesInDirectory(File directory) {
+        File[] files = directory.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String filename) {
+                return filename.endsWith(".java");
             }
-
-        } catch (PMDException e) {
-            e.printStackTrace();
-        }
-
-        return stringBuffer.toString();
+        });
+        return Arrays.asList(files);
     }
 
 }
