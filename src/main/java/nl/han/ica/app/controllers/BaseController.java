@@ -19,7 +19,9 @@ public abstract class BaseController {
     protected Logger logger;
     protected FXMLLoader fxmlLoader;
 
-
+    /**
+     * Initialize a new BaseController.
+     */
     public BaseController() {
         logger = getLogger(getClass().getName());
         fxmlLoader = new FXMLLoader();
@@ -39,20 +41,14 @@ public abstract class BaseController {
      * @param viewPath The path to the FXML resource.
      * @return The initialized view's root element.
      */
-    protected Parent buildView(String viewPath) {
+    protected Parent buildView(String viewPath) throws IOException {
         if (viewPath == null) {
             throw new IllegalArgumentException("No viewPath given.");
         }
 
         fxmlLoader.setLocation(getClass().getResource(viewPath));
+        fxmlLoader.load();
 
-        try {
-            fxmlLoader.load();
-        }
-        catch (IOException e) {
-            logger.fatal("Error loading StrategySelectionController scene.");
-            // TODO: Throw new Exception
-        }
         return (Parent) fxmlLoader.getRoot();
     }
 

@@ -1,7 +1,5 @@
 package nl.han.ica.app.controllers;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -12,7 +10,6 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import nl.han.ica.core.Job;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -30,21 +27,28 @@ public class StrategySelectionController extends BaseController {
     private Label selectedFile;
     @FXML
     private Label selectedFilePath;
-    @FXML
-    private Button analyzeButton;
+    public Button analyzeButton;
 
     /**
      * Initialize a new StrategySelectionController.
      *
      * @param scene The scene in which the controller's view is located.
+     * @param job The job to select source files and strategies for.
      */
-    public StrategySelectionController(Scene scene) {
+    public StrategySelectionController(Scene scene, Job job) {
         this.scene = scene;
+        this.job = job;
     }
 
     @Override
     public Parent getView() {
-        return buildView("/views/strategy_selection.fxml");
+        try {
+            return buildView("/views/strategy_selection.fxml");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @FXML
@@ -79,7 +83,7 @@ public class StrategySelectionController extends BaseController {
         if (job.getFiles().size() > 0) {
             StringBuilder selectedFiles = new StringBuilder();
             for (File file : job.getFiles()) {
-                selectedFiles.append(file.getName() + "\n");
+                selectedFiles.append(file.getName()).append("\n");
             }
             selectedFilePath.setText(selectedFiles.toString());
             selectedFilePath.setVisible(true);

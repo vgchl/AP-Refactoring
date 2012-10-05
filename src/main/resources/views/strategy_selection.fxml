@@ -54,7 +54,7 @@
         <CheckBox fx:id="remAssignmParam" mnemonicParsing="false" text="Remove assignments to parameter" />
         <CheckBox fx:id="remControlFlag" mnemonicParsing="false" text="Remove Control Flag" />
         <Separator prefWidth="200.0" />
-        <Button fx:id="analyzeButton" disable="false" mnemonicParsing="false" onAction="#analyze" prefWidth="326.0" text="Analyze" />
+        <Button fx:id="analyzeButton" disable="true" mnemonicParsing="false" onAction="#analyze" prefWidth="326.0" text="Analyze" />
       </children>
     </VBox>
   </right>

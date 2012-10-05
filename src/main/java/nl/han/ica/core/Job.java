@@ -1,16 +1,14 @@
 package nl.han.ica.core;
 
 import net.sourceforge.pmd.*;
-import net.sourceforge.pmd.dfa.report.ReportTree;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Job {
-
     private List<File> files;
     private RuleSet ruleSet;
     private List<RuleViolation> ruleViolations;
@@ -19,15 +17,15 @@ public class Job {
         setRuleViolations(new ArrayList<RuleViolation>());
     }
 
-    public void processFiles() {
+    public void processFiles() throws FileNotFoundException, PMDException {
         PMD pmd = new PMD();
-
         RuleContext ruleContext = new RuleContext();
 
-//        ruleContext.setSourceCodeFilename(file.getAbsolutePath());
-//        pmd.processFile(file, ruleSet, ruleContext);
-//        pmd.processFiles();
-
+        // TODO: Process all files instead of just one.
+        File file = files.get(0);
+        ruleContext.setSourceCodeFilename(file.getAbsolutePath());
+        pmd.processFile(new FileInputStream(file), ruleSet, ruleContext);
+        // TODO: Process PMD result...
     }
 
     public List<File> getFiles() {

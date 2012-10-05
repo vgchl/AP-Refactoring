@@ -3,16 +3,24 @@ package nl.han.ica.app.controllers;
 import javafx.scene.Parent;
 import nl.han.ica.core.Job;
 
+import java.io.IOException;
+
 public class ResolveIssuesController extends BaseController {
 
-    public ResolveIssuesController(Job job)
-    {
+    private Job job;
 
+    public ResolveIssuesController(Job job) {
+        this.job = job;
     }
 
     @Override
     public Parent getView() {
-        return buildView("/views/resolve_issues.fxml");
+        try {
+            return buildView("/views/resolve_issues.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }
