@@ -23,8 +23,6 @@ public class UnusedCodeTester {
         return true;
     }
 
-    private static final int TEST = 5;
-
     private static final int MAGIC0 = 0;
 
     private static final int MAGIC23 = 23;

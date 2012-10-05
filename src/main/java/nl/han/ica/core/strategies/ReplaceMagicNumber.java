@@ -58,6 +58,8 @@ public class ReplaceMagicNumber extends Strategy {
         modifier = ModifierSet.addModifier(modifier, ModifierSet.FINAL);
 
         BodyDeclaration declaration = new FieldDeclaration(modifier, primitiveType,variableDeclarator);
+        declaration.setBeginLine(4);
+        declaration.setEndLine(4);
 
         ASTHelper.addMember(compilationUnit.getTypes().get(0), declaration);
     }

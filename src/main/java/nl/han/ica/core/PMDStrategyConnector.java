@@ -52,12 +52,18 @@ public class PMDStrategyConnector {
 
     public void processResults(){
         Iterator it = reportTree.iterator();
+        Strategy strategy = null;
 
         //TODO atm taking first element of the tree, change to user selected
         RuleViolation ruleViolation = (RuleViolation) it.next();
-        Strategy strategy = StrategyFactory.createStrategy(ruleViolation);
-        strategy.buildAST(file);
-        strategy.rewriteAST();
+        if (ruleViolation != null) {
+            strategy = StrategyFactory.createStrategy(ruleViolation);
+            strategy.buildAST(file);
+            strategy.rewriteAST();
+        }
+        else {
+            return;
+        }
 
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(file));
