@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.dfa.report.ReportTree;
+import nl.han.ica.core.PMDStrategyConnector;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -56,6 +57,11 @@ public class StrategySelectionController extends BaseController {
         scene.setRoot(resolveIssuesController.getView());
 
         event.consume();
+        if(file != null){
+            PMDStrategyConnector strategyConnector = new PMDStrategyConnector(file);
+            strategyConnector.runPMD(new RuleSet());
+            strategyConnector.processResults();
+        }
     }
 
     @FXML

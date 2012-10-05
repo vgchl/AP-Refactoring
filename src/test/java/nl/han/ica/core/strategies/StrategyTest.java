@@ -13,10 +13,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -33,7 +30,6 @@ public class StrategyTest {
 
     @Before
     public void setUp() throws Exception {
-        strategy = new StrategyMock();
 
         Rule rule = new UnusedLocalVariableRule();
         RuleContext context = new RuleContext();
@@ -50,14 +46,14 @@ public class StrategyTest {
         node.testingOnly__setBeginLine(1);
 
         testViolation = new RuleViolation(rule, context, node);
-
+        strategy = new StrategyMock(testViolation);
     }
 
 
 
     @Test
     public void testBuildAST() throws Exception {
-        strategy.buildAST(testViolation);
+        strategy.buildAST(file);
 
         CompilationUnit unit = JavaParser.parse(file);
 

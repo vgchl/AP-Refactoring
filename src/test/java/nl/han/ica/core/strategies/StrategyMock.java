@@ -1,7 +1,7 @@
 package nl.han.ica.core.strategies;
 
 
-import japa.parser.ast.CompilationUnit;
+import net.sourceforge.pmd.RuleViolation;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,6 +11,10 @@ import japa.parser.ast.CompilationUnit;
  * To change this template use File | Settings | File Templates.
  */
 public class StrategyMock extends Strategy {
+
+    public StrategyMock(RuleViolation ruleViolation) {
+        super(ruleViolation);
+    }
 
     @Override
     public void rewriteAST() {
