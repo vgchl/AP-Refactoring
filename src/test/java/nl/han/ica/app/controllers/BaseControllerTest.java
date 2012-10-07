@@ -1,6 +1,5 @@
 package nl.han.ica.app.controllers;
 
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 import org.junit.Assert;
@@ -13,11 +12,6 @@ public class BaseControllerTest {
 
     private class TestController extends BaseController {
 
-        public FXMLLoader getFXMLLoader() {
-            return fxmlLoader;
-        }
-
-
         @Override
         public Parent getView() {
             try {
@@ -26,9 +20,10 @@ public class BaseControllerTest {
                 return null;
             }
         }
+
     }
 
-    private TestController controller;
+    private BaseController controller;
 
     @Before
     public void setUp() {
@@ -48,6 +43,7 @@ public class BaseControllerTest {
 
     @Test
     public void setsSelfAsViewController() {
-        Assert.assertEquals(controller, controller.getFXMLLoader().getController());
+        Assert.assertEquals(controller, controller.fxmlLoader.getController());
     }
+
 }

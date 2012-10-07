@@ -11,6 +11,7 @@ public class ResolveIssuesController extends BaseController {
 
     public ResolveIssuesController(Job job) {
         this.job = job;
+        job.process();
     }
 
     @Override
