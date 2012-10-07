@@ -9,17 +9,17 @@ import javafx.scene.control.Label;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import nl.han.ica.core.Job;
+import nl.han.ica.core.util.FileUtil;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * Handles all interaction on the source and strategy selection screen.
  */
 public class StrategySelectionController extends BaseController {
+    private static String FILES_SELECTION_TITLE = "Select source files";
 
     private Job job;
     private Scene scene;
@@ -33,7 +33,7 @@ public class StrategySelectionController extends BaseController {
      * Initialize a new StrategySelectionController.
      *
      * @param scene The scene in which the controller's view is located.
-     * @param job The job to select source files and strategies for.
+     * @param job   The job to select source files and strategies for.
      */
     public StrategySelectionController(Scene scene, Job job) {
         this.scene = scene;
@@ -44,8 +44,7 @@ public class StrategySelectionController extends BaseController {
     public Parent getView() {
         try {
             return buildView("/views/strategy_selection.fxml");
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
@@ -54,8 +53,8 @@ public class StrategySelectionController extends BaseController {
     @FXML
     private void selectSourceFiles(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select source files");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Java Source Files", "*.java"));
+        fileChooser.setTitle(FILES_SELECTION_TITLE);
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Java Files", "*.java"));
 
         job.setFiles(fileChooser.showOpenMultipleDialog(null));
 
@@ -65,27 +64,23 @@ public class StrategySelectionController extends BaseController {
     @FXML
     private void selectSourceDirectory(ActionEvent event) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Select source directory");
+        directoryChooser.setTitle(FILES_SELECTION_TITLE);
 
         File directory = directoryChooser.showDialog(null);
-        job.setFiles(findSourceFilesInDirectory(directory));
+        job.setFiles(FileUtil.listFilesRecursively(directory, ".java"));
 
         onSourceFilesSelected();
     }
 
     @FXML
-    private void analyze(ActionEvent event) throws IOException {
+    private void analyze(ActionEvent event) {
         ResolveIssuesController resolveIssuesController = new ResolveIssuesController(job);
         scene.setRoot(resolveIssuesController.getView());
     }
 
     private void onSourceFilesSelected() {
         if (job.getFiles().size() > 0) {
-            StringBuilder selectedFiles = new StringBuilder();
-            for (File file : job.getFiles()) {
-                selectedFiles.append(file.getName()).append("\n");
-            }
-            selectedFilePath.setText(selectedFiles.toString());
+            selectedFilePath.setText(formatFileList(job.getFiles()));
             selectedFilePath.setVisible(true);
             selectedFile.setVisible(true);
             analyzeButton.setDisable(false);
@@ -96,13 +91,12 @@ public class StrategySelectionController extends BaseController {
         }
     }
 
-    private List<File> findSourceFilesInDirectory(File directory) {
-        File[] files = directory.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String filename) {
-                return filename.endsWith(".java");
-            }
-        });
-        return Arrays.asList(files);
+    private String formatFileList(List<File> files) {
+        StringBuilder fileList = new StringBuilder();
+        for (File file : files) {
+            fileList.append(file.getName()).append("\n");
+        }
+        return fileList.toString();
     }
 
 }
