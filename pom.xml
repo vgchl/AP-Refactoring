@@ -6,7 +6,7 @@
 
     <groupId>nl.han</groupId>
     <artifactId>Refactor-Tool</artifactId>
-    <version>1.0</version>
+    <version>0.Bulbasaur</version>
 
     <dependencies>
         <dependency>
