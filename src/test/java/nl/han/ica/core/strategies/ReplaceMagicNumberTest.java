@@ -8,6 +8,7 @@ import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.ast.SimpleJavaNode;
 import net.sourceforge.pmd.rules.XPathRule;
 import net.sourceforge.pmd.symboltable.SourceFileScope;
+import nl.han.ica.core.strategies.ReplaceMagicNumber;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,12 +26,12 @@ import java.io.IOException;
  */
 public class ReplaceMagicNumberTest {
 
-    private  ReplaceMagicNumber replaceMagicNumber;
+    private ReplaceMagicNumber replaceMagicNumber;
     private File file;
 
     @Before
     public void setUp() throws Exception {
-        replaceMagicNumber = new ReplaceMagicNumber();
+
 
         XPathRule magicNumberRule = new XPathRule();
 
@@ -49,7 +50,8 @@ public class ReplaceMagicNumberTest {
         node.testingOnly__setBeginLine(1);
 
         RuleViolation ruleViolation = new RuleViolation(magicNumberRule, context, node);
-        replaceMagicNumber.buildAST(ruleViolation);
+        replaceMagicNumber = new ReplaceMagicNumber(ruleViolation);
+        replaceMagicNumber.buildAST(file);
     }
 
     @Test
@@ -59,12 +61,12 @@ public class ReplaceMagicNumberTest {
         replaceMagicNumber.rewriteAST();
 
 
-        CompilationUnit unit = JavaParser.parse(rewritedFile());
+        CompilationUnit unit = JavaParser.parse(rewrittenFile());
         Assert.assertEquals(replaceMagicNumber.getCompilationUnit(), unit);
 
     }
 
-    private static File rewritedFile(){
+    private static File rewrittenFile(){
         File file = null;
         try {
             file = File.createTempFile("TempFile.txt", ".tmp");
