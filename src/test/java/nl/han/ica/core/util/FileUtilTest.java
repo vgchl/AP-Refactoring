@@ -5,6 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -30,8 +32,19 @@ public class FileUtilTest {
         foundFiles = FileUtil.listFilesRecursively(directory, ".txt");
         Assert.assertEquals(foundFiles.size(), 2);
 
-        foundFiles = FileUtil.listFilesRecursively(directory, ".xml");
+        foundFiles = FileUtil.listFilesRecursively(directory, ".md");
         Assert.assertEquals(foundFiles.size(), 1);
+    }
+
+    @Test
+    public void isUninstantiable() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+        Assert.assertEquals("There must be only one constructor.", 1, FileUtil.class.getDeclaredConstructors().length);
+        Constructor constructor = FileUtil.class.getDeclaredConstructor();
+        Assert.assertFalse("Constructor must not be accessible.", constructor.isAccessible());
+
+        // Call the constructor body for coverage.
+        constructor.setAccessible(true);
+        constructor.newInstance();
     }
 
 }

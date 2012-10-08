@@ -12,9 +12,9 @@ import java.util.Queue;
 public class FileUtil {
 
     /**
-     * Protected constructor to prevent class initialization.
+     * Private constructor to prevent class initialization.
      */
-    protected FileUtil() {
+    private FileUtil() {
 
     }
 
