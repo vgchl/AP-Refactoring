@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 
 public class StrategySelectionController extends BaseController {
+
     private File file;
     private Scene scene;
     @FXML
@@ -67,48 +68,6 @@ public class StrategySelectionController extends BaseController {
     @FXML
     protected void replMagNumClick(ActionEvent event) {
         System.out.println("Replace Magic Num with Symbolic Content Clicked.");
-    }
-
-    private String checkFile() throws IOException {
-
-        StringBuffer stringBuffer = new StringBuffer();
-        try {
-            PMD pmd = new PMD();
-
-            InputStream inputStream = new FileInputStream(file);
-            RuleSet ruleSet = new RuleSet();
-
-            InputStream rs = pmd.getClassLoader().getResourceAsStream("rulesets/unusedcode.xml");
-            InputStream rs2 = pmd.getClassLoader().getResourceAsStream("rulesets/naming.xml");
-
-            RuleSetFactory ruleSetFactory = new RuleSetFactory();
-            ruleSet.addRuleSet(ruleSetFactory.createRuleSet(rs, pmd.getClassLoader()));
-            ruleSet.addRuleSet(ruleSetFactory.createRuleSet(rs2, pmd.getClassLoader()));
-
-            RuleContext rc = new RuleContext();
-            rc.setSourceCodeFilename(file.getAbsolutePath());
-
-            pmd.processFile(inputStream, ruleSet, rc);
-
-            ReportTree reportTree = rc.getReport().getViolationTree();
-            Iterator it = reportTree.iterator();
-            while (it.hasNext()) {
-                RuleViolation ruleViolation = (RuleViolation) it.next();
-
-                stringBuffer.append("Class name:\t" + ruleViolation.getClassName() + "\n");
-                stringBuffer.append("Description:\t" + ruleViolation.getDescription() + "\n");
-                stringBuffer.append("Line num:\t\t" + ruleViolation.getBeginLine() + "\n");
-                stringBuffer.append("Column num:\t" + ruleViolation.getBeginColumn() + "\n");
-                stringBuffer.append("End line num:\t" + ruleViolation.getEndLine() + "\n");
-                stringBuffer.append("Var name:\t" + ruleViolation.getVariableName() + "\n");
-                stringBuffer.append("\n");
-            }
-
-        } catch (PMDException e) {
-            e.printStackTrace();
-        }
-
-        return stringBuffer.toString();
     }
 
 }

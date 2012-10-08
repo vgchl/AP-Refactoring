@@ -29,7 +29,6 @@
             <artifactId>javafx</artifactId>
             <version>2.2</version>
         </dependency>
-
      </dependencies>
 
 
@@ -42,7 +41,6 @@
                     <source>1.7</source>
                     <target>1.7</target>
                 </configuration>
-
             </plugin>
 
                 <!--<plugin>-->
