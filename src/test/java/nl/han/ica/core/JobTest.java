@@ -2,7 +2,7 @@ package nl.han.ica.core;
 
 import org.junit.Before;
 import org.junit.Test;
-import sun.jvm.hotspot.utilities.Assert;
+import org.junit.Assert;
 
 public class JobTest {
 
@@ -15,7 +15,7 @@ public class JobTest {
 
     @Test
     public void hasReportAfterInstantiation() {
-        Assert.that(null != job.getReport(), "Report present after instantiation.");
+        Assert.assertTrue("Report present after instantiation.", null != job.getReport());
     }
 
 }
