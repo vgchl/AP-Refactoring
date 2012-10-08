@@ -70,7 +70,7 @@
             <HBox alignment="TOP_RIGHT" prefHeight="22.0" prefWidth="632.0" spacing="5.0">
               <children>
                 <Button mnemonicParsing="false" text="Ignore this issue" HBox.hgrow="NEVER" />
-                <Button mnemonicParsing="false" onAction="#fillTableViewWithIssues" text="Apply refactoring" />
+                <Button mnemonicParsing="false" text="Apply refactoring" />
               </children>
             </HBox>
           </children>

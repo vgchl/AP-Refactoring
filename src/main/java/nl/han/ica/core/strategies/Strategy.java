@@ -10,6 +10,8 @@ import java.io.IOException;
 
 public abstract class Strategy  {
 
+    private String name = null;
+
     protected CompilationUnit compilationUnit = null;
     protected RuleViolation ruleViolation = null;
 
@@ -30,5 +32,13 @@ public abstract class Strategy  {
 
     public CompilationUnit getCompilationUnit() {
         return compilationUnit;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

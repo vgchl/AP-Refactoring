@@ -5,14 +5,19 @@ import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import nl.han.ica.core.Job;
+import nl.han.ica.core.strategies.ReplaceMagicNumber;
+import nl.han.ica.core.strategies.Strategy;
 import nl.han.ica.core.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,12 +28,21 @@ public class StrategySelectionController extends BaseController {
 
     private Job job;
     private Scene scene;
+
+    private ArrayList<Strategy> strategyList = new ArrayList<>();
+
+    @FXML
+    protected VBox strategyOptions;
+
     @FXML
     private Label selectedFile;
+
     @FXML
     private Label selectedFilePath;
+
     @FXML
-    private Button analyzeButton;
+    public Button analyzeButton;
+
 
     /**
      * Initialize a new StrategySelectionController.
@@ -39,6 +53,8 @@ public class StrategySelectionController extends BaseController {
     public StrategySelectionController(Scene scene, Job job) {
         this.scene = scene;
         this.job = job;
+
+        fillStrategyList();
     }
 
     @Override
@@ -98,6 +114,20 @@ public class StrategySelectionController extends BaseController {
             fileList.append(file.getName()).append("\n");
         }
         return fileList.toString();
+    }
+
+    private void fillStrategyList() {
+        strategyList.add( new ReplaceMagicNumber( null  ) );
+
+        for (Strategy strategy : strategyList) {
+            CheckBox cb = new CheckBox();
+
+            cb.setId(strategy.getName());
+            cb.setText(strategy.getName());
+
+            strategyOptions.getChildren().add(cb);
+        }
+
     }
 
 }

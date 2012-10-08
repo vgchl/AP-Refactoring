@@ -7,12 +7,14 @@ import japa.parser.ast.type.PrimitiveType;
 import japa.parser.ast.visitor.VoidVisitorAdapter;
 import net.sourceforge.pmd.RuleViolation;
 
+
 public class ReplaceMagicNumber extends Strategy {
 
     private String replaceName = "MAGIC";
 
     public ReplaceMagicNumber(RuleViolation ruleViolation) {
         super(ruleViolation);
+        setName("Replace Magic Number with Symbolic Constant");
         System.out.println(ruleViolation.getDescription());
     }
 

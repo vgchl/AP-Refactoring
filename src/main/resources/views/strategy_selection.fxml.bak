@@ -10,7 +10,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane fx:id="strategySelectionController" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" stylesheets="style.css" xmlns:fx="http://javafx.com/fxml">
+<BorderPane fx:id="strategySelectionController" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml" stylesheets="style.css">
   <bottom>
     <HBox fx:id="statusBox" minHeight="25.0" prefHeight="25.0" prefWidth="800.0">
       <children>
@@ -50,7 +50,9 @@
           </font>
         </Label>
         <Separator prefWidth="200.0" />
-        <VBox fx:id="strategyOptions" prefHeight="549.0" prefWidth="330.0" spacing="10.0" />
+        <CheckBox fx:id="replMagNum" mnemonicParsing="false" selected="true" text="Replace Magic Number with Symbolic Constant" />
+        <CheckBox fx:id="remAssignmParam" mnemonicParsing="false" text="Remove assignments to parameter" />
+        <CheckBox fx:id="remControlFlag" mnemonicParsing="false" text="Remove Control Flag" />
         <Separator prefWidth="200.0" />
         <Button fx:id="analyzeButton" disable="true" mnemonicParsing="false" onAction="#analyze" prefWidth="326.0" text="Analyze" />
       </children>
