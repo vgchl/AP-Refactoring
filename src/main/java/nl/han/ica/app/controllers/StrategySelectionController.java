@@ -13,6 +13,7 @@ import nl.han.ica.core.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -57,7 +58,12 @@ public class StrategySelectionController extends BaseController {
         fileChooser.setTitle(FILES_SELECTION_TITLE);
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Java Files", "*.java"));
 
-        job.setFiles(fileChooser.showOpenMultipleDialog(null));
+        List<File> files = fileChooser.showOpenMultipleDialog(null);
+        if (null != files) {
+            job.setFiles(files);
+        } else {
+            job.getFiles().clear();
+        }
 
         onSourceFilesSelected();
     }
@@ -68,7 +74,12 @@ public class StrategySelectionController extends BaseController {
         directoryChooser.setTitle(FILES_SELECTION_TITLE);
 
         File directory = directoryChooser.showDialog(null);
-        job.setFiles(FileUtil.listFilesRecursively(directory, ".java"));
+        if (null != directory) {
+            job.setFiles(FileUtil.listFilesRecursively(directory, ".java"));
+        }
+        else {
+            job.getFiles().clear();
+        }
 
         onSourceFilesSelected();
     }

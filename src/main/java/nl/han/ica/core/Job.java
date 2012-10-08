@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,6 +23,7 @@ public class Job {
      * Instantiate a new job.
      */
     public Job() {
+        files = new ArrayList<>();
         logger = Logger.getLogger(getClass().getName());
 
         pmd = new PMD();
