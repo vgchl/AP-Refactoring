@@ -1,19 +1,17 @@
 package nl.han.ica.core.strategies;
 
-
 import net.sourceforge.pmd.RuleViolation;
 
 /**
  * Created with IntelliJ IDEA.
- * User: Corne
- * Date: 3-10-12
- * Time: 9:44
+ * User: Niek
+ * Date: 7-10-12
+ * Time: 23:53
  * To change this template use File | Settings | File Templates.
  */
-public class StrategyMock extends Strategy {
-
-    public StrategyMock(RuleViolation ruleViolation) {
-        super(ruleViolation);
+public class ReplacePublicField extends Strategy {
+    public ReplacePublicField(RuleViolation ruleViolation) {
+        super(ruleViolation);    //To change body of overridden methods use File | Settings | File Templates.
     }
 
     @Override

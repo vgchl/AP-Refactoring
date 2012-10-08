@@ -1,13 +1,12 @@
 package nl.han.ica.core.strategies;
 
 import junit.framework.Assert;
-import net.sourceforge.pmd.Rule;
 import net.sourceforge.pmd.RuleContext;
 import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.ast.SimpleJavaNode;
 import net.sourceforge.pmd.rules.XPathRule;
-import net.sourceforge.pmd.rules.strings.AvoidDuplicateLiteralsRule;
 import net.sourceforge.pmd.symboltable.SourceFileScope;
+
 import org.junit.Before;
 import org.junit.Test;
 
