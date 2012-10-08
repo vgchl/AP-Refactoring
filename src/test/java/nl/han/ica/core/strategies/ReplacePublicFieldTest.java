@@ -18,13 +18,19 @@ import java.io.IOException;
  */
 public class ReplacePublicFieldTest {
 
+    private ReplacePublicField replacePublicField;
+    private File file;
+
     @Before
-    private void setUp() {
+    public void setUp() {
+
+
+        replacePublicField = new ReplacePublicField();
 
     }
 
     @Test
-    private void testRewriteAST() {
+    public void testRewriteAST() {
 
     }
 
