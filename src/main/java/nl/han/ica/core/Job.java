@@ -1,11 +1,14 @@
 package nl.han.ica.core;
 
 import net.sourceforge.pmd.*;
+import nl.han.ica.core.strategies.Strategy;
 import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,8 +16,8 @@ import java.util.List;
  */
 public class Job {
     private List<File> files;
+    private List<Strategy> strategies;
     private PMD pmd;
-    private RuleSet ruleSet;
     private RuleContext ruleContext;
     private Logger logger;
 
@@ -22,22 +25,29 @@ public class Job {
      * Instantiate a new job.
      */
     public Job() {
+        strategies = new ArrayList<>();
+        files = new ArrayList<>();
+
         logger = Logger.getLogger(getClass().getName());
 
         pmd = new PMD();
         pmd.setJavaVersion(SourceType.JAVA_17);
 
         ruleContext = new RuleContext();
-        setRuleSet(new RuleSet());
     }
 
     /**
      * Process the files in this job and check them against the selected rules. Results are stored in the job report.
      */
     public void process() {
+        RuleSet ruleSet = new RuleSet();
+        for (Strategy strategy : strategies) {
+            ruleSet.addRuleSet(strategy.getRuleSet());
+        }
         for (File file : files) {
             ruleContext.setSourceCodeFilename(file.getName());
             ruleContext.setSourceCodeFile(file);
+            
             try {
                 pmd.processFile(new FileInputStream(file), ruleSet, ruleContext);
             } catch (PMDException e) {
@@ -48,6 +58,8 @@ public class Job {
                 logger.info("File not found: " + file.getPath(), e.getCause());
             }
         }
+
+
     }
 
     /**
@@ -55,7 +67,7 @@ public class Job {
      * @return Whether files and rules are present.
      */
     public boolean canProcess() {
-        return files.size() > 0 && ruleSet.size() > 0;
+        return files.size() > 0 && strategies.size() > 0;
     }
 
     public List<File> getFiles() {
@@ -66,16 +78,15 @@ public class Job {
         this.files = files;
     }
 
-    public RuleSet getRuleSet() {
-        return ruleSet;
-    }
-
-    public void setRuleSet(RuleSet ruleSet) {
-        this.ruleSet = ruleSet;
-    }
-
     public Report getReport() {
         return ruleContext.getReport();
     }
 
+    public List<Strategy> getStrategies() {
+        return strategies;
+    }
+
+    public void setStrategies(List<Strategy> strategies) {
+        this.strategies = strategies;
+    }
 }

@@ -8,22 +8,19 @@ public class UnusedCodeTester {
 
     public static void main(String[] args) {
         System.out.println(string1);
-        used();
+        used(100);
     }
 
     private String unused(String a, String b, String c) {
         int i = 0;
-        if (i == MAGIC0) {
-        } else if (i == MAGIC23) {
+        if (i == 0) {
+        } else if (i == 23) {
         }
         return "YES";
     }
 
-    private static boolean used() {
+    private static boolean used(int i) {
         return true;
     }
 
-    private static final int MAGIC0 = 0;
-
-    private static final int MAGIC23 = 23;
 }

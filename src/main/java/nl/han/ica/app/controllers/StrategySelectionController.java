@@ -1,7 +1,10 @@
 package nl.han.ica.app.controllers;
 
+import com.sun.javafx.fxml.ObservableListChangeEvent;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -10,8 +13,10 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import net.sourceforge.pmd.RuleViolation;
 import nl.han.ica.core.Job;
 import nl.han.ica.core.strategies.ReplaceMagicNumber;
+import nl.han.ica.core.strategies.ReplacePublicField;
 import nl.han.ica.core.strategies.Strategy;
 import nl.han.ica.core.util.FileUtil;
 
@@ -53,14 +58,16 @@ public class StrategySelectionController extends BaseController {
     public StrategySelectionController(Scene scene, Job job) {
         this.scene = scene;
         this.job = job;
-
-        fillStrategyList();
     }
 
     @Override
     public Parent getView() {
         try {
-            return buildView("/views/strategy_selection.fxml");
+            Parent p = buildView("/views/strategy_selection.fxml");
+
+            fillStrategyCheckboxList();
+
+            return p;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -91,6 +98,16 @@ public class StrategySelectionController extends BaseController {
 
     @FXML
     private void analyze(ActionEvent event) {
+        ObservableList<Node> checkboxes = strategyOptions.getChildren();
+
+        for (int i = 0; i < checkboxes.size(); i++) {
+            CheckBox c = (CheckBox) checkboxes.get(i);
+            if( c.isSelected() ) {
+                Strategy strategy = strategyList.get(i);
+                job.getStrategies().add(strategy);
+            }
+        }
+
         ResolveIssuesController resolveIssuesController = new ResolveIssuesController(job);
         scene.setRoot(resolveIssuesController.getView());
     }
@@ -116,18 +133,15 @@ public class StrategySelectionController extends BaseController {
         return fileList.toString();
     }
 
-    private void fillStrategyList() {
-        strategyList.add( new ReplaceMagicNumber( null  ) );
-
+    private void fillStrategyCheckboxList() {
+        strategyList.add( new ReplaceMagicNumber() );
+        strategyList.add( new ReplacePublicField() );
         for (Strategy strategy : strategyList) {
             CheckBox cb = new CheckBox();
 
-            cb.setId(strategy.getName());
             cb.setText(strategy.getName());
-
             strategyOptions.getChildren().add(cb);
         }
-
     }
 
 }

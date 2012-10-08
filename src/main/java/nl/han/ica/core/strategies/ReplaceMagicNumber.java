@@ -5,17 +5,27 @@ import japa.parser.ast.body.*;
 import japa.parser.ast.expr.IntegerLiteralExpr;
 import japa.parser.ast.type.PrimitiveType;
 import japa.parser.ast.visitor.VoidVisitorAdapter;
+import net.sourceforge.pmd.PMD;
+import net.sourceforge.pmd.RuleSet;
+import net.sourceforge.pmd.RuleSetFactory;
 import net.sourceforge.pmd.RuleViolation;
+
+import java.io.InputStream;
 
 
 public class ReplaceMagicNumber extends Strategy {
 
     private String replaceName = "MAGIC";
 
-    public ReplaceMagicNumber(RuleViolation ruleViolation) {
-        super(ruleViolation);
-        setName("Replace Magic Number with Symbolic Constant");
-        System.out.println(ruleViolation.getDescription());
+    public ReplaceMagicNumber() {
+        super("Replace Magic Number with Symbolic Constant");
+
+        InputStream rs = PMD.class.getClassLoader().getResourceAsStream("rulesets/controversial.xml");
+
+        RuleSetFactory ruleSetFactory = new RuleSetFactory();
+        setRuleSet(ruleSetFactory.createRuleSet(rs, PMD.class.getClassLoader()));
+
+       // System.out.println(ruleViolation.getDescription());
     }
 
     @Override
