@@ -23,10 +23,8 @@ public abstract class Strategy  {
 
         try {
             compilationUnit = JavaParser.parse(file);
-        } catch (ParseException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (ParseException | IOException e) {
+            e.printStackTrace();
         }
     }
 

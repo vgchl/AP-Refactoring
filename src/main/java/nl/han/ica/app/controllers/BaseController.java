@@ -16,7 +16,7 @@ public abstract class BaseController {
     /**
      * Debugging logger.
      */
-    protected Logger logger;
+    private final Logger logger;
     protected FXMLLoader fxmlLoader;
 
     /**

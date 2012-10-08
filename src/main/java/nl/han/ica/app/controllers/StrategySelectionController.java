@@ -27,7 +27,8 @@ public class StrategySelectionController extends BaseController {
     private Label selectedFile;
     @FXML
     private Label selectedFilePath;
-    public Button analyzeButton;
+    @FXML
+    private Button analyzeButton;
 
     /**
      * Initialize a new StrategySelectionController.

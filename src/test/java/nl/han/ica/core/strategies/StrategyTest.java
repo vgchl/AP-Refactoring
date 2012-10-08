@@ -15,18 +15,10 @@ import org.junit.Test;
 
 import java.io.File;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Corne
- * Date: 1-10-12
- * Time: 12:21
- * To change this template use File | Settings | File Templates.
- */
 public class StrategyTest {
 
     private Strategy strategy;
     private File file;
-    private RuleViolation testViolation;
 
     @Before
     public void setUp() throws Exception {
@@ -45,11 +37,9 @@ public class StrategyTest {
         node.testingOnly__setBeginColumn(1);
         node.testingOnly__setBeginLine(1);
 
-        testViolation = new RuleViolation(rule, context, node);
+        RuleViolation testViolation = new RuleViolation(rule, context, node);
         strategy = new StrategyMock(testViolation);
     }
-
-
 
     @Test
     public void testBuildAST() throws Exception {

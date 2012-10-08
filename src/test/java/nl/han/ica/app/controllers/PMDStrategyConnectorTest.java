@@ -12,22 +12,14 @@ import org.junit.Test;
 import java.io.File;
 import java.io.InputStream;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Corne
- * Date: 1-10-12
- * Time: 12:21
- * To change this template use File | Settings | File Templates.
- */
 public class PMDStrategyConnectorTest {
 
     private PMDStrategyConnector pmdStrategyConnector;
-    private File file;
     private RuleSet ruleSet;
 
     @Before
     public void setUp() throws Exception {
-        file = TestInputFile.createTempFile();
+        File file = TestInputFile.createTempFile();
         pmdStrategyConnector = new PMDStrategyConnector(file);
         PMD pmd = new PMD();//pmd needed for classpath
         InputStream rs = pmd.getClassLoader().getResourceAsStream("rulesets/controversial.xml");
