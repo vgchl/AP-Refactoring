@@ -1,14 +1,23 @@
 package nl.han.ica.app.controllers;
 
+import com.sun.javafx.fxml.ObservableListChangeEvent;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import net.sourceforge.pmd.RuleViolation;
 import nl.han.ica.core.Job;
+import nl.han.ica.core.strategies.ReplaceMagicNumber;
+import nl.han.ica.core.strategies.ReplacePublicField;
+import nl.han.ica.core.strategies.Strategy;
 import nl.han.ica.core.util.FileUtil;
 
 import java.io.File;
@@ -24,12 +33,21 @@ public class StrategySelectionController extends BaseController {
 
     private Job job;
     private Scene scene;
+
+    private ArrayList<Strategy> strategyList = new ArrayList<>();
+
+    @FXML
+    protected VBox strategyOptions;
+
     @FXML
     private Label selectedFile;
+
     @FXML
     private Label selectedFilePath;
+
     @FXML
-    private Button analyzeButton;
+    public Button analyzeButton;
+
 
     /**
      * Initialize a new StrategySelectionController.
@@ -45,7 +63,11 @@ public class StrategySelectionController extends BaseController {
     @Override
     public Parent getView() {
         try {
-            return buildView("/views/strategy_selection.fxml");
+            Parent p = buildView("/views/strategy_selection.fxml");
+
+            fillStrategyCheckboxList();
+
+            return p;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -86,6 +108,16 @@ public class StrategySelectionController extends BaseController {
 
     @FXML
     private void analyze(ActionEvent event) {
+        ObservableList<Node> checkboxes = strategyOptions.getChildren();
+
+        for (int i = 0; i < checkboxes.size(); i++) {
+            CheckBox c = (CheckBox) checkboxes.get(i);
+            if( c.isSelected() ) {
+                Strategy strategy = strategyList.get(i);
+                job.getStrategies().add(strategy);
+            }
+        }
+
         ResolveIssuesController resolveIssuesController = new ResolveIssuesController(job);
         scene.setRoot(resolveIssuesController.getView());
     }
@@ -109,6 +141,17 @@ public class StrategySelectionController extends BaseController {
             fileList.append(file.getName()).append("\n");
         }
         return fileList.toString();
+    }
+
+    private void fillStrategyCheckboxList() {
+        strategyList.add( new ReplaceMagicNumber() );
+        strategyList.add( new ReplacePublicField() );
+        for (Strategy strategy : strategyList) {
+            CheckBox cb = new CheckBox();
+
+            cb.setText(strategy.getName());
+            strategyOptions.getChildren().add(cb);
+        }
     }
 
 }
