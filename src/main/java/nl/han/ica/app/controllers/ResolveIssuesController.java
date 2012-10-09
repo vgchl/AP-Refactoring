@@ -121,7 +121,7 @@ public class ResolveIssuesController extends BaseController {
 //        });
 
         FadeTransition fadeTransition
-                = new FadeTransition(Duration.millis(750), ruleDetailDisplay);
+                = new FadeTransition(Duration.millis(500), ruleDetailDisplay);
         fadeTransition.setFromValue(0.0);
         fadeTransition.setToValue(1.0);
         fadeTransition.play();

@@ -8,7 +8,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<SplitPane dividerPositions="0.2817371937639198" focusTraversable="true" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml" stylesheets="../style.css">
+<SplitPane dividerPositions="0.2817371937639198" focusTraversable="true" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" stylesheets="../style.css" xmlns:fx="http://javafx.com/fxml">
   <items>
     <AnchorPane maxWidth="250.0" minHeight="0.0" minWidth="250.0" prefHeight="598.0" prefWidth="250.0">
       <children>
@@ -19,7 +19,7 @@
         </VBox>
       </children>
     </AnchorPane>
-    <AnchorPane fx:id="ruleDetailDisplay" minHeight="0.0" minWidth="0.0" opacity="0.0" prefHeight="160.0" prefWidth="100.0">
+    <AnchorPane fx:id="ruleDetailDisplay" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
       <children>
         <VBox prefHeight="698.0" prefWidth="642.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
           <children>
@@ -61,7 +61,7 @@
                     <VBox minHeight="22.0" padding="$x3" prefHeight="612.0" prefWidth="311.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                       <children>
                         <Label font="$x2" text="After" />
-                        <TextArea fx:id="afterView" editable="false" prefHeight="590.0" prefWidth="301.0" style="border: 0;" wrapText="true" />
+                        <TextArea fx:id="afterView" editable="false" prefHeight="569.0" prefWidth="299.0" style="border: 0;" wrapText="true" VBox.vgrow="ALWAYS" />
                       </children>
                     </VBox>
                   </children>
