@@ -60,7 +60,6 @@ public class ReplaceMagicNumberTest {
         replaceMagicNumber.setReplaceName("MAGICINT");
         replaceMagicNumber.rewriteAST();
 
-
         CompilationUnit unit = JavaParser.parse(rewrittenFile());
         Assert.assertEquals(replaceMagicNumber.getCompilationUnit(), unit);
 
