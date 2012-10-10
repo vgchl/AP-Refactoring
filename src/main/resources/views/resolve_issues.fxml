@@ -8,7 +8,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<SplitPane dividerPositions="0.2817371937639198" focusTraversable="true" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" stylesheets="../style.css" xmlns:fx="http://javafx.com/fxml">
+<SplitPane dividerPositions="0.2817371937639198" focusTraversable="true" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" stylesheets="/style.css" xmlns:fx="http://javafx.com/fxml">
   <items>
     <AnchorPane maxWidth="250.0" minHeight="0.0" minWidth="250.0" prefHeight="598.0" prefWidth="250.0">
       <children>
