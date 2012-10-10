@@ -8,7 +8,7 @@ public class UnusedCodeTester {
 
     public static void main(String[] args) {
         System.out.println(string1);
-        used();
+        used(100);
     }
 
     private String unused(String a, String b, String c) {
@@ -19,7 +19,7 @@ public class UnusedCodeTester {
         return "YES";
     }
 
-    private static boolean used() {
+    private static boolean used(int i) {
         return true;
     }
 

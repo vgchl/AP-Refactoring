@@ -36,6 +36,10 @@ public class FileUtil {
      * @return List of files.
      */
     public static List<File> listFilesRecursively(final File directory, final String extension) {
+        if (null == directory) {
+            throw new IllegalArgumentException("Directory must not be null");
+        }
+
         List<File> files = new ArrayList();
         Queue<File> directories = new LinkedList();
         directories.add(directory);

@@ -13,7 +13,7 @@ import net.sourceforge.pmd.RuleViolation;
 public class StrategyMock extends Strategy {
 
     public StrategyMock(RuleViolation ruleViolation) {
-        super(ruleViolation);
+        super("Mocked Name", ruleViolation);
     }
 
     @Override

@@ -47,4 +47,9 @@ public class FileUtilTest {
         constructor.newInstance();
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void haltOnNullDirectory() {
+        FileUtil.listFilesRecursively(null);
+    }
+
 }

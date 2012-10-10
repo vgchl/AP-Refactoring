@@ -50,7 +50,7 @@ public class ReplaceMagicNumberTest {
         node.testingOnly__setBeginLine(1);
 
         RuleViolation ruleViolation = new RuleViolation(magicNumberRule, context, node);
-        replaceMagicNumber = new ReplaceMagicNumber(ruleViolation);
+        replaceMagicNumber = new ReplaceMagicNumber();
         replaceMagicNumber.buildAST(file);
     }
 
@@ -59,7 +59,6 @@ public class ReplaceMagicNumberTest {
 
         replaceMagicNumber.setReplaceName("MAGICINT");
         replaceMagicNumber.rewriteAST();
-
 
         CompilationUnit unit = JavaParser.parse(rewrittenFile());
         Assert.assertEquals(replaceMagicNumber.getCompilationUnit(), unit);
