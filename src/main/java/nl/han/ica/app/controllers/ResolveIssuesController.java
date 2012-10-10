@@ -17,6 +17,7 @@ import nl.han.ica.core.strategies.ReplaceMagicNumber;
 import nl.han.ica.core.strategies.StrategyFactory;
 
 import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -52,13 +53,19 @@ public class ResolveIssuesController extends BaseController {
     @Override
     public Parent getView() {
         try {
-            Parent p = buildView("/views/resolve_issues.fxml");
+            Parent view = buildView("/views/resolve_issues.fxml");
             fillTableViewWithIssues();
-            return p;
+            initializeEditors();
+            return view;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private void initializeEditors() {
+        stateBefore.getEngine().load(getClass().getResource("/editor/editor.html").toExternalForm());
+//        stateBefore.getEngine().executeScript("editor.setValue('test123')");
     }
 
     protected void fillTableViewWithIssues() {
