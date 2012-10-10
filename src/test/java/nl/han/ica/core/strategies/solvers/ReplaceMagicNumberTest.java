@@ -48,7 +48,7 @@ public class ReplaceMagicNumberTest {
         SourceFileScope scope = new SourceFileScope(file.getAbsolutePath());
         node.setScope(scope);
 
-        node.testingOnly__setBeginColumn(1);
+        node.testingOnly__setBeginColumn(17);
         node.testingOnly__setBeginLine(16);
 
         RuleViolation ruleViolation = new RuleViolation(magicNumberRule, context, node);
@@ -65,7 +65,7 @@ public class ReplaceMagicNumberTest {
         replaceMagicNumber.rewriteAST();
 
         CompilationUnit unit = JavaParser.parse(rewrittenFile());
-        Assert.assertEquals(replaceMagicNumber.getCompilationUnit(), unit);
+        Assert.assertEquals(replaceMagicNumber.getCompilationUnit().toString(), unit.toString());
 
     }
 
@@ -82,7 +82,7 @@ public class ReplaceMagicNumberTest {
                     "\tpublic static String string1 = \"Si!\";\n" +
                     " \tpublic static String string2 = \"No!\";\n" +
                     "    public static String MYvariBal = \"x\";\n" +
-                    "\tprivate static final int MAGICINT = 0;\n" +
+                    "\tprivate static final int MAGICINT0 = 0;\n" +
                     "\n" +
                     "\tpublic static void main(String[] args) {\n" +
                     "    \tSystem.out.println(string1);    \n" +
@@ -93,7 +93,7 @@ public class ReplaceMagicNumberTest {
                     "                          String b,\n" +
                     "                          String c) {\n" +
                     "        int i =0;\n" +
-                    "        if(i == MAGICINT){\n" +
+                    "        if(i == MAGICINT0){\n" +
                     "\n" +
                     "        }else if(i == 23){\n" +
                     "\n" +
