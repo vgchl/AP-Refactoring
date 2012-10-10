@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import net.sourceforge.pmd.*;
 import nl.han.ica.core.strategies.Strategy;
-import nl.han.ica.core.strategies.solvers.StrategySolver;
 import org.apache.log4j.Logger;
 
 /**

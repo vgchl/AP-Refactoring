@@ -89,7 +89,7 @@ public class ResolveIssuesController extends BaseController {
         }
 
         detectedIssuesTableView.setItems(issueList);
-        TableColumn<IssueViewModel,String> issueNameCol = new TableColumn<IssueViewModel,String>("Issue Type");
+        TableColumn<IssueViewModel,String> issueNameCol = new TableColumn<>("Issue Type");
         issueNameCol.setCellValueFactory(new PropertyValueFactory("issueName"));
         issueNameCol.setPrefWidth(250);
         issueNameCol.setResizable(false);
@@ -104,7 +104,6 @@ public class ResolveIssuesController extends BaseController {
         issueDescriptionLabel.setText(issue.getRuleViolation().getRule().getDescription().replace("\n", " ").replace("   ", ""));
         fileNameLabel.setText(issue.getRuleViolation().getFilename());
         lineNumberLabel.setText(issue.getRuleViolation().getBeginLine() + ":" + issue.getRuleViolation().getBeginColumn());
-        beforeView.setText(readFile(issue.getFile()));
 
         ReplaceMagicNumberSolver replaceMagicNumber = (ReplaceMagicNumberSolver) StrategySolverFactory.createStrategy(issue.getRuleViolation());
         replaceMagicNumber.setRuleViolation(issue.getRuleViolation());
