@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.web.WebView;
 import javafx.util.Duration;
 import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.dfa.report.ReportTree;
@@ -44,6 +45,8 @@ public class ResolveIssuesController extends BaseController {
     protected Label issueDescriptionLabel;
     @FXML
     protected Button applyRefactoringButton;
+    @FXML
+    protected WebView stateBefore;
 
     public ResolveIssuesController(Job job) {
         this.job = job;
