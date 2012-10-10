@@ -66,6 +66,14 @@ public class ReplaceMagicNumber extends Strategy {
             return integerLiteralViolationExpr;
         }
 
+        @Override
+        public void visit(ClassOrInterfaceDeclaration n, Object arg) {
+            System.out.println("test");
+            n.getTypeParameters();
+        }
+        
+        
+
     }
 
 }

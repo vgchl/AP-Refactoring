@@ -3,10 +3,9 @@ package nl.han.ica.core.strategies;
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
-import net.sourceforge.pmd.RuleViolation;
-
 import java.io.File;
 import java.io.IOException;
+import net.sourceforge.pmd.RuleViolation;
 
 public abstract class Strategy  {
 
