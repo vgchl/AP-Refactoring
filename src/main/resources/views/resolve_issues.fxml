@@ -21,7 +21,7 @@
         </VBox>
       </children>
     </AnchorPane>
-    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+    <AnchorPane fx:id="ruleDetailDisplay" minHeight="0.0" minWidth="0.0" opacity="0.0" prefHeight="160.0" prefWidth="100.0">
       <children>
         <VBox prefHeight="698.0" prefWidth="642.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
           <children>
@@ -30,6 +30,7 @@
                 <Font name="System Bold" size="18.0" fx:id="x1" />
               </font>
             </Label>
+            <Label id="issueDescription" fx:id="issueDescriptionLabel" text="Rule Description" />
             <HBox prefHeight="22.0" prefWidth="632.0" spacing="10.0">
               <children>
                 <Label text="In" />
@@ -49,8 +50,7 @@
                             <Font name="System Bold" size="13.0" fx:id="x2" />
                           </font>
                         </Label>
-                        <WebView fx:id="stateBefore" prefHeight="569.0" prefWidth="301.0" />
-                        <TextArea fx:id="beforeView" editable="false" prefHeight="45.0" prefRowCount="5" prefWidth="301.0" style="border: 0;" wrapText="true" VBox.vgrow="ALWAYS" />
+                        <WebView fx:id="stateBefore" prefHeight="569.0" prefWidth="301.0" VBox.vgrow="ALWAYS" />
                       </children>
                       <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x3" />
@@ -63,7 +63,7 @@
                     <VBox minHeight="22.0" padding="$x3" prefHeight="612.0" prefWidth="311.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                       <children>
                         <Label font="$x2" text="After" />
-                        <TextArea fx:id="afterView" editable="false" prefHeight="590.0" prefWidth="301.0" style="border: 0;" wrapText="true" />
+                        <TextArea fx:id="afterView" editable="false" prefHeight="590.0" prefWidth="301.0" style="border: 0;" wrapText="true" VBox.vgrow="ALWAYS" />
                       </children>
                     </VBox>
                   </children>
