@@ -1,18 +1,20 @@
 package nl.han.ica.app.controllers;
 
+import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
+import javafx.util.Duration;
 import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.dfa.report.ReportTree;
 import nl.han.ica.app.presenters.IssueViewModel;
 import nl.han.ica.core.Job;
+import nl.han.ica.core.strategies.ReplaceMagicNumber;
+import nl.han.ica.core.strategies.StrategyFactory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -22,10 +24,11 @@ public class ResolveIssuesController extends BaseController {
 
     private Job job;
     private ObservableList<IssueViewModel> issueList;
-    private File file;
 
     @FXML
     protected TableView detectedIssuesTableView;
+    @FXML
+    protected AnchorPane ruleDetailDisplay;
     @FXML
     protected TextArea beforeView;
     @FXML
@@ -36,6 +39,10 @@ public class ResolveIssuesController extends BaseController {
     protected Label lineNumberLabel;
     @FXML
     protected Label issueNameLabel;
+    @FXML
+    protected Label issueDescriptionLabel;
+    @FXML
+    protected Button applyRefactoringButton;
 
     public ResolveIssuesController(Job job) {
         this.job = job;
@@ -64,6 +71,8 @@ public class ResolveIssuesController extends BaseController {
             RuleViolation ruleViolation = (RuleViolation) it.next();
 
             IssueViewModel issueViewModel = new IssueViewModel();
+            // TODO: Fix the below line so it chooses the correct file for the Issue. Can only handle single files now...
+            issueViewModel.setFile(job.getFiles().get(0));
             issueViewModel.setRuleViolation(ruleViolation);
             issueViewModel.setIssueName(ruleViolation.getDescription());
             issueList.add(issueViewModel);
@@ -80,12 +89,42 @@ public class ResolveIssuesController extends BaseController {
 
     @FXML
     protected void showIssueDetails() throws IOException {
-        IssueViewModel issue = (IssueViewModel) detectedIssuesTableView.getSelectionModel().getSelectedItem();
+        final IssueViewModel issue = (IssueViewModel) detectedIssuesTableView.getSelectionModel().getSelectedItem();
         issueNameLabel.setText(issue.getIssueName());
-        fileNameLabel.setText(file.getName());
+        issueDescriptionLabel.setText(issue.getRuleViolation().getRule().getDescription().replace("\n", " ").replace("   ", ""));
+        fileNameLabel.setText(issue.getRuleViolation().getFilename());
         lineNumberLabel.setText(issue.getRuleViolation().getBeginLine() + ":" + issue.getRuleViolation().getBeginColumn());
-        beforeView.setText(readFile(file));
-        afterView.setText(readFile(file));
+        beforeView.setText(readFile(issue.getFile()));
+
+        ReplaceMagicNumber replaceMagicNumber = (ReplaceMagicNumber) StrategyFactory.createStrategy(issue.getRuleViolation());
+        replaceMagicNumber.setRuleViolation(issue.getRuleViolation());
+        replaceMagicNumber.buildAST(issue.getFile());
+
+        replaceMagicNumber.setReplaceName("MAGICINT");
+        replaceMagicNumber.rewriteAST();
+
+        afterView.setText(replaceMagicNumber.getCompilationUnit().toString());
+
+//        applyRefactoringButton.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent event) {
+//
+//                ReplaceMagicNumber replaceMagicNumber = (ReplaceMagicNumber) StrategyFactory.createStrategy(issue.getRuleViolation());
+//                replaceMagicNumber.setRuleViolation(issue.getRuleViolation());
+//                replaceMagicNumber.buildAST(issue.getFile());
+//
+//                replaceMagicNumber.setReplaceName("MAGICINT");
+//                replaceMagicNumber.rewriteAST();
+//
+//                replaceMagicNumber.getCompilationUnit();
+//            }
+//        });
+
+        FadeTransition fadeTransition
+                = new FadeTransition(Duration.millis(500), ruleDetailDisplay);
+        fadeTransition.setFromValue(0.0);
+        fadeTransition.setToValue(1.0);
+        fadeTransition.play();
     }
 
 

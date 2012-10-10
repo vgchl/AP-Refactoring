@@ -10,7 +10,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane fx:id="strategySelectionController" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" stylesheets="style.css" xmlns:fx="http://javafx.com/fxml">
+<BorderPane fx:id="strategySelectionController" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" stylesheets="/style.css" xmlns:fx="http://javafx.com/fxml">
   <bottom>
     <HBox fx:id="statusBox" minHeight="25.0" prefHeight="25.0" prefWidth="800.0">
       <children>
@@ -24,7 +24,7 @@
   <center>
     <VBox alignment="CENTER" padding="$x1" prefHeight="200.0" prefWidth="100.0" spacing="5.0">
       <children>
-        <Label fx:id="browseHelpText" text="Select a file, source folder or zip file to scan." />
+        <Label fx:id="browseHelpText" text="Select a file, source folder or zip file to scan." id="select-file" />
         <Button fx:id="browseButton" mnemonicParsing="false" onAction="#selectSourceFiles" text="Select files..." />
         <Button fx:id="browseButton" mnemonicParsing="false" onAction="#selectSourceDirectory" text="Select folder..." />
         <Separator prefWidth="200.0">
