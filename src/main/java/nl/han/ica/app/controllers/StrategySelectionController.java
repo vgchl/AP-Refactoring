@@ -1,6 +1,5 @@
 package nl.han.ica.app.controllers;
 
-import com.sun.javafx.fxml.ObservableListChangeEvent;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,10 +9,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import net.sourceforge.pmd.RuleViolation;
 import nl.han.ica.core.Job;
 import nl.han.ica.core.strategies.ReplaceMagicNumber;
 import nl.han.ica.core.strategies.ReplacePublicField;
@@ -33,21 +34,16 @@ public class StrategySelectionController extends BaseController {
 
     private Job job;
     private Scene scene;
-
-    private ArrayList<Strategy> strategyList = new ArrayList<>();
+    private List<Strategy> strategyList = new ArrayList<>();
 
     @FXML
     protected VBox strategyOptions;
-
     @FXML
-    private Label selectedFile;
-
+    protected Label selectedFile;
     @FXML
-    private Label selectedFilePath;
-
+    protected Label selectedFilePath;
     @FXML
-    public Button analyzeButton;
-
+    protected Button analyzeButton;
 
     /**
      * Initialize a new StrategySelectionController.
@@ -104,6 +100,37 @@ public class StrategySelectionController extends BaseController {
         }
 
         onSourceFilesSelected();
+    }
+
+    @FXML
+    public void handleFilesDragOver(DragEvent event) {
+        Dragboard db = event.getDragboard();
+        if (db.hasFiles()) {
+            event.acceptTransferModes(TransferMode.COPY);
+        } else {
+            event.consume();
+        }
+    }
+    @FXML
+    public void handleFilesDragDropped(DragEvent event) {
+        Dragboard db = event.getDragboard();
+        boolean success = false;
+        if (db.hasFiles()) {
+            success = true;
+            job.getFiles().clear();
+            for (File file : db.getFiles()) {
+                if (file.isDirectory()) {
+                    for (File directoryFile : FileUtil.listFilesRecursively(file, ".java")) {
+                        job.getFiles().add(directoryFile);
+                    }
+                } else if (file.getName().endsWith(".java")) {
+                    job.getFiles().add(file);
+                }
+            }
+            onSourceFilesSelected();
+        }
+        event.setDropCompleted(success);
+        event.consume();
     }
 
     @FXML

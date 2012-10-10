@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import java.net.*?>
 <?import java.util.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -81,4 +82,7 @@
       </children>
     </AnchorPane>
   </items>
+  <stylesheets>
+    <URL value="@../theme/styles/main.css" />
+  </stylesheets>
 </SplitPane>
