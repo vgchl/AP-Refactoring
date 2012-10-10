@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
 
 <SplitPane dividerPositions="0.2817371937639198" focusTraversable="true" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml">
   <items>
@@ -48,7 +49,8 @@
                             <Font name="System Bold" size="13.0" fx:id="x2" />
                           </font>
                         </Label>
-                        <TextArea fx:id="beforeView" editable="false" prefHeight="591.0" prefWidth="301.0" style="border: 0;" wrapText="true" VBox.vgrow="ALWAYS" />
+                        <WebView fx:id="stateBefore" prefHeight="569.0" prefWidth="301.0" />
+                        <TextArea fx:id="beforeView" editable="false" prefHeight="45.0" prefRowCount="5" prefWidth="301.0" style="border: 0;" wrapText="true" VBox.vgrow="ALWAYS" />
                       </children>
                       <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x3" />

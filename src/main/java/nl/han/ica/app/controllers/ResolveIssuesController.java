@@ -9,12 +9,14 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.web.WebView;
 import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.dfa.report.ReportTree;
 import nl.han.ica.app.presenters.IssueViewModel;
 import nl.han.ica.core.Job;
 
 import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -36,6 +38,8 @@ public class ResolveIssuesController extends BaseController {
     protected Label lineNumberLabel;
     @FXML
     protected Label issueNameLabel;
+    @FXML
+    protected WebView stateBefore;
 
     public ResolveIssuesController(Job job) {
         this.job = job;
@@ -45,13 +49,18 @@ public class ResolveIssuesController extends BaseController {
     @Override
     public Parent getView() {
         try {
-            Parent p = buildView("/views/resolve_issues.fxml");
+            Parent view = buildView("/views/resolve_issues.fxml");
             fillTableViewWithIssues();
-            return p;
+            initializeEditors();
+            return view;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private void initializeEditors() {
+        stateBefore.getEngine().load(getClass().getResource("/editor/editor.html").toExternalForm());
     }
 
     protected void fillTableViewWithIssues() {
