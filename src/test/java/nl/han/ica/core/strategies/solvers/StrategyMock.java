@@ -1,4 +1,4 @@
-package nl.han.ica.core.strategies;
+package nl.han.ica.core.strategies.solvers;
 
 
 import net.sourceforge.pmd.RuleViolation;
@@ -10,10 +10,10 @@ import net.sourceforge.pmd.RuleViolation;
  * Time: 9:44
  * To change this template use File | Settings | File Templates.
  */
-public class StrategyMock extends Strategy {
+public class StrategyMock extends StrategySolver {
 
     public StrategyMock(RuleViolation ruleViolation) {
-        super("Mocked Name", ruleViolation);
+        super(ruleViolation);
     }
 
     @Override

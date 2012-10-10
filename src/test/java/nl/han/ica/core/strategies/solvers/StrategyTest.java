@@ -1,5 +1,6 @@
-package nl.han.ica.core.strategies;
+package nl.han.ica.core.strategies.solvers;
 
+import nl.han.ica.core.strategies.solvers.StrategySolver;
 import japa.parser.JavaParser;
 import japa.parser.ast.CompilationUnit;
 import net.sourceforge.pmd.Rule;
@@ -17,7 +18,7 @@ import java.io.File;
 
 public class StrategyTest {
 
-    private Strategy strategy;
+    private StrategySolver strategy;
     private File file;
 
     @Before

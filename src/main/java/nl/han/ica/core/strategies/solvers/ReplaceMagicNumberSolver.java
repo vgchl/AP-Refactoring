@@ -1,39 +1,32 @@
-package nl.han.ica.core.strategies;
+package nl.han.ica.core.strategies.solvers;
 
 import japa.parser.ASTHelper;
-import japa.parser.ast.body.*;
+import japa.parser.ast.body.BodyDeclaration;
+import japa.parser.ast.body.ModifierSet;
+import japa.parser.ast.body.VariableDeclarator;
+import japa.parser.ast.body.VariableDeclaratorId;
 import japa.parser.ast.expr.IntegerLiteralExpr;
-import japa.parser.ast.type.PrimitiveType;
 import japa.parser.ast.visitor.VoidVisitorAdapter;
-import net.sourceforge.pmd.PMD;
-import net.sourceforge.pmd.RuleSet;
-import net.sourceforge.pmd.RuleSetFactory;
 import net.sourceforge.pmd.RuleViolation;
+import nl.han.ica.core.ast.ASTStrategyHelper;
+import nl.han.ica.core.ast.FieldDeclarationVisitor;
 
-import java.io.InputStream;
 
-
-public class ReplaceMagicNumber extends Strategy {
+public class ReplaceMagicNumberSolver extends StrategySolver {
 
     private String replaceName = "MAGIC";
 
-    public ReplaceMagicNumber() {
-        super("Replace Magic Number with Symbolic Constant");
-
-        InputStream rs = PMD.class.getClassLoader().getResourceAsStream("rulesets/controversial.xml");
-
-        RuleSetFactory ruleSetFactory = new RuleSetFactory();
-        setRuleSet(ruleSetFactory.createRuleSet(rs, PMD.class.getClassLoader()));
-
-       // System.out.println(ruleViolation.getDescription());
+    public ReplaceMagicNumberSolver(RuleViolation ruleViolation) {
+        super(ruleViolation);
     }
 
     @Override
     public void rewriteAST() {
         System.out.println(ruleViolation.toString());
-        ReplaceMagicNumberMethodVisitor methodVisitor = new ReplaceMagicNumberMethodVisitor();
-        methodVisitor.visit(compilationUnit, ruleViolation);
-        IntegerLiteralExpr literalExpr = methodVisitor.getIntegerLiteralViolationExpr();
+        ReplaceMagicNumberLiteralExprVisitor expressionVisitor = new ReplaceMagicNumberLiteralExprVisitor();
+        compilationUnit.accept(expressionVisitor, ruleViolation);
+        
+        IntegerLiteralExpr literalExpr = expressionVisitor.getIntegerLiteralViolationExpr();
         if (literalExpr != null) {
             addStaticFinalField(literalExpr.getValue());
             literalExpr.setValue(replaceName + literalExpr.getValue());
@@ -45,7 +38,6 @@ public class ReplaceMagicNumber extends Strategy {
     }
 
     private void addStaticFinalField(String magicNumber) {
-        PrimitiveType primitiveType = new PrimitiveType(PrimitiveType.Primitive.Int);
 
         VariableDeclarator variableDeclarator = new VariableDeclarator(new VariableDeclaratorId(replaceName + magicNumber),
                 new IntegerLiteralExpr(magicNumber));
@@ -53,14 +45,18 @@ public class ReplaceMagicNumber extends Strategy {
         int modifier = ModifierSet.addModifier(ModifierSet.PRIVATE, ModifierSet.STATIC);
         modifier = ModifierSet.addModifier(modifier, ModifierSet.FINAL);
 
-        BodyDeclaration declaration = new FieldDeclaration(modifier, primitiveType, variableDeclarator);
-        declaration.setBeginLine(4);
-        declaration.setEndLine(4);
-
-        ASTHelper.addMember(compilationUnit.getTypes().get(0), declaration);
+        BodyDeclaration fieldDeclaration = ASTHelper.createFieldDeclaration(modifier, ASTHelper.INT_TYPE, variableDeclarator);
+        fieldDeclaration.setBeginLine(4);
+        fieldDeclaration.setEndLine(5);
+        
+        FieldDeclarationVisitor fieldVisitor = new FieldDeclarationVisitor();
+        compilationUnit.accept(fieldVisitor, null);
+        ASTStrategyHelper.insertMember(compilationUnit.getTypes().get(0),
+                fieldDeclaration, fieldVisitor.getNumberOfFields());        
     }
+    
 
-    private class ReplaceMagicNumberMethodVisitor extends VoidVisitorAdapter {
+    private static class ReplaceMagicNumberLiteralExprVisitor extends VoidVisitorAdapter {
 
         private IntegerLiteralExpr integerLiteralViolationExpr = null;
 
@@ -77,15 +73,6 @@ public class ReplaceMagicNumber extends Strategy {
         public IntegerLiteralExpr getIntegerLiteralViolationExpr() {
             return integerLiteralViolationExpr;
         }
-
-        @Override
-        public void visit(ClassOrInterfaceDeclaration n, Object arg) {
-            System.out.println("test");
-            n.getTypeParameters();
-        }
         
-        
-
     }
-
 }

@@ -1,6 +1,9 @@
 package nl.han.ica.app.controllers;
 
-import com.sun.javafx.fxml.ObservableListChangeEvent;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,17 +16,10 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import net.sourceforge.pmd.RuleViolation;
 import nl.han.ica.core.Job;
 import nl.han.ica.core.strategies.ReplaceMagicNumber;
-import nl.han.ica.core.strategies.ReplacePublicField;
 import nl.han.ica.core.strategies.Strategy;
 import nl.han.ica.core.util.FileUtil;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Handles all interaction on the source and strategy selection screen.
@@ -145,7 +141,7 @@ public class StrategySelectionController extends BaseController {
 
     private void fillStrategyCheckboxList() {
         strategyList.add( new ReplaceMagicNumber() );
-        strategyList.add( new ReplacePublicField() );
+        //strategyList.add( new ReplacePublicFieldSolver() );
         for (Strategy strategy : strategyList) {
             CheckBox cb = new CheckBox();
 

@@ -1,21 +1,20 @@
-package nl.han.ica.core.strategies;
+package nl.han.ica.core.strategies.solvers;
 
+import nl.han.ica.core.strategies.solvers.ReplaceMagicNumberSolver;
 import japa.parser.JavaParser;
 import japa.parser.ast.CompilationUnit;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import junit.framework.Assert;
 import net.sourceforge.pmd.RuleContext;
 import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.ast.SimpleJavaNode;
 import net.sourceforge.pmd.rules.XPathRule;
 import net.sourceforge.pmd.symboltable.SourceFileScope;
-import nl.han.ica.core.strategies.ReplaceMagicNumber;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,14 +25,17 @@ import java.io.IOException;
  */
 public class ReplaceMagicNumberTest {
 
-    private ReplaceMagicNumber replaceMagicNumber;
-    private File file;
+    private ReplaceMagicNumberSolver replaceMagicNumber;
 
     @Before
     public void setUp() throws Exception {
 
 
         XPathRule magicNumberRule = new XPathRule();
+        magicNumberRule.setName("Avoid using Literals in Conditional Statements");
+        magicNumberRule.setMessage("Avoid using Literals in Conditional Statements:16");
+        magicNumberRule.setDescription("Avoid using Literals in Conditional Statements:16");
+        
 
         //AvoidLiteralsInIfCondition
         RuleContext context = new RuleContext();
@@ -47,10 +49,12 @@ public class ReplaceMagicNumberTest {
         node.setScope(scope);
 
         node.testingOnly__setBeginColumn(1);
-        node.testingOnly__setBeginLine(1);
+        node.testingOnly__setBeginLine(16);
 
         RuleViolation ruleViolation = new RuleViolation(magicNumberRule, context, node);
-        replaceMagicNumber = new ReplaceMagicNumber();
+        
+        replaceMagicNumber = new ReplaceMagicNumberSolver(ruleViolation);
+        
         replaceMagicNumber.buildAST(file);
     }
 
@@ -74,10 +78,11 @@ public class ReplaceMagicNumberTest {
             BufferedWriter out = new BufferedWriter(new FileWriter(file));
             out.write("public class UnusedCodeTester {\n" +
                     "\n" +
-                    "\tprivate static final int MAGICINT = 0;\n" +
+                    
                     "\tpublic static String string1 = \"Si!\";\n" +
                     " \tpublic static String string2 = \"No!\";\n" +
                     "    public static String MYvariBal = \"x\";\n" +
+                    "\tprivate static final int MAGICINT = 0;\n" +
                     "\n" +
                     "\tpublic static void main(String[] args) {\n" +
                     "    \tSystem.out.println(string1);    \n" +

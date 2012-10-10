@@ -1,4 +1,4 @@
-package nl.han.ica.core.strategies;
+package nl.han.ica.core.strategies.solvers;
 
 import net.sourceforge.pmd.RuleViolation;
 
@@ -9,11 +9,12 @@ import net.sourceforge.pmd.RuleViolation;
  * Time: 23:53
  * To change this template use File | Settings | File Templates.
  */
-public class ReplacePublicField extends Strategy {
-    public ReplacePublicField() {
-        super("Replace Public Field");    //To change body of overridden methods use File | Settings | File Templates.
-    }
+public class ReplacePublicFieldSolver extends StrategySolver {
 
+    public ReplacePublicFieldSolver(RuleViolation ruleViolation) {
+        super(ruleViolation);
+    }
+    
     @Override
     public void rewriteAST() {
         //To change body of implemented methods use File | Settings | File Templates.

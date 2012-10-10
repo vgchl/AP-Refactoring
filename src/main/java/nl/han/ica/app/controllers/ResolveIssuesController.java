@@ -13,8 +13,8 @@ import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.dfa.report.ReportTree;
 import nl.han.ica.app.presenters.IssueViewModel;
 import nl.han.ica.core.Job;
-import nl.han.ica.core.strategies.ReplaceMagicNumber;
-import nl.han.ica.core.strategies.StrategyFactory;
+import nl.han.ica.core.strategies.solvers.ReplaceMagicNumberSolver;
+import nl.han.ica.core.strategies.solvers.StrategySolverFactory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -96,7 +96,7 @@ public class ResolveIssuesController extends BaseController {
         lineNumberLabel.setText(issue.getRuleViolation().getBeginLine() + ":" + issue.getRuleViolation().getBeginColumn());
         beforeView.setText(readFile(issue.getFile()));
 
-        ReplaceMagicNumber replaceMagicNumber = (ReplaceMagicNumber) StrategyFactory.createStrategy(issue.getRuleViolation());
+        ReplaceMagicNumberSolver replaceMagicNumber = (ReplaceMagicNumberSolver) StrategySolverFactory.createStrategy(issue.getRuleViolation());
         replaceMagicNumber.setRuleViolation(issue.getRuleViolation());
         replaceMagicNumber.buildAST(issue.getFile());
 

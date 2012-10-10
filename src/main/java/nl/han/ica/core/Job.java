@@ -1,15 +1,14 @@
 package nl.han.ica.core;
 
-import net.sourceforge.pmd.*;
-import nl.han.ica.core.strategies.Strategy;
-import org.apache.log4j.Logger;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import net.sourceforge.pmd.*;
+import nl.han.ica.core.strategies.Strategy;
+import nl.han.ica.core.strategies.solvers.StrategySolver;
+import org.apache.log4j.Logger;
 
 /**
  * Lists the files and the rules to check them for.

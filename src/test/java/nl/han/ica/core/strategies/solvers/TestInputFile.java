@@ -1,4 +1,4 @@
-package nl.han.ica.core.strategies;
+package nl.han.ica.core.strategies.solvers;
 
 import java.io.BufferedWriter;
 import java.io.File;

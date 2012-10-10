@@ -1,6 +1,10 @@
 package nl.han.ica.core.ast;
 
-import japa.parser.ASTHelper;
+import japa.parser.ast.body.BodyDeclaration;
+import japa.parser.ast.body.TypeDeclaration;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,5 +14,13 @@ import japa.parser.ASTHelper;
  * To change this template use File | Settings | File Templates.
  */
 public class ASTStrategyHelper  {
-
+    
+    public static void insertMember(TypeDeclaration type, BodyDeclaration decl, int insertIndex) {
+        List<BodyDeclaration> members = type.getMembers();
+        if (members == null) {
+            members = new ArrayList<>();
+            type.setMembers(members);
+        }
+        members.add(insertIndex, decl);
+    }
 }

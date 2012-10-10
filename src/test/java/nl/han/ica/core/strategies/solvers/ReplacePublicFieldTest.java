@@ -1,5 +1,6 @@
-package nl.han.ica.core.strategies;
+package nl.han.ica.core.strategies.solvers;
 
+import nl.han.ica.core.strategies.solvers.ReplacePublicFieldSolver;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,7 +11,7 @@ import java.io.IOException;
 
 public class ReplacePublicFieldTest {
 
-    private ReplacePublicField replacePublicField;
+    private ReplacePublicFieldSolver replacePublicField;
     private File file;
 
     @Before
