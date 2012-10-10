@@ -61,6 +61,7 @@ public class ResolveIssuesController extends BaseController {
 
     private void initializeEditors() {
         stateBefore.getEngine().load(getClass().getResource("/editor/editor.html").toExternalForm());
+//        stateBefore.getEngine().executeScript("editor.setValue('test123')");
     }
 
     protected void fillTableViewWithIssues() {
