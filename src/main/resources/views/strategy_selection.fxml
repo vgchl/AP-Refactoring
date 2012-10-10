@@ -6,6 +6,7 @@
 <?import java.util.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
@@ -42,7 +43,7 @@
     </VBox>
   </center>
   <right>
-    <VBox fx:id="optionsVbox" padding="$x1" prefHeight="551.0" prefWidth="340.0" spacing="5.0" BorderPane.margin="$x1">
+    <VBox fx:id="optionsVbox" prefHeight="700.0" prefWidth="250.0" spacing="5.0">
       <children>
         <Label text="Refactor options:">
           <font>
@@ -54,17 +55,12 @@
         <Separator prefWidth="200.0" />
         <Button fx:id="analyzeButton" disable="true" mnemonicParsing="false" onAction="#analyze" prefWidth="326.0" text="Analyze" />
       </children>
+      <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+      </padding>
     </VBox>
   </right>
-  <top>
-    <HBox minHeight="29.0" padding="$x1" prefHeight="39.0" prefWidth="790.0" BorderPane.margin="$x1">
-      <children>
-        <Label fx:id="applicationTitle" text="ART (Awesome Refactor Tool)">
-          <font>
-            <Font name="Arial" size="28.0" />
-          </font>
-        </Label>
-      </children>
-    </HBox>
-  </top>
+  <stylesheets>
+    <URL value="@../theme/styles/main.css" />
+  </stylesheets>
 </BorderPane>

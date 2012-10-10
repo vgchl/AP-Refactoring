@@ -1,0 +1,12 @@
+html, body, form, .CodeMirror, .CodeMirror-scroll {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.activeline { 
+  background: #e8f2ff !important;
+}
