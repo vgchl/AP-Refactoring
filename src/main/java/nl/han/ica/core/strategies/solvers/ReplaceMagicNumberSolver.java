@@ -62,7 +62,6 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
 
         @Override
         public void visit(IntegerLiteralExpr n, Object arg) {
-            System.out.println("IntegerLiteral: " + n.getBeginLine() + " " + n.getBeginColumn());
             RuleViolation violation = (RuleViolation) arg;
             if (n.getBeginLine() == violation.getBeginLine() &&
                     n.getBeginColumn() == violation.getBeginColumn()) {
