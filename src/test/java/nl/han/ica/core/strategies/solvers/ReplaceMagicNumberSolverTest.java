@@ -23,7 +23,7 @@ import org.junit.Test;
  * Time: 12:20
  * To change this template use File | Settings | File Templates.
  */
-public class ReplaceMagicNumberTest {
+public class ReplaceMagicNumberSolverTest {
 
     private ReplaceMagicNumberSolver replaceMagicNumber;
 
