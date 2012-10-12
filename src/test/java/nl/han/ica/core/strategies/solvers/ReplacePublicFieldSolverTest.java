@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class ReplacePublicFieldTest {
+public class ReplacePublicFieldSolverTest {
 
     private ReplacePublicFieldSolver replacePublicField;
     private File file;

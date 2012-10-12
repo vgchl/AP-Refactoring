@@ -16,7 +16,7 @@ import org.junit.Test;
 
 import java.io.File;
 
-public class StrategyTest {
+public class StrategySolverTest {
 
     private StrategySolver strategy;
     private File file;
@@ -39,7 +39,7 @@ public class StrategyTest {
         node.testingOnly__setBeginLine(1);
 
         RuleViolation testViolation = new RuleViolation(rule, context, node);
-        strategy = new StrategyMock(testViolation);
+        strategy = new StrategySolverMock(testViolation);
     }
 
     @Test
