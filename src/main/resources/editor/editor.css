@@ -10,3 +10,7 @@ body {
 .activeline { 
   background: #e8f2ff !important;
 }
+
+.change-before {
+  background-color: #df8f8f !important;
+}

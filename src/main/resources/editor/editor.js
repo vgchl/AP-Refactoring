@@ -1,4 +1,4 @@
-var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
     mode: "text/x-java",
     lineNumbers: true,
     onCursorActivity: function() {
@@ -7,4 +7,3 @@ var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
     }
 });
 var hlLine = editor.setLineClass(0, "activeline");
-
