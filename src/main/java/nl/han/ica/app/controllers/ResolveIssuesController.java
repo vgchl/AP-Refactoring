@@ -78,7 +78,7 @@ public class ResolveIssuesController extends BaseController {
 
             IssueViewModel issueViewModel = new IssueViewModel();
             // TODO: Fix the below line so it chooses the correct file for the Issue. Can only handle single files now...
-            issueViewModel.setFile(job.getFiles().get(0));
+            issueViewModel.setFile(job.getFileByName(ruleViolation.getFilename()));
             issueViewModel.setRuleViolation(ruleViolation);
             issueViewModel.setIssueName(ruleViolation.getDescription());
             issueList.add(issueViewModel);
