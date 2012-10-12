@@ -11,36 +11,46 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane fx:id="strategySelectionController" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" stylesheets="/style.css" xmlns:fx="http://javafx.com/fxml">
-  <bottom>
-    <HBox fx:id="statusBox" minHeight="25.0" prefHeight="25.0" prefWidth="800.0">
-      <children>
-        <Label id="tests" text="Status: Idle" />
-      </children>
-      <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
-      </padding>
-    </HBox>
-  </bottom>
+<BorderPane fx:id="strategySelectionController" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml">
   <center>
-    <VBox alignment="CENTER" padding="$x1" prefHeight="200.0" prefWidth="100.0" spacing="5.0">
-      <children>
-        <Label fx:id="browseHelpText" text="Select a file, source folder or zip file to scan." id="select-file" />
-        <Button fx:id="browseButton" mnemonicParsing="false" onAction="#selectSourceFiles" text="Select files..." />
-        <Button fx:id="browseButton" mnemonicParsing="false" onAction="#selectSourceDirectory" text="Select folder..." />
-        <Separator prefWidth="200.0">
-          <VBox.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
-          </VBox.margin>
-        </Separator>
-        <Label fx:id="selectedFile" text="Selected file:" visible="false" />
-        <Label id="selectedFile" fx:id="selectedFilePath" visible="false">
-          <font>
-            <Font size="10.0" />
-          </font>
-        </Label>
-      </children>
-    </VBox>
+    <BorderPane prefHeight="200.0" prefWidth="200.0">
+      <bottom>
+        <ToolBar BorderPane.alignment="TOP_LEFT">
+          <items>
+            <Button id="browseButton" fx:id="browseDirectoryButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#selectSourceDirectory" prefWidth="120.0" text="Select folder" />
+            <Button id="browseButton" fx:id="browseFilesButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#selectSourceFiles" prefWidth="120.0" text="Select files" />
+          </items>
+          <BorderPane.margin>
+            <Insets />
+          </BorderPane.margin>
+        </ToolBar>
+      </bottom>
+      <center>
+        <VBox alignment="CENTER" onDragDropped="#handleFilesDragDropped" onDragOver="#handleFilesDragOver" prefHeight="200.0" prefWidth="100.0" styleClass="drop-source-files-pane">
+          <children>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+              <children>
+                <ImageView id="drop-files-here.png">
+                  <image>
+                    <Image url="@../theme/images/drop-files-here.png" preserveRatio="true" smooth="false" />
+                  </image>
+                  <HBox.margin>
+                    <Insets bottom="15.0" />
+                  </HBox.margin>
+                </ImageView>
+              </children>
+            </HBox>
+            <Label styleClass="drop-source-files-label" text="Drop files or directories here." />
+            <Label fx:id="selectedFile" text="Selected file:" visible="false" />
+            <Label id="selectedFile" fx:id="selectedFilePath" visible="false">
+              <font>
+                <Font size="10.0" />
+              </font>
+            </Label>
+          </children>
+        </VBox>
+      </center>
+    </BorderPane>
   </center>
   <right>
     <VBox fx:id="optionsVbox" prefHeight="700.0" prefWidth="250.0" spacing="5.0">

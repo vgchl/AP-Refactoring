@@ -10,7 +10,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
 
-<SplitPane dividerPositions="0.2817371937639198" focusTraversable="true" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" stylesheets="/style.css" xmlns:fx="http://javafx.com/fxml">
+<SplitPane dividerPositions="0.2817371937639198" focusTraversable="true" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml">
   <items>
     <AnchorPane maxWidth="250.0" minHeight="0.0" minWidth="250.0" prefHeight="598.0" prefWidth="250.0">
       <children>
@@ -73,7 +73,7 @@
             <HBox alignment="TOP_RIGHT" prefHeight="22.0" prefWidth="632.0" spacing="5.0">
               <children>
                 <Button mnemonicParsing="false" text="Ignore this issue" HBox.hgrow="NEVER" />
-                <Button fx:id="applyRefactoringButton" mnemonicParsing="false" text="Apply refactoring" />
+                <Button mnemonicParsing="false" text="Apply refactoring" />
               </children>
             </HBox>
           </children>

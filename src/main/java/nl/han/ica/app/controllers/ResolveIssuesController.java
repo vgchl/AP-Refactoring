@@ -14,8 +14,8 @@ import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.dfa.report.ReportTree;
 import nl.han.ica.app.presenters.IssueViewModel;
 import nl.han.ica.core.Job;
-import nl.han.ica.core.strategies.solvers.ReplaceMagicNumberSolver;
-import nl.han.ica.core.strategies.solvers.StrategySolverFactory;
+import nl.han.ica.core.strategies.ReplaceMagicNumber;
+import nl.han.ica.core.strategies.StrategyFactory;
 
 import java.io.*;
 import java.net.URL;
@@ -26,13 +26,12 @@ public class ResolveIssuesController extends BaseController {
 
     private Job job;
     private ObservableList<IssueViewModel> issueList;
+    private File file;
 
     @FXML
     protected TableView detectedIssuesTableView;
     @FXML
     protected AnchorPane ruleDetailDisplay;
-    @FXML
-    protected TextArea beforeView;
     @FXML
     protected TextArea afterView;
     @FXML
@@ -43,8 +42,6 @@ public class ResolveIssuesController extends BaseController {
     protected Label issueNameLabel;
     @FXML
     protected Label issueDescriptionLabel;
-    @FXML
-    protected Button applyRefactoringButton;
     @FXML
     protected WebView stateBefore;
 
@@ -89,7 +86,7 @@ public class ResolveIssuesController extends BaseController {
         }
 
         detectedIssuesTableView.setItems(issueList);
-        TableColumn<IssueViewModel,String> issueNameCol = new TableColumn<>("Issue Type");
+        TableColumn<IssueViewModel,String> issueNameCol = new TableColumn<IssueViewModel,String>("Issue Type");
         issueNameCol.setCellValueFactory(new PropertyValueFactory("issueName"));
         issueNameCol.setPrefWidth(250);
         issueNameCol.setResizable(false);
@@ -105,7 +102,7 @@ public class ResolveIssuesController extends BaseController {
         fileNameLabel.setText(issue.getRuleViolation().getFilename());
         lineNumberLabel.setText(issue.getRuleViolation().getBeginLine() + ":" + issue.getRuleViolation().getBeginColumn());
 
-        ReplaceMagicNumberSolver replaceMagicNumber = (ReplaceMagicNumberSolver) StrategySolverFactory.createStrategy(issue.getRuleViolation());
+        ReplaceMagicNumber replaceMagicNumber = (ReplaceMagicNumber) StrategyFactory.createStrategy(issue.getRuleViolation());
         replaceMagicNumber.setRuleViolation(issue.getRuleViolation());
         replaceMagicNumber.buildAST(issue.getFile());
 

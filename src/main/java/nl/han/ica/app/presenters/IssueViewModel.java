@@ -1,9 +1,10 @@
 package nl.han.ica.app.presenters;
 
-import java.io.File;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import net.sourceforge.pmd.RuleViolation;
+
+import java.io.File;
 
 public class IssueViewModel {
     private RuleViolation ruleViolation;
