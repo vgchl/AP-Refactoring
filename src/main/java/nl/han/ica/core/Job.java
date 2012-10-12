@@ -73,6 +73,16 @@ public class Job {
         this.files = files;
     }
 
+    public File getFileByName(String name) {
+        for (File file : files) {
+            if(file.getName().equals(name)) {
+                return file;
+            }
+        }
+
+        return null;
+    }
+
     public Report getReport() {
         return ruleContext.getReport();
     }
