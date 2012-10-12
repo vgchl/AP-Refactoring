@@ -51,7 +51,7 @@ public class StrategyFactoryTest {
 
         RuleViolation ruleViolation = new RuleViolation(magicNumberRule, context, node);
 
-        StrategySolver strategy = StrategySolverFactory.createStrategy(ruleViolation);
+        StrategySolver strategy = StrategySolverFactory.createStrategySolver(ruleViolation);
 
         Assert.assertNotNull(strategy);
         Assert.assertTrue(strategy instanceof ReplaceMagicNumberSolver);

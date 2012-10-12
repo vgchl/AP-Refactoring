@@ -14,11 +14,10 @@ import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.dfa.report.ReportTree;
 import nl.han.ica.app.presenters.IssueViewModel;
 import nl.han.ica.core.Job;
-import nl.han.ica.core.strategies.ReplaceMagicNumber;
-import nl.han.ica.core.strategies.StrategyFactory;
+import nl.han.ica.core.strategies.solvers.ReplaceMagicNumberSolver;
+import nl.han.ica.core.strategies.solvers.StrategySolverFactory;
 
 import java.io.*;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -102,27 +101,27 @@ public class ResolveIssuesController extends BaseController {
         fileNameLabel.setText(issue.getRuleViolation().getFilename());
         lineNumberLabel.setText(issue.getRuleViolation().getBeginLine() + ":" + issue.getRuleViolation().getBeginColumn());
 
-        ReplaceMagicNumber replaceMagicNumber = (ReplaceMagicNumber) StrategyFactory.createStrategy(issue.getRuleViolation());
-        replaceMagicNumber.setRuleViolation(issue.getRuleViolation());
-        replaceMagicNumber.buildAST(issue.getFile());
+        ReplaceMagicNumberSolver replaceMagicNumberSolver = (ReplaceMagicNumberSolver) StrategySolverFactory.createStrategySolver(issue.getRuleViolation());
+        replaceMagicNumberSolver.setRuleViolation(issue.getRuleViolation());
+        replaceMagicNumberSolver.buildAST(issue.getFile());
 
-        replaceMagicNumber.setReplaceName("MAGICINT");
-        replaceMagicNumber.rewriteAST();
+        replaceMagicNumberSolver.setReplaceName("MAGICINT");
+        replaceMagicNumberSolver.rewriteAST();
 
-        afterView.setText(replaceMagicNumber.getCompilationUnit().toString());
+        afterView.setText(replaceMagicNumberSolver.getCompilationUnit().toString());
 
 //        applyRefactoringButton.setOnAction(new EventHandler<ActionEvent>() {
 //            @Override
 //            public void handle(ActionEvent event) {
 //
-//                ReplaceMagicNumber replaceMagicNumber = (ReplaceMagicNumber) StrategyFactory.createStrategy(issue.getRuleViolation());
-//                replaceMagicNumber.setRuleViolation(issue.getRuleViolation());
-//                replaceMagicNumber.buildAST(issue.getFile());
+//                ReplaceMagicNumberSolver replaceMagicNumberSolver = (ReplaceMagicNumberSolver) StrategyFactory.createStrategy(issue.getRuleViolation());
+//                replaceMagicNumberSolver.setRuleViolation(issue.getRuleViolation());
+//                replaceMagicNumberSolver.buildAST(issue.getFile());
 //
-//                replaceMagicNumber.setReplaceName("MAGICINT");
-//                replaceMagicNumber.rewriteAST();
+//                replaceMagicNumberSolver.setReplaceName("MAGICINT");
+//                replaceMagicNumberSolver.rewriteAST();
 //
-//                replaceMagicNumber.getCompilationUnit();
+//                replaceMagicNumberSolver.getCompilationUnit();
 //            }
 //        });
 

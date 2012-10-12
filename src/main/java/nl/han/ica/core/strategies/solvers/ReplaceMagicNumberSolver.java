@@ -25,7 +25,7 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
         System.out.println(ruleViolation.toString());
         ReplaceMagicNumberLiteralExprVisitor expressionVisitor = new ReplaceMagicNumberLiteralExprVisitor();
         compilationUnit.accept(expressionVisitor, ruleViolation);
-        
+
         IntegerLiteralExpr literalExpr = expressionVisitor.getIntegerLiteralViolationExpr();
         if (literalExpr != null) {
             addStaticFinalField(literalExpr.getValue());
@@ -48,13 +48,13 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
         BodyDeclaration fieldDeclaration = ASTHelper.createFieldDeclaration(modifier, ASTHelper.INT_TYPE, variableDeclarator);
         fieldDeclaration.setBeginLine(4);
         fieldDeclaration.setEndLine(5);
-        
+
         FieldDeclarationVisitor fieldVisitor = new FieldDeclarationVisitor();
         compilationUnit.accept(fieldVisitor, null);
         ASTStrategyHelper.insertMember(compilationUnit.getTypes().get(0),
-                fieldDeclaration, fieldVisitor.getNumberOfFields());        
+                fieldDeclaration, fieldVisitor.getNumberOfFields());
     }
-    
+
 
     private static class ReplaceMagicNumberLiteralExprVisitor extends VoidVisitorAdapter {
 
@@ -73,6 +73,6 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
         public IntegerLiteralExpr getIntegerLiteralViolationExpr() {
             return integerLiteralViolationExpr;
         }
-        
+
     }
 }
