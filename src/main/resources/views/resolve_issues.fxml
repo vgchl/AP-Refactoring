@@ -63,7 +63,7 @@
                     <VBox minHeight="22.0" padding="$x3" prefHeight="612.0" prefWidth="311.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                       <children>
                         <Label font="$x2" text="After" />
-                        <TextArea fx:id="afterView" editable="false" prefHeight="590.0" prefWidth="301.0" style="border: 0;" wrapText="true" VBox.vgrow="ALWAYS" />
+                        <WebView fx:id="stateAfter" prefHeight="569.0" prefWidth="301.0" VBox.vgrow="ALWAYS" />
                       </children>
                     </VBox>
                   </children>
