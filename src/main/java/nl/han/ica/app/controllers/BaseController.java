@@ -8,26 +8,46 @@ import java.io.IOException;
 
 import static org.apache.log4j.Logger.getLogger;
 
+/**
+ * Provides all basic functionality for standard controllers.
+ */
 public abstract class BaseController {
 
-    protected Logger logger = getLogger(getClass().getName());
+    /**
+     * Debugging logger.
+     */
+    private final Logger logger;
+    protected FXMLLoader fxmlLoader;
 
+    /**
+     * Initialize a new BaseController.
+     */
+    public BaseController() {
+        logger = getLogger(getClass().getName());
+        fxmlLoader = new FXMLLoader();
+        fxmlLoader.setController(this);
+    }
+
+    /**
+     * Get the view belonging to the controller.
+     *
+     * @return The view belonging to the controller.
+     */
     abstract public Parent getView();
 
-    protected Parent buildView(String viewPath) {
+    /**
+     * Load and build the controller's view from its FXML resource.
+     *
+     * @param viewPath The path to the FXML resource.
+     * @return The initialized view's root element.
+     */
+    protected Parent buildView(String viewPath) throws IOException {
         if (viewPath == null) {
             throw new IllegalArgumentException("No viewPath given.");
         }
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(viewPath));
-
-        fxmlLoader.setController(this);
-
-        try {
-            fxmlLoader.load();
-        } catch (IOException e) {
-            logger.fatal("Error loading StrategySelectionController scene.");
-        }
+        fxmlLoader.setLocation(getClass().getResource(viewPath));
+        fxmlLoader.load();
 
         return (Parent) fxmlLoader.getRoot();
     }

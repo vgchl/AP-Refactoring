@@ -1,17 +1,21 @@
 package nl.han.ica.app.controllers;
 
+import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.web.WebView;
+import javafx.util.Duration;
 import net.sourceforge.pmd.*;
 import net.sourceforge.pmd.dfa.report.ReportTree;
 import nl.han.ica.app.presenters.IssueViewModel;
+import nl.han.ica.core.Job;
+import nl.han.ica.core.strategies.solvers.ReplaceMagicNumberSolver;
+import nl.han.ica.core.strategies.solvers.StrategySolverFactory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -19,13 +23,14 @@ import java.util.Iterator;
 
 public class ResolveIssuesController extends BaseController {
 
-    private File file;
+    private Job job;
     private ObservableList<IssueViewModel> issueList;
+    private File file;
 
     @FXML
     protected TableView detectedIssuesTableView;
     @FXML
-    protected TextArea beforeView;
+    protected AnchorPane ruleDetailDisplay;
     @FXML
     protected TextArea afterView;
     @FXML
@@ -34,68 +39,97 @@ public class ResolveIssuesController extends BaseController {
     protected Label lineNumberLabel;
     @FXML
     protected Label issueNameLabel;
+    @FXML
+    protected Label issueDescriptionLabel;
+    @FXML
+    protected WebView stateBefore;
+
+    public ResolveIssuesController(Job job) {
+        this.job = job;
+        job.process();
+    }
 
     @Override
     public Parent getView() {
-        return buildView("/views/resolve_issues.fxml");
+        try {
+            Parent view = buildView("/views/resolve_issues.fxml");
+            fillTableViewWithIssues();
+            initializeEditors();
+            return view;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    @FXML
-    protected void fillTableViewWithIssues() throws IOException {
+    private void initializeEditors() {
+        stateBefore.getEngine().load(getClass().getResource("/editor/editor.html").toExternalForm());
+//        stateBefore.getEngine().executeScript("editor.setValue('test123')");
+    }
+
+    protected void fillTableViewWithIssues() {
 
         issueList = FXCollections.observableList(new ArrayList<IssueViewModel>());
-        try {
-            PMD pmd = new PMD();
 
-            file = new File("/Users/wouterkonecny/Documents/workspace/ap-refactoring/src/main/resources/UnusedCodeTester.java");
-            InputStream inputStream = new FileInputStream(file);
-            RuleSet ruleSet = new RuleSet();
+        ReportTree reportTree = job.getReport().getViolationTree();
+        Iterator it = reportTree.iterator();
+        while (it.hasNext()) {
+            RuleViolation ruleViolation = (RuleViolation) it.next();
 
-            InputStream rs = pmd.getClassLoader().getResourceAsStream("rulesets/unusedcode.xml");
-            InputStream rs2 = pmd.getClassLoader().getResourceAsStream("rulesets/naming.xml");
-
-            RuleSetFactory ruleSetFactory = new RuleSetFactory();
-            ruleSet.addRuleSet(ruleSetFactory.createRuleSet(rs, pmd.getClassLoader()));
-            ruleSet.addRuleSet(ruleSetFactory.createRuleSet(rs2, pmd.getClassLoader()));
-
-            RuleContext rc = new RuleContext();
-            rc.setSourceCodeFilename(file.getAbsolutePath());
-
-            pmd.processFile(inputStream, ruleSet, rc);
-
-            ReportTree reportTree = rc.getReport().getViolationTree();
-            Iterator it = reportTree.iterator();
-            while (it.hasNext()) {
-                RuleViolation ruleViolation = (RuleViolation) it.next();
-
-                IssueViewModel issueViewModel = new IssueViewModel();
-                issueViewModel.setRuleViolation(ruleViolation);
-                issueViewModel.setIssueName(ruleViolation.getDescription());
-                issueList.add(issueViewModel);
-            }
-
-            detectedIssuesTableView.setItems(issueList);
-            TableColumn<IssueViewModel,String> issueNameCol = new TableColumn<IssueViewModel,String>("Issue Type");
-            issueNameCol.setCellValueFactory(new PropertyValueFactory("issueName"));
-            issueNameCol.setPrefWidth(250);
-            issueNameCol.setResizable(false);
-            detectedIssuesTableView.getColumns().setAll(issueNameCol);
-
-        } catch (PMDException e) {
-            e.printStackTrace();
+            IssueViewModel issueViewModel = new IssueViewModel();
+            // TODO: Fix the below line so it chooses the correct file for the Issue. Can only handle single files now...
+            issueViewModel.setFile(job.getFiles().get(0));
+            issueViewModel.setRuleViolation(ruleViolation);
+            issueViewModel.setIssueName(ruleViolation.getDescription());
+            issueList.add(issueViewModel);
         }
+
+        detectedIssuesTableView.setItems(issueList);
+        TableColumn<IssueViewModel,String> issueNameCol = new TableColumn<IssueViewModel,String>("Issue Type");
+        issueNameCol.setCellValueFactory(new PropertyValueFactory("issueName"));
+        issueNameCol.setPrefWidth(250);
+        issueNameCol.setResizable(false);
+        detectedIssuesTableView.getColumns().setAll(issueNameCol);
     }
 
 
     @FXML
     protected void showIssueDetails() throws IOException {
-        IssueViewModel issue = (IssueViewModel) detectedIssuesTableView.getSelectionModel().getSelectedItem();
+        final IssueViewModel issue = (IssueViewModel) detectedIssuesTableView.getSelectionModel().getSelectedItem();
         issueNameLabel.setText(issue.getIssueName());
-        fileNameLabel.setText(file.getName());
+        issueDescriptionLabel.setText(issue.getRuleViolation().getRule().getDescription().replace("\n", " ").replace("   ", ""));
+        fileNameLabel.setText(issue.getRuleViolation().getFilename());
         lineNumberLabel.setText(issue.getRuleViolation().getBeginLine() + ":" + issue.getRuleViolation().getBeginColumn());
-        beforeView.setText(readFile(file));
-        afterView.setText(readFile(file));
-        afterView.setText("<font color=red>GAAAY</font>");
+
+        ReplaceMagicNumberSolver replaceMagicNumberSolver = (ReplaceMagicNumberSolver) StrategySolverFactory.createStrategySolver(issue.getRuleViolation());
+        replaceMagicNumberSolver.setRuleViolation(issue.getRuleViolation());
+        replaceMagicNumberSolver.buildAST(issue.getFile());
+
+        replaceMagicNumberSolver.setReplaceName("MAGICINT");
+        replaceMagicNumberSolver.rewriteAST();
+
+        afterView.setText(replaceMagicNumberSolver.getCompilationUnit().toString());
+
+//        applyRefactoringButton.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent event) {
+//
+//                ReplaceMagicNumberSolver replaceMagicNumberSolver = (ReplaceMagicNumberSolver) StrategyFactory.createStrategy(issue.getRuleViolation());
+//                replaceMagicNumberSolver.setRuleViolation(issue.getRuleViolation());
+//                replaceMagicNumberSolver.buildAST(issue.getFile());
+//
+//                replaceMagicNumberSolver.setReplaceName("MAGICINT");
+//                replaceMagicNumberSolver.rewriteAST();
+//
+//                replaceMagicNumberSolver.getCompilationUnit();
+//            }
+//        });
+
+        FadeTransition fadeTransition
+                = new FadeTransition(Duration.millis(500), ruleDetailDisplay);
+        fadeTransition.setFromValue(0.0);
+        fadeTransition.setToValue(1.0);
+        fadeTransition.play();
     }
 
 

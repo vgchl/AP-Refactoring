@@ -6,42 +6,54 @@
 <?import java.util.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane fx:id="strategySelectionController" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml" stylesheets="style.css">
-  <bottom>
-    <HBox fx:id="statusBox" minHeight="25.0" prefHeight="25.0" prefWidth="800.0">
-      <children>
-        <Label id="tests" text="Status: Idle" />
-      </children>
-      <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
-      </padding>
-    </HBox>
-  </bottom>
+<BorderPane fx:id="strategySelectionController" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml">
   <center>
-    <VBox alignment="CENTER" padding="$x1" prefHeight="200.0" prefWidth="100.0" spacing="5.0">
-      <children>
-        <Label fx:id="browseHelpText" text="Select a file, source folder or zip file to scan." />
-        <Button fx:id="browseButton" mnemonicParsing="false" onAction="#browse" text="Browse..." />
-        <Separator prefWidth="200.0">
-          <VBox.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
-          </VBox.margin>
-        </Separator>
-        <Label fx:id="selectedFile" text="Selected file:" visible="false" />
-        <Label id="selectedFile" fx:id="selectedFilePath" visible="false">
-          <font>
-            <Font size="10.0" />
-          </font>
-        </Label>
-      </children>
-    </VBox>
+    <BorderPane prefHeight="200.0" prefWidth="200.0">
+      <bottom>
+        <ToolBar BorderPane.alignment="TOP_LEFT">
+          <items>
+            <Button id="browseButton" fx:id="browseDirectoryButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#selectSourceDirectory" prefWidth="120.0" text="Select folder" />
+            <Button id="browseButton" fx:id="browseFilesButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#selectSourceFiles" prefWidth="120.0" text="Select files" />
+          </items>
+          <BorderPane.margin>
+            <Insets />
+          </BorderPane.margin>
+        </ToolBar>
+      </bottom>
+      <center>
+        <VBox alignment="CENTER" onDragDropped="#handleFilesDragDropped" onDragOver="#handleFilesDragOver" prefHeight="200.0" prefWidth="100.0" styleClass="drop-source-files-pane">
+          <children>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+              <children>
+                <ImageView id="drop-files-here.png">
+                  <image>
+                    <Image url="@../theme/images/drop-files-here.png" preserveRatio="true" smooth="false" />
+                  </image>
+                  <HBox.margin>
+                    <Insets bottom="15.0" />
+                  </HBox.margin>
+                </ImageView>
+              </children>
+            </HBox>
+            <Label styleClass="drop-source-files-label" text="Drop files or directories here." />
+            <Label fx:id="selectedFile" text="Selected file:" visible="false" />
+            <Label id="selectedFile" fx:id="selectedFilePath" visible="false">
+              <font>
+                <Font size="10.0" />
+              </font>
+            </Label>
+          </children>
+        </VBox>
+      </center>
+    </BorderPane>
   </center>
   <right>
-    <VBox fx:id="optionsVbox" padding="$x1" prefHeight="551.0" prefWidth="340.0" spacing="5.0" BorderPane.margin="$x1">
+    <VBox fx:id="optionsVbox" prefHeight="700.0" prefWidth="250.0" spacing="5.0">
       <children>
         <Label text="Refactor options:">
           <font>
@@ -49,23 +61,16 @@
           </font>
         </Label>
         <Separator prefWidth="200.0" />
-        <CheckBox fx:id="replMagNum" mnemonicParsing="false" onAction="#replMagNumClick" selected="true" text="Replace Magic Number with Symbolic Constant" />
-        <CheckBox fx:id="remAssignmParam" mnemonicParsing="false" text="Remove assignments to parameter" />
-        <CheckBox fx:id="remControlFlag" mnemonicParsing="false" text="Remove Control Flag" />
+        <VBox fx:id="strategyOptions" prefHeight="549.0" prefWidth="330.0" spacing="10.0" />
         <Separator prefWidth="200.0" />
-        <Button fx:id="analyzeButton" disable="false" mnemonicParsing="false" onAction="#analyze" prefWidth="326.0" text="Analyze" />
+        <Button fx:id="analyzeButton" disable="true" mnemonicParsing="false" onAction="#analyze" prefWidth="326.0" text="Analyze" />
       </children>
+      <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+      </padding>
     </VBox>
   </right>
-  <top>
-    <HBox minHeight="29.0" padding="$x1" prefHeight="39.0" prefWidth="790.0" BorderPane.margin="$x1">
-      <children>
-        <Label fx:id="applicationTitle" text="ART (Awesome Refactor Tool)">
-          <font>
-            <Font name="Arial" size="28.0" />
-          </font>
-        </Label>
-      </children>
-    </HBox>
-  </top>
+  <stylesheets>
+    <URL value="@../theme/styles/main.css" />
+  </stylesheets>
 </BorderPane>

@@ -4,9 +4,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import net.sourceforge.pmd.RuleViolation;
 
+import java.io.File;
+
 public class IssueViewModel {
     private RuleViolation ruleViolation;
     private StringProperty issueName;
+    private File file;
 
     public void setIssueName(String value) {
         issueNameProperty().set(value);
@@ -27,5 +30,13 @@ public class IssueViewModel {
 
     public void setRuleViolation(RuleViolation ruleViolation) {
         this.ruleViolation = ruleViolation;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 }
