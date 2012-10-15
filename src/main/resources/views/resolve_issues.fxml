@@ -3,6 +3,7 @@
 <?import java.lang.*?>
 <?import java.net.*?>
 <?import java.util.*?>
+<?import javafx.collections.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -10,20 +11,90 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
 
-<SplitPane dividerPositions="0.2817371937639198" focusTraversable="true" minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml">
-  <items>
-    <AnchorPane maxWidth="250.0" minHeight="0.0" minWidth="250.0" prefHeight="598.0" prefWidth="250.0">
-      <children>
-        <VBox prefHeight="1532.0" prefWidth="236.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+<BorderPane minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="1200.0" styleClass="SCENE_BUILDER_THEME" xmlns:fx="http://javafx.com/fxml">
+  <center>
+    <BorderPane prefHeight="200.0" prefWidth="200.0">
+      <bottom>
+        <HBox id="issue-actions-bar" alignment="TOP_RIGHT" spacing="10.0" styleClass="issue-actions">
           <children>
-            <TableView fx:id="detectedIssuesTableView" onMouseReleased="#showIssueDetails" prefHeight="999.0" prefWidth="250.0" VBox.vgrow="ALWAYS" />
+            <Button cancelButton="true" mnemonicParsing="false" prefWidth="125.0" text="Ignore" HBox.hgrow="NEVER" />
+            <Button cancelButton="false" defaultButton="false" mnemonicParsing="false" prefWidth="125.0" text="Apply" />
           </children>
-        </VBox>
-      </children>
-    </AnchorPane>
-    <AnchorPane fx:id="ruleDetailDisplay" minHeight="0.0" minWidth="0.0" opacity="0.0" prefHeight="160.0" prefWidth="100.0">
-      <children>
-        <VBox prefHeight="698.0" prefWidth="642.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+          <padding>
+            <Insets bottom="7.0" left="10.0" right="10.0" top="7.0" />
+          </padding>
+          <BorderPane.margin>
+            <Insets />
+          </BorderPane.margin>
+        </HBox>
+      </bottom>
+      <center>
+        <StackPane prefHeight="150.0" prefWidth="200.0">
+          <children>
+            <Pane prefHeight="200.0" prefWidth="200.0" styleClass="gray-linnen" />
+            <ScrollPane id="issue-files-container" fitToWidth="true" hbarPolicy="NEVER" pannable="true" style="">
+              <content>
+                <VBox id="" alignment="CENTER" fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" snapToPixel="true" spacing="5.0">
+                  <children>
+                    <TitledPane animated="false" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="issue-change" text="Solver.java" textAlignment="LEFT" VBox.vgrow="NEVER">
+                      <content>
+                        <VBox id="VBox" alignment="CENTER" spacing="0.0">
+                          <children>
+                            <GridPane id="GridPane" blendMode="SRC_OVER" gridLinesVisible="false" hgap="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="207.0" prefWidth="-1.0">
+                              <children>
+                                <TitledPane id="x2" animated="false" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="207.0" prefWidth="469.0" styleClass="code-editor-after" text="After" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                  <content>
+                                    <WebView fx:id="stateAfter" maxHeight="9999.0" maxWidth="9999.0" prefHeight="0.0" prefWidth="0.0" />
+                                  </content>
+                                </TitledPane>
+                                <TitledPane id="x3" animated="false" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="207.0" prefWidth="466.0" text="Before" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                  <content>
+                                    <WebView fx:id="stateBefore" maxHeight="9999.0" maxWidth="9999.0" prefHeight="0.0" prefWidth="0.0" />
+                                  </content>
+                                </TitledPane>
+                              </children>
+                              <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                              </columnConstraints>
+                              <rowConstraints>
+                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                              </rowConstraints>
+                            </GridPane>
+                            <GridPane gridLinesVisible="false" hgap="10.0" styleClass="issue-change-options" vgap="5.0">
+                              <children>
+                                <Label contentDisplay="RIGHT" text="Constant name" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="0" GridPane.vgrow="SOMETIMES" />
+                                <TextField prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                              </children>
+                              <columnConstraints>
+                                <ColumnConstraints fillWidth="true" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              </columnConstraints>
+                              <padding>
+                                <Insets />
+                              </padding>
+                              <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              </rowConstraints>
+                            </GridPane>
+                          </children>
+                        </VBox>
+                      </content>
+                    </TitledPane>
+                  </children>
+                  <padding>
+                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                  </padding>
+                </VBox>
+              </content>
+            </ScrollPane>
+          </children>
+        </StackPane>
+      </center>
+      <top>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="47.0" prefHeight="62.0" prefWidth="975.0" spacing="5.0" styleClass="root">
           <children>
             <Label fx:id="issueNameLabel" text="Issue Name">
               <font>
@@ -31,60 +102,24 @@
               </font>
             </Label>
             <Label id="issueDescription" fx:id="issueDescriptionLabel" text="Rule Description" />
-            <HBox prefHeight="22.0" prefWidth="632.0" spacing="10.0">
-              <children>
-                <Label text="In" />
-                <Label fx:id="fileNameLabel" text="FILENAME" />
-                <Label text="at line" />
-                <Label fx:id="lineNumberLabel" text="LINENUMBER" />
-              </children>
-            </HBox>
-            <SplitPane dividerPositions="0.5" focusTraversable="true" prefHeight="645.0" prefWidth="632.0" VBox.vgrow="ALWAYS">
-              <items>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                  <children>
-                    <VBox minHeight="22.0" prefHeight="612.0" prefWidth="311.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="-1.0">
-                      <children>
-                        <Label text="Before">
-                          <font>
-                            <Font name="System Bold" size="13.0" fx:id="x2" />
-                          </font>
-                        </Label>
-                        <WebView fx:id="stateBefore" prefHeight="569.0" prefWidth="301.0" VBox.vgrow="ALWAYS" />
-                      </children>
-                      <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x3" />
-                      </padding>
-                    </VBox>
-                  </children>
-                </AnchorPane>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                  <children>
-                    <VBox minHeight="22.0" padding="$x3" prefHeight="612.0" prefWidth="311.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                      <children>
-                        <Label font="$x2" text="After" />
-                        <WebView fx:id="stateAfter" prefHeight="569.0" prefWidth="301.0" VBox.vgrow="ALWAYS" />
-                      </children>
-                    </VBox>
-                  </children>
-                </AnchorPane>
-              </items>
-            </SplitPane>
-            <HBox alignment="TOP_RIGHT" prefHeight="22.0" prefWidth="632.0" spacing="5.0">
-              <children>
-                <Button mnemonicParsing="false" text="Ignore this issue" HBox.hgrow="NEVER" />
-                <Button mnemonicParsing="false" text="Apply refactoring" />
-              </children>
-            </HBox>
           </children>
           <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x3" />
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
           </padding>
         </VBox>
-      </children>
-    </AnchorPane>
-  </items>
+      </top>
+    </BorderPane>
+  </center>
+  <left>
+    <TitledPane id="issues-sidebar" fx:id="x4" animated="false" collapsible="false" maxHeight="1.7976931348623157E308" prefHeight="700.0" prefWidth="225.0" text="Issues">
+      <content>
+        <ListView id="issue-list" fx:id="detectedIssuesListView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="678.0" prefWidth="158.0" />
+      </content>
+    </TitledPane>
+  </left>
   <stylesheets>
-    <URL value="@../theme/styles/main.css" />
+      <URL value="@../theme/styles/main.css" />
+      <URL value="@../theme/styles/controls.css" />
+      <URL value="@../theme/styles/resolve_issues.css" />
   </stylesheets>
-</SplitPane>
+</BorderPane>

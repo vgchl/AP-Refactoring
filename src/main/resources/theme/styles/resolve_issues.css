@@ -1,0 +1,56 @@
+
+/**** Issue List ****/
+
+#issue-list .list-cell {
+    -fx-background-color: #e3e7eb;
+    -fx-padding: 5 10;
+    -fx-cell-size: 40;
+    -fx-border-width: 0;
+    -fx-border-color: white;
+    -fx-snap-to-pixel: true;
+    -fx-wrap-text: true;
+}
+#issue-list .list-cell:filled {
+    -fx-background-color: #ced5dc, #e3e7eb;
+    -fx-background-insets: 0, 0 0 1 0;
+}
+#issue-list .list-cell:focused {
+    -fx-background-color: #999, linear-gradient(#a2b1c9 0%, #8398b6 100%);
+    -fx-background-insets: 0, 0 0 1 0;
+}
+#issue-list .list-cell:focused .text {
+    -fx-fill: white;
+    -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.66), 2, 0.0, 0, 1);
+}
+
+/**** Issue Change ****/
+
+.issue-change {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0.0, 0, 2);
+    -fx-margin: 0 0 20 0;
+}
+.issue-change > .title {
+    -fx-background-color: SB-header-bottom-border, linear-gradient(#d6d6d6 0%, #bbbbbb 100%);
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-background-radius: 3 3 0 0;
+    -fx-padding: 5 11;
+    -fx-font-weight: bold;
+}
+.issue-change > .title .text {
+    -fx-effect: dropshadow(one-pass-box, white, 1, 0, 0, 1);
+}
+.issue-change > .title .label {
+    -fx-text-alignment: center;
+}
+.issue-change .text-field {
+    -fx-font-family: "Courier New";
+}
+.issue-change .code-editor-after {
+    -fx-padding: 0 0 0 1;
+    -fx-background-color: #999;
+}
+.issue-change .issue-change-options {
+    -fx-background-color: #999, #e7e7e7;
+    -fx-background-insets: 0, 1 0 0 0;
+    -fx-padding: 2 5;
+}

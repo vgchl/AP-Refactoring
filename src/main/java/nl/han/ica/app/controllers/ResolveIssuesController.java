@@ -1,16 +1,20 @@
 package nl.han.ica.app.controllers;
 
 import javafx.animation.FadeTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebView;
+import javafx.util.Callback;
 import javafx.util.Duration;
 import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.dfa.report.ReportTree;
@@ -20,6 +24,7 @@ import nl.han.ica.core.Job;
 import nl.han.ica.core.strategies.solvers.ReplaceMagicNumberSolver;
 import nl.han.ica.core.strategies.solvers.StrategySolverFactory;
 
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -35,13 +40,9 @@ public class ResolveIssuesController extends BaseController {
     private File file;
 
     @FXML
-    protected TableView detectedIssuesTableView;
+    protected ListView<IssueViewModel> detectedIssuesListView;
     @FXML
     protected AnchorPane ruleDetailDisplay;
-    @FXML
-    protected Label fileNameLabel;
-    @FXML
-    protected Label lineNumberLabel;
     @FXML
     protected Label issueNameLabel;
     @FXML
@@ -94,22 +95,50 @@ public class ResolveIssuesController extends BaseController {
             issueList.add(issueViewModel);
         }
 
-        detectedIssuesTableView.setItems(issueList);
-        TableColumn<IssueViewModel,String> issueNameCol = new TableColumn<IssueViewModel,String>("Issue Type");
-        issueNameCol.setCellValueFactory(new PropertyValueFactory("issueName"));
-        issueNameCol.setPrefWidth(250);
-        issueNameCol.setResizable(false);
-        detectedIssuesTableView.getColumns().setAll(issueNameCol);
+        detectedIssuesListView.setItems(issueList);
+        detectedIssuesListView.setCellFactory(new Callback<ListView<IssueViewModel>, ListCell<IssueViewModel>>() {
+            @Override
+            public ListCell<IssueViewModel> call(ListView<IssueViewModel> list) {
+                return new IssueCell();
+            }
+        });
+        detectedIssuesListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<IssueViewModel>() {
+            @Override
+            public void changed(ObservableValue<? extends IssueViewModel> observable, IssueViewModel oldIssue, IssueViewModel newIssue) {
+                try {
+                    showIssueDetails();
+                } catch (IOException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+            }
+        });
+
+
+//        TableColumn<IssueViewModel,String> issueNameCol = new TableColumn<IssueViewModel,String>("Issue Type");
+//        issueNameCol.setCellValueFactory(new PropertyValueFactory("issueName"));
+//        issueNameCol.setPrefWidth(250);
+//        issueNameCol.setResizable(false);
+//        detectedIssuesListView.getColumns().setAll(issueNameCol);
+    }
+
+    private class IssueCell extends ListCell<IssueViewModel> {
+
+        @Override
+        protected void updateItem(IssueViewModel issue, boolean empty) {
+            super.updateItem(issue, empty);
+            if (null != issue) {
+                setText(issue.getIssueName());
+            }
+        }
+
     }
 
 
     @FXML
     protected void showIssueDetails() throws IOException {
-        final IssueViewModel issue = (IssueViewModel) detectedIssuesTableView.getSelectionModel().getSelectedItem();
+        final IssueViewModel issue = (IssueViewModel) detectedIssuesListView.getSelectionModel().getSelectedItem();
         issueNameLabel.setText(issue.getIssueName());
         issueDescriptionLabel.setText(issue.getRuleViolation().getRule().getDescription().replace("\n", " ").replace("   ", ""));
-        fileNameLabel.setText(issue.getRuleViolation().getFilename());
-        lineNumberLabel.setText(issue.getRuleViolation().getBeginLine() + ":" + issue.getRuleViolation().getBeginColumn());
 
         ReplaceMagicNumberSolver replaceMagicNumberSolver = (ReplaceMagicNumberSolver) StrategySolverFactory.createStrategySolver(issue.getRuleViolation());
         replaceMagicNumberSolver.setRuleViolation(issue.getRuleViolation());
