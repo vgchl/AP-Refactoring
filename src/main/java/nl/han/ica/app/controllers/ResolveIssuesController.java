@@ -18,12 +18,10 @@ import nl.han.ica.app.CodeEditor;
 import nl.han.ica.app.presenters.IssueViewModel;
 import nl.han.ica.core.Job;
 import nl.han.ica.core.strategies.solvers.ReplaceMagicNumberSolver;
+import nl.han.ica.core.strategies.solvers.StrategySolver;
 import nl.han.ica.core.strategies.solvers.StrategySolverFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -32,7 +30,8 @@ public class ResolveIssuesController extends BaseController {
 
     private Job job;
     private ObservableList<IssueViewModel> issueList;
-    private File file;
+    private IssueViewModel currentIssue;
+    private StrategySolver currentStrategySolver;
 
     @FXML
     protected TableView detectedIssuesTableView;
@@ -105,23 +104,22 @@ public class ResolveIssuesController extends BaseController {
 
     @FXML
     protected void showIssueDetails() throws IOException {
-        final IssueViewModel issue = (IssueViewModel) detectedIssuesTableView.getSelectionModel().getSelectedItem();
-        issueNameLabel.setText(issue.getIssueName());
-        issueDescriptionLabel.setText(issue.getRuleViolation().getRule().getDescription().replace("\n", " ").replace("   ", ""));
-        fileNameLabel.setText(issue.getRuleViolation().getFilename());
-        lineNumberLabel.setText(issue.getRuleViolation().getBeginLine() + ":" + issue.getRuleViolation().getBeginColumn());
+        currentIssue = (IssueViewModel) detectedIssuesTableView.getSelectionModel().getSelectedItem();
+        issueNameLabel.setText(currentIssue.getIssueName());
+        issueDescriptionLabel.setText(currentIssue.getRuleViolation().getRule().getDescription().replace("\n", " ").replace("   ", ""));
+        fileNameLabel.setText(currentIssue.getRuleViolation().getFilename());
+        lineNumberLabel.setText(currentIssue.getRuleViolation().getBeginLine() + ":" + currentIssue.getRuleViolation().getBeginColumn());
 
-        ReplaceMagicNumberSolver replaceMagicNumberSolver = (ReplaceMagicNumberSolver) StrategySolverFactory.createStrategySolver(issue.getRuleViolation());
-        replaceMagicNumberSolver.setRuleViolation(issue.getRuleViolation());
-        replaceMagicNumberSolver.buildAST(issue.getFile());
+        currentStrategySolver = (StrategySolver) StrategySolverFactory.createStrategySolver(currentIssue.getRuleViolation());
+        currentStrategySolver.setRuleViolation(currentIssue.getRuleViolation());
+        currentStrategySolver.buildAST(currentIssue.getFile());
 
-        replaceMagicNumberSolver.setReplaceName("MAGICINT");
-        replaceMagicNumberSolver.rewriteAST();
+        currentStrategySolver.rewriteAST();
 
-        RuleViolation violation = issue.getRuleViolation();
-        editorBefore.setValue(readFile(issue.getFile()));
+        RuleViolation violation = currentIssue.getRuleViolation();
+        editorBefore.setValue(readFile(currentIssue.getFile()));
         editorBefore.highlightText(violation.getBeginLine(), violation.getBeginColumn(), violation.getEndLine(), violation.getEndColumn(), "change-before");
-        editorAfter.setValue(replaceMagicNumberSolver.getCompilationUnit().toString());
+        editorAfter.setValue(currentStrategySolver.getCompilationUnit().toString());
 
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(500), ruleDetailDisplay);
         fadeTransition.setFromValue(0.0);
@@ -129,6 +127,20 @@ public class ResolveIssuesController extends BaseController {
         fadeTransition.play();
     }
 
+    @FXML
+    protected void applyRefactoring() {
+        issueList.remove(currentIssue);
+        String fixedFile = currentStrategySolver.getCompilationUnit().toString();
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(currentIssue.getFile());
+            byte[] content = fixedFile.getBytes();
+            fileOutputStream.write(content);
+        } catch (FileNotFoundException e) {
+            // Catch
+        } catch (IOException e) {
+            // Catch
+        }
+    }
 
     private static String readFile(File f) throws IOException {
         String lineSep = System.getProperty("line.separator");
