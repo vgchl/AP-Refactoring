@@ -12,10 +12,18 @@ import net.sourceforge.pmd.RuleViolation;
 import nl.han.ica.core.ast.ASTStrategyHelper;
 import nl.han.ica.core.ast.FieldDeclarationVisitor;
 
+/**
+ * Solver for the Replace Magic Number with Constant violation.
+ */
 public class ReplaceMagicNumberSolver extends StrategySolver {
 
     private String replaceName = "MAGIC";
 
+    /**
+     * The constructor for this solver.
+     *
+     * @param ruleViolation The rule violation.
+     */
     public ReplaceMagicNumberSolver(IRuleViolation ruleViolation) {
         super(ruleViolation);
     }
@@ -32,6 +40,11 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
         }
     }
 
+    /**
+     * Sets the replace name for the constant.
+     *
+     * @param replaceName The constant name.
+     */
     public void setReplaceName(String replaceName) {
         this.replaceName = replaceName;
     }

@@ -27,6 +27,11 @@ public class IssueResolveController extends BaseController {
     @FXML
     protected VBox issueChangesContainer;
 
+    /**
+     * Creates a Issue Resolve Controller
+     *
+     * @param job The job for the controller.
+     */
     public IssueResolveController(Job job) {
         this.job = job;
         changeController = new IssueResolveChangeController();
@@ -53,6 +58,9 @@ public class IssueResolveController extends BaseController {
         // TODO: Add listener to resolve issue with updated params
     }
 
+    /**
+     * Executed when the Apply button is clicked in the interface.
+     */
     @FXML
     protected void applySolution() {
         job.applySolution(issue, solution);
@@ -68,10 +76,20 @@ public class IssueResolveController extends BaseController {
         }
     }
 
+    /**
+     * Gets the current issue.
+     *
+     * @return The current issue.
+     */
     public Issue getIssue() {
         return issue;
     }
 
+    /**
+     * Sets the current issue.
+     *
+     * @param issue The issue to set.
+     */
     public void setIssue(Issue issue) {
         if (this.issue != issue) {
             this.issue = issue;

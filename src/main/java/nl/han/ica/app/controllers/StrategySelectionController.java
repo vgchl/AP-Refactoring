@@ -75,6 +75,11 @@ public class StrategySelectionController extends BaseController {
         }
     }
 
+    /**
+     * Opens a file browser where (multiple) files could be selected.
+     *
+     * @param event The event that is passed by the view.
+     */
     @FXML
     public void selectSourceFiles(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -91,6 +96,11 @@ public class StrategySelectionController extends BaseController {
         onSourceFilesSelected();
     }
 
+    /**
+     * Opens a file browser where (multiple) folders could be selected.
+     *
+     * @param event The event that is passed by the view.
+     */
     @FXML
     public void selectSourceDirectory(ActionEvent event) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -107,6 +117,11 @@ public class StrategySelectionController extends BaseController {
         onSourceFilesSelected();
     }
 
+    /**
+     * This event gets executed when files or folders are hovered on the application.
+     *
+     * @param event The event that is passed by the view.
+     */
     @FXML
     public void handleFilesDragOver(DragEvent event) {
         Dragboard db = event.getDragboard();
@@ -117,6 +132,11 @@ public class StrategySelectionController extends BaseController {
         }
     }
 
+    /**
+     * This event gets executed when files or folders are dropped on the application.
+     *
+     * @param event The event that is passed by the view.
+     */
     @FXML
     public void handleFilesDragDropped(DragEvent event) {
         Dragboard db = event.getDragboard();
@@ -139,6 +159,11 @@ public class StrategySelectionController extends BaseController {
         event.consume();
     }
 
+    /**
+     * This action is executed when the Analyze button is clicked.
+     *
+     * @param event The event that is passed by the view.
+     */
     @FXML
     public void analyze(ActionEvent event) {
         ObservableList<Node> checkboxes = strategyOptions.getChildren();

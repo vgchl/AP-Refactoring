@@ -27,6 +27,9 @@ public class IssueResolveChangeController extends BaseController {
         initializeEditors();
     }
 
+    /**
+     * Initializes the editors (before and after views).
+     */
     public void initializeEditors() {
         editorBefore = new CodeEditor(editorBeforeView);
         editorAfter = new CodeEditor(editorAfterView);
@@ -48,10 +51,20 @@ public class IssueResolveChangeController extends BaseController {
         }
     }
 
+    /**
+     * Gets the solution.
+     *
+     * @return The solution of this controller.
+     */
     public Solution getSolution() {
         return solution;
     }
 
+    /**
+     * Sets the solution.
+     *
+     * @param solution The solution for this controller.
+     */
     public void setSolution(Solution solution) {
         if (this.solution != solution) {
             this.solution = solution;
