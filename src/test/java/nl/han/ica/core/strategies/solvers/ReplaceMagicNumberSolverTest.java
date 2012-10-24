@@ -1,27 +1,23 @@
 package nl.han.ica.core.strategies.solvers;
 
-import nl.han.ica.core.strategies.solvers.ReplaceMagicNumberSolver;
-import japa.parser.JavaParser;
-import japa.parser.ast.CompilationUnit;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+
 import junit.framework.Assert;
 import net.sourceforge.pmd.RuleContext;
 import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.ast.SimpleJavaNode;
 import net.sourceforge.pmd.rules.XPathRule;
 import net.sourceforge.pmd.symboltable.SourceFileScope;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Created with IntelliJ IDEA.
  * User: Corne
  * Date: 1-10-12
  * Time: 12:20
- * To change this template use File | Settings | File Templates.
  */
 public class ReplaceMagicNumberSolverTest {
 
@@ -60,12 +56,26 @@ public class ReplaceMagicNumberSolverTest {
 
     @Test
     public void testRewriteAST() throws Exception {
-
+        BufferedReader in;
         replaceMagicNumber.setReplaceName("MAGICINT");
         replaceMagicNumber.rewriteAST();
 
-        CompilationUnit unit = JavaParser.parse(rewrittenFile());
-        Assert.assertEquals(replaceMagicNumber.getCompilationUnit().toString(), unit.toString());
+
+        ASTParser parser = ASTParser.newParser(AST.JLS3);
+        in = new BufferedReader(new FileReader(rewrittenFile()));
+        final StringBuffer buffer = new StringBuffer();
+        String line;
+        while (null != (line = in.readLine())) {
+            buffer.append(line).append("\n");
+        }
+
+        parser.setSource(buffer.toString().toCharArray());
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
+        parser.setResolveBindings(true);
+
+        CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
+
+        Assert.assertEquals(replaceMagicNumber.getCompilationUnit().toString(), compilationUnit.toString());
 
     }
 
@@ -109,7 +119,7 @@ public class ReplaceMagicNumberSolverTest {
                     "}");
             out.close();
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
         return file;
     }
