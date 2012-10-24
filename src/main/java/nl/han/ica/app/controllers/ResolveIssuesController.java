@@ -121,7 +121,7 @@ public class ResolveIssuesController extends BaseController {
         RuleViolation violation = issue.getRuleViolation();
         editorBefore.setValue(readFile(issue.getFile()));
         editorBefore.highlightText(violation.getBeginLine(), violation.getBeginColumn(), violation.getEndLine(), violation.getEndColumn(), "change-before");
-        editorAfter.setValue(replaceMagicNumberSolver.getCompilationUnit().toString());
+        editorAfter.setValue(replaceMagicNumberSolver.getDocument().get());
 
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(500), ruleDetailDisplay);
         fadeTransition.setFromValue(0.0);

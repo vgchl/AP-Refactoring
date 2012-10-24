@@ -1,20 +1,27 @@
 package nl.han.ica.core.strategies.solvers;
 
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sourceforge.pmd.RuleViolation;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
 
 public abstract class StrategySolver  {
 
-
+    
+    protected IDocument document = null;
     protected CompilationUnit compilationUnit = null;
     protected RuleViolation ruleViolation = null;
-
+    protected ASTParser astParser = null;
     
     public StrategySolver(RuleViolation ruleViolation){
         this.ruleViolation = ruleViolation;
@@ -23,38 +30,66 @@ public abstract class StrategySolver  {
     public abstract void rewriteAST();
 
     public void buildAST(File file)  {
-        BufferedReader in = null;
-        try {
-            ASTParser parser = ASTParser.newParser(AST.JLS3);
-            in = new BufferedReader(new FileReader(file));
-            final StringBuffer buffer = new StringBuffer();
-            String line = null;
-            while (null != (line = in.readLine())) {
-                buffer.append(line).append("\n");
-            }
-            
-            parser.setSource(buffer.toString().toCharArray());
-            parser.setKind(ASTParser.K_COMPILATION_UNIT);
-            parser.setResolveBindings(true);
-            compilationUnit = (CompilationUnit) parser.createAST(null);
 
-        } catch (IOException ex) {
-            Logger.getLogger(StrategySolver.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                in.close();
-            } catch (IOException ex) {
-                Logger.getLogger(StrategySolver.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        astParser = ASTParser.newParser(AST.JLS3);
+
+        String existingFile = getExistingFileContents(file);
+        document = new Document(existingFile);
+
+        astParser.setSource(existingFile.toCharArray());
+        astParser.setKind(ASTParser.K_COMPILATION_UNIT);
+        astParser.setResolveBindings(true);
+
+        Map options = JavaCore.getOptions();
+        astParser.setCompilerOptions(options);
+        compilationUnit = (CompilationUnit) astParser.createAST(null);
+        compilationUnit.recordModifications();
+
     }
     
+    private String getExistingFileContents(File file) {
+        
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            char[] buffer = new char[1024];
+            int returnedBytes = br.read(buffer);
+            while (returnedBytes != -1) {
+                sb.append(buffer, 0, returnedBytes);
+                returnedBytes = br.read(buffer);
+            }
 
+        return sb.toString();
+        } catch (IOException ex) {
+            Logger.getLogger(StrategySolver.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    protected TypeDeclaration getTopLevelTypeDeclaration(){
+        Iterator iter = compilationUnit.types().iterator();
+        while (iter.hasNext()) {
+            TypeDeclaration td = (TypeDeclaration) iter.next();
+            if (td.getParent().equals(compilationUnit)
+                    && (td.getModifiers() & Modifier.PUBLIC) > 0) {
+                return td;
+            }
+        }
+        return null;      
+    }
+    
+    protected void refreshCompilationUnit(){
+        astParser.setSource(document.get().toCharArray());
+        compilationUnit = (CompilationUnit) astParser.createAST(null);
+    }
 
     public CompilationUnit getCompilationUnit() {
         return compilationUnit;
     }
 
+    public IDocument getDocument() {
+        return document;
+    }
+    
     public RuleViolation getRuleViolation() {
         return ruleViolation;
     }
