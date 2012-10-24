@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.web.WebView;
-import nl.han.ica.app.CodeEditor;
+import nl.han.ica.app.models.CodeEditor;
 import nl.han.ica.core.Solution;
 
 import java.io.IOException;

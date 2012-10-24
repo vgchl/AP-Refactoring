@@ -2,6 +2,7 @@ package nl.han.ica.app.controllers;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
@@ -70,6 +71,14 @@ public class IssueIndexController extends BaseController implements Initializabl
                     resolvePane.setVisible(true);
                 } else {
                     resolvePane.setVisible(false);
+                }
+            }
+        });
+        job.getIssues().addListener(new ListChangeListener<Issue>() {
+            @Override
+            public void onChanged(Change<? extends Issue> change) {
+                if (job.getIssues().size() > 0) {
+                    issues.getSelectionModel().select(0);
                 }
             }
         });
