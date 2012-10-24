@@ -34,6 +34,7 @@ public class IssueIndexController extends BaseController {
 
     /**
      * Instantiate a new IssueIndexController.
+     *
      * @param job The job that contains the issues to display.
      */
     public IssueIndexController(Job job) {
@@ -48,6 +49,9 @@ public class IssueIndexController extends BaseController {
         initializeIssueList();
     }
 
+    /**
+     * Initializes the resolve pane.
+     */
     private void initializeResolvePane() {
         issueResolveController = new IssueResolveController(job);
         resolvePane = issueResolveController.getView();
@@ -55,6 +59,9 @@ public class IssueIndexController extends BaseController {
         contentPane.getChildren().add(resolvePane);
     }
 
+    /**
+     * Initializes the issue list.
+     */
     private void initializeIssueList() {
         issues.setItems(job.getIssues());
         issues.setCellFactory(new Callback<ListView<Issue>, ListCell<Issue>>() {

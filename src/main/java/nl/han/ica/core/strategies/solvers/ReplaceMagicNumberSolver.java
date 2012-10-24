@@ -46,7 +46,13 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
     public void setReplaceName(String replaceName) {
         this.replaceName = replaceName;
     }
-    
+
+    /**
+     * Rewrites the code so the magic number is replaced with an constant.
+     *
+     * @param ast The AST to use when adding the constant to the code.
+     * @param numberLiteral The constant.
+     */
     private void rewriteMagicNumber(AST ast, NumberLiteral numberLiteral){
         ASTRewrite rewrite = ASTRewrite.create(numberLiteral.getAST());
         SimpleName newSimpleName = ast.newSimpleName(replaceName);
