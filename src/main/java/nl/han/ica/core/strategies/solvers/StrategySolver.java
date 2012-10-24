@@ -18,18 +18,24 @@ import org.eclipse.jface.text.IDocument;
 public abstract class StrategySolver  {
 
     
-    protected IDocument document = null;
-    protected CompilationUnit compilationUnit = null;
-    protected RuleViolation ruleViolation = null;
-    protected ASTParser astParser = null;
+    protected CompilationUnit compilationUnit;
+    protected IRuleViolation ruleViolation;
+    protected RuleViolation ruleViolation;
+    protected ASTParser astParser;
+    private Parameters parameters;
     
-    public StrategySolver(RuleViolation ruleViolation){
+    public StrategySolver(IRuleViolation ruleViolation){
         this.ruleViolation = ruleViolation;
+    }
+
+    public StrategySolver(IRuleViolation ruleViolation, Parameters parameters) {
+        this(ruleViolation);
+        this.parameters = parameters;
     }
 
     public abstract void rewriteAST();
 
-    public void buildAST(File file)  {
+    public void buildAST(File file) {
 
         astParser = ASTParser.newParser(AST.JLS3);
 
@@ -89,13 +95,25 @@ public abstract class StrategySolver  {
     public IDocument getDocument() {
         return document;
     }
-    
-    public RuleViolation getRuleViolation() {
+
+    public IRuleViolation getRuleViolation() {
+
         return ruleViolation;
     }
 
-    public void setRuleViolation(RuleViolation ruleViolation) {
+    public void setRuleViolation(IRuleViolation ruleViolation) {
         this.ruleViolation = ruleViolation;
     }
 
+    public Parameters getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Parameters parameters) {
+        this.parameters = parameters;
+    }
+
+    public Parameters getDefaultParameters() {
+        return new Parameters();
+    }
 }

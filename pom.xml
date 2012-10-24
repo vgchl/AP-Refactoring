@@ -81,6 +81,11 @@
             <artifactId>text</artifactId>
             <version>3.2.0-v20060605-1400</version>
         </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
+            <version>1.4.12</version>
+        </dependency>
     </dependencies>
 
     <build>

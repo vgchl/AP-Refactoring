@@ -12,13 +12,12 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
-
 public class ReplaceMagicNumberSolver extends StrategySolver {
 
     private String replaceName = "MAGIC";
     
     
-    public ReplaceMagicNumberSolver(RuleViolation ruleViolation) {
+    public ReplaceMagicNumberSolver(IRuleViolation ruleViolation) {
         super(ruleViolation);
     }
 

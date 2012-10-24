@@ -22,5 +22,4 @@ public class UnusedCodeTester {
     private static boolean used(int i) {
         return true;
     }
-
 }
