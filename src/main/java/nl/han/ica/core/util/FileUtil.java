@@ -2,10 +2,7 @@ package nl.han.ica.core.util;
 
 import org.apache.tools.ant.util.FileUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,7 +59,7 @@ public class FileUtil {
         return files;
     }
 
-    public static String getFileContents(File file) throws IOException {
+    public static String getFileContent(File file) throws IOException {
         String lineSeparator = System.getProperty("line.separator");
         BufferedReader reader = new BufferedReader(new FileReader(file.getAbsoluteFile()));
         String nextLine;
@@ -72,5 +69,10 @@ public class FileUtil {
             buffer.append(lineSeparator);
         }
         return buffer.toString();
+    }
+
+    public static void setFileContent(File file, String content) throws IOException {
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
+        fileOutputStream.write(content.getBytes());
     }
 }

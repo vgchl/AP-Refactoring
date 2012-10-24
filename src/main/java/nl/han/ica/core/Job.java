@@ -104,7 +104,7 @@ public class Job {
 
         Solution solution = new Solution(strategySolver, parameters); // TODO: Move to StrategySolver
         try {
-            String contents = FileUtil.getFileContents(issue.getFile());
+            String contents = FileUtil.getFileContent(issue.getFile());
             solution.setBefore(contents);
         } catch (IOException e) {
             e.printStackTrace();
@@ -129,9 +129,7 @@ public class Job {
      */
     public void applySolution(Issue issue, Solution solution) {
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(issue.getFile());
-            byte[] content = solution.getAfter().getBytes();
-            fileOutputStream.write(content);
+            FileUtil.setFileContent(issue.getFile(), solution.getAfter());
             process();
         } catch (IOException e) {
             logger.fatal("Could not apply solution: error during file write.");
