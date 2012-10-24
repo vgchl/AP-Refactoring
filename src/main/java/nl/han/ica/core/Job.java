@@ -45,6 +45,7 @@ public class Job {
      * Process the files in this job and check them against the selected rules. Results are stored in the job report.
      */
     public void process() {
+        issues.clear();
         for (Strategy strategy : strategies) {
             RuleContext ruleContext = new RuleContext();
             for (File file : files) {
@@ -124,7 +125,7 @@ public class Job {
             FileOutputStream fileOutputStream = new FileOutputStream(issue.getFile());
             byte[] content = solution.getAfter().getBytes();
             fileOutputStream.write(content);
-            issues.remove(issue);
+            process();
         } catch (FileNotFoundException e) {
         } catch (IOException e) {
         }
