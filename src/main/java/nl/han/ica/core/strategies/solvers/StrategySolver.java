@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sourceforge.pmd.RuleViolation;
+import net.sourceforge.pmd.IRuleViolation;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jface.text.Document;
@@ -20,8 +20,8 @@ public abstract class StrategySolver  {
     
     protected CompilationUnit compilationUnit;
     protected IRuleViolation ruleViolation;
-    protected RuleViolation ruleViolation;
     protected ASTParser astParser;
+    protected IDocument document;
     private Parameters parameters;
     
     public StrategySolver(IRuleViolation ruleViolation){
