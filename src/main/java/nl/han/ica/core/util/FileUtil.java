@@ -1,7 +1,5 @@
 package nl.han.ica.core.util;
 
-import org.apache.tools.ant.util.FileUtils;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -62,6 +60,13 @@ public class FileUtil {
         return files;
     }
 
+    /**
+     * Gets the contents of a file as a String.
+     *
+     * @param file The file to read.
+     * @return The contents of a file
+     * @throws IOException When the given file could not be found or read.
+     */
     public static String getFileContents(File file) throws IOException {
         String lineSeparator = System.getProperty("line.separator");
         BufferedReader reader = new BufferedReader(new FileReader(file.getAbsoluteFile()));

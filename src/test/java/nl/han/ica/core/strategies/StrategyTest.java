@@ -6,7 +6,7 @@ package nl.han.ica.core.strategies;
 
 import net.sourceforge.pmd.RuleSet;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+
 import org.junit.*;
 
 /**

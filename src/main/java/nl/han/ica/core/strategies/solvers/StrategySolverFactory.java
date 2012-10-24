@@ -1,7 +1,6 @@
 package nl.han.ica.core.strategies.solvers;
 
 import net.sourceforge.pmd.IRuleViolation;
-import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.rules.XPathRule;
 import nl.han.ica.core.strategies.ReplaceMagicNumber;
 

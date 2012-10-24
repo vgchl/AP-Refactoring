@@ -1,11 +1,7 @@
 package nl.han.ica.core;
 
-import nl.han.ica.core.strategies.Strategy;
 import nl.han.ica.core.strategies.solvers.Parameters;
 import nl.han.ica.core.strategies.solvers.StrategySolver;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Solution {
 
