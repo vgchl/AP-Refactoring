@@ -66,6 +66,14 @@ public class IssueResolveController extends BaseController {
         job.applySolution(issue, solution);
     }
 
+    /**
+     * Ignores a solution. Removes it from the issues list.
+     */
+    @FXML
+    protected void ignoreSolution() {
+        job.ignoreSolution(issue);
+    }
+
     @Override
     public Pane getView() {
         try {

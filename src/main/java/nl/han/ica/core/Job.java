@@ -127,6 +127,7 @@ public class Job {
 
     /**
      * Save a solution to file.
+     *
      * @param issue The issue to solve.
      * @param solution The solution to apply.
      */
@@ -137,6 +138,15 @@ public class Job {
         } catch (IOException e) {
             logger.fatal("Could not apply solution: error during file write.");
         }
+    }
+
+    /**
+     * Ignores a solution.
+     *
+     * @param issue The issue to ignore.
+     */
+    public void ignoreSolution(Issue issue) {
+        issues.remove(issue);
     }
 
     /**
