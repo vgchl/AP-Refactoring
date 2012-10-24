@@ -1,6 +1,5 @@
 package nl.han.ica.core.strategies.solvers;
 
-
 import net.sourceforge.pmd.IRuleViolation;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;

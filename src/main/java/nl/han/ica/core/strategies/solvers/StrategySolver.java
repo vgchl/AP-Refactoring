@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Level;
 import net.sourceforge.pmd.IRuleViolation;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.JavaCore;
@@ -21,7 +20,6 @@ import org.eclipse.text.edits.TextEdit;
 
 public abstract class StrategySolver  {
 
-    
     protected CompilationUnit compilationUnit;
     protected IRuleViolation ruleViolation;
     protected ASTParser astParser;
@@ -61,7 +59,7 @@ public abstract class StrategySolver  {
     public void buildAST(File file) {
         astParser = ASTParser.newParser(AST.JLS3);
 
-        String existingFile = getExistingFileContents(file);
+        String existingFile = getFileContents(file);
         document = new Document(existingFile);
 
         astParser.setSource(existingFile.toCharArray());
@@ -75,7 +73,7 @@ public abstract class StrategySolver  {
 
     }
     
-    private String getExistingFileContents(File file) {        
+    private String getFileContents(File file) {        
         StringBuilder sb = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             char[] buffer = new char[1024];
@@ -84,7 +82,6 @@ public abstract class StrategySolver  {
                 sb.append(buffer, 0, returnedBytes);
                 returnedBytes = br.read(buffer);
             }
-
         return sb.toString();
         } catch (IOException ex) {
             logger.error(StrategySolver.class.getName(), ex);
@@ -126,7 +123,7 @@ public abstract class StrategySolver  {
         try {
             textEdit.apply(document);
         } catch (MalformedTreeException | BadLocationException ex) {
-            java.util.logging.Logger.getLogger(ReplaceMagicNumberSolver.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(StrategySolver.class.getName(), ex);
         }
     }
 
