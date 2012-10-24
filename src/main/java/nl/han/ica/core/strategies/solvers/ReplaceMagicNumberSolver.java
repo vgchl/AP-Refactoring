@@ -1,16 +1,16 @@
 package nl.han.ica.core.strategies.solvers;
 
-import japa.parser.ASTHelper;
-import japa.parser.ast.body.BodyDeclaration;
-import japa.parser.ast.body.ModifierSet;
-import japa.parser.ast.body.VariableDeclarator;
-import japa.parser.ast.body.VariableDeclaratorId;
-import japa.parser.ast.expr.IntegerLiteralExpr;
-import japa.parser.ast.visitor.VoidVisitorAdapter;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sourceforge.pmd.IRuleViolation;
-import net.sourceforge.pmd.RuleViolation;
-import nl.han.ica.core.ast.ASTStrategyHelper;
-import nl.han.ica.core.ast.FieldDeclarationVisitor;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.TextEdit;
 
 /**
  * Solver for the Replace Magic Number with Constant violation.
@@ -30,14 +30,12 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
 
     @Override
     public void rewriteAST() {
-        ReplaceMagicNumberLiteralExprVisitor expressionVisitor = new ReplaceMagicNumberLiteralExprVisitor();
-        compilationUnit.accept(expressionVisitor, ruleViolation);
-
-        IntegerLiteralExpr literalExpr = expressionVisitor.getIntegerLiteralViolationExpr();
-        if (literalExpr != null) {
-            addStaticFinalField(literalExpr.getValue());
-            literalExpr.setValue(replaceName + literalExpr.getValue());
-        }
+        LiteralExprVisitor visitor = new LiteralExprVisitor(ruleViolation, compilationUnit);
+        compilationUnit.accept(visitor);
+        AST ast = compilationUnit.getAST();
+        
+        rewriteMagicNumber(ast, visitor.getLiteralViolation());
+        addStaticFinalField(ast, visitor.getLiteralViolation().getToken());
     }
 
     /**
@@ -48,39 +46,73 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
     public void setReplaceName(String replaceName) {
         this.replaceName = replaceName;
     }
+    
+    private void rewriteMagicNumber(AST ast, NumberLiteral numberLiteral){
+        ASTRewrite rewrite = ASTRewrite.create(numberLiteral.getAST());
+        SimpleName newSimpleName = ast.newSimpleName(replaceName);
+        rewrite.replace(numberLiteral, newSimpleName, null);
+        
+        applyChanges(rewrite);
+    }
+    
+    private void addStaticFinalField(AST ast, String fieldValue){       
+        TypeDeclaration topLevelType = getTopLevelTypeDeclaration();
 
-    private void addStaticFinalField(String magicNumber) {
-        VariableDeclarator variableDeclarator = new VariableDeclarator(new VariableDeclaratorId(replaceName + magicNumber), new IntegerLiteralExpr(magicNumber));
-
-        int modifier = ModifierSet.addModifier(ModifierSet.PRIVATE, ModifierSet.STATIC);
-        modifier = ModifierSet.addModifier(modifier, ModifierSet.FINAL);
-
-        BodyDeclaration fieldDeclaration = ASTHelper.createFieldDeclaration(modifier, ASTHelper.INT_TYPE, variableDeclarator);
-        fieldDeclaration.setBeginLine(4);
-        fieldDeclaration.setEndLine(5);
-
-        FieldDeclarationVisitor fieldVisitor = new FieldDeclarationVisitor();
-        compilationUnit.accept(fieldVisitor, null);
-        ASTStrategyHelper.insertMember(compilationUnit.getTypes().get(0), fieldDeclaration, fieldVisitor.getNumberOfFields());
+        ASTRewrite rewrite = ASTRewrite.create(topLevelType.getRoot().getAST());
+        ListRewrite listRewrite = rewrite.getListRewrite(topLevelType,
+                TypeDeclaration.BODY_DECLARATIONS_PROPERTY);        
+                
+        FieldDeclaration fieldDeclaration = createNewFieldDeclaration(ast, fieldValue);
+        listRewrite.insertFirst(fieldDeclaration, null);
+        
+        applyChanges(rewrite);
+    }
+    
+    private void applyChanges(ASTRewrite rewrite){
+        TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
+        
+        try {
+            textEdit.apply(document);
+        } catch (MalformedTreeException | BadLocationException ex) {
+            Logger.getLogger(ReplaceMagicNumberSolver.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private FieldDeclaration createNewFieldDeclaration(AST ast, String fieldValue){
+        VariableDeclarationFragment variableDeclarationFragment = ast.newVariableDeclarationFragment();
+        variableDeclarationFragment.setName(ast.newSimpleName(replaceName));
+        variableDeclarationFragment.setInitializer(ast.newNumberLiteral(fieldValue));
+        FieldDeclaration fieldDeclaration = ast.newFieldDeclaration(variableDeclarationFragment);
+        fieldDeclaration.setType(ast.newPrimitiveType(PrimitiveType.INT));
+        fieldDeclaration.modifiers().addAll(ast.newModifiers(Modifier.PRIVATE | Modifier.STATIC | Modifier.FINAL));
+        
+        return fieldDeclaration;
     }
 
 
-    private static class ReplaceMagicNumberLiteralExprVisitor extends VoidVisitorAdapter {
+    private class LiteralExprVisitor extends ASTVisitor  {
 
-        private IntegerLiteralExpr integerLiteralViolationExpr = null;
+        private IRuleViolation ruleViolation;
+        private CompilationUnit compilationUnit;
+        private NumberLiteral literalViolation;
 
+        public LiteralExprVisitor(IRuleViolation ruleViolation, CompilationUnit compilationUnit) {
+            this.ruleViolation = ruleViolation;
+            this.compilationUnit = compilationUnit;
+        }
+        
         @Override
-        public void visit(IntegerLiteralExpr n, Object arg) {
-            RuleViolation violation = (RuleViolation) arg;
-            if (n.getBeginLine() == violation.getBeginLine() &&
-                    n.getBeginColumn() == violation.getBeginColumn()) {
-                integerLiteralViolationExpr = n;
+        public boolean visit(NumberLiteral node) {
+            if(compilationUnit.getColumnNumber(node.getStartPosition()) == ruleViolation.getBeginColumn()-1 &&
+                    compilationUnit.getLineNumber(node.getStartPosition()) == ruleViolation.getBeginLine()){
+                literalViolation = node;
             }
+            return super.visit(node);
         }
 
-        public IntegerLiteralExpr getIntegerLiteralViolationExpr() {
-            return integerLiteralViolationExpr;
+        public NumberLiteral getLiteralViolation() {
+            return literalViolation;
         }
-
+        
     }
 }

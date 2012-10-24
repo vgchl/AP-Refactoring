@@ -1,18 +1,26 @@
 package nl.han.ica.core.strategies.solvers;
 
-import japa.parser.JavaParser;
-import japa.parser.ParseException;
-import japa.parser.ast.CompilationUnit;
-import net.sourceforge.pmd.IRuleViolation;
-import org.apache.log4j.Logger;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+import org.apache.log4j.Logger;
+import net.sourceforge.pmd.IRuleViolation;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
 
 public abstract class StrategySolver  {
 
+    
     protected CompilationUnit compilationUnit;
     protected IRuleViolation ruleViolation;
+    protected ASTParser astParser;
+    protected IDocument document;
     private Parameters parameters;
     private Logger logger;
 
@@ -47,11 +55,55 @@ public abstract class StrategySolver  {
      */
     public void buildAST(File file) {
 
-        try {
-            compilationUnit = JavaParser.parse(file);
-        } catch (ParseException | IOException e) {
-            logger.error("Could not parse the Java File(s) to an AST.");
+        astParser = ASTParser.newParser(AST.JLS3);
+
+        String existingFile = getExistingFileContents(file);
+        document = new Document(existingFile);
+
+        astParser.setSource(existingFile.toCharArray());
+        astParser.setKind(ASTParser.K_COMPILATION_UNIT);
+        astParser.setResolveBindings(true);
+
+        Map options = JavaCore.getOptions();
+        astParser.setCompilerOptions(options);
+        compilationUnit = (CompilationUnit) astParser.createAST(null);
+        compilationUnit.recordModifications();
+
+    }
+    
+    private String getExistingFileContents(File file) {
+        
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            char[] buffer = new char[1024];
+            int returnedBytes = br.read(buffer);
+            while (returnedBytes != -1) {
+                sb.append(buffer, 0, returnedBytes);
+                returnedBytes = br.read(buffer);
+            }
+
+        return sb.toString();
+        } catch (IOException ex) {
+            logger.error(StrategySolver.class.getName(), ex);
         }
+        return null;
+    }
+    
+    protected TypeDeclaration getTopLevelTypeDeclaration(){
+        Iterator iter = compilationUnit.types().iterator();
+        while (iter.hasNext()) {
+            TypeDeclaration td = (TypeDeclaration) iter.next();
+            if (td.getParent().equals(compilationUnit)
+                    && (td.getModifiers() & Modifier.PUBLIC) > 0) {
+                return td;
+            }
+        }
+        return null;      
+    }
+    
+    protected void refreshCompilationUnit(){
+        astParser.setSource(document.get().toCharArray());
+        compilationUnit = (CompilationUnit) astParser.createAST(null);
     }
 
     /**
@@ -69,6 +121,7 @@ public abstract class StrategySolver  {
      * @return The rule violation interface.
      */
     public IRuleViolation getRuleViolation() {
+
         return ruleViolation;
     }
 
@@ -106,5 +159,9 @@ public abstract class StrategySolver  {
      */
     public Parameters getDefaultParameters() {
         return new Parameters();
+    }
+
+    public IDocument getDocument() {
+        return document;
     }
 }

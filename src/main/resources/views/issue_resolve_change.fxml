@@ -19,12 +19,12 @@
           <children>
             <TitledPane id="x2" animated="false" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" styleClass="code-editor-after" text="After" GridPane.columnIndex="1" GridPane.rowIndex="0">
               <content>
-                <WebView fx:id="editorAfterView" maxHeight="9999.0" maxWidth="9999.0" prefHeight="0.0" prefWidth="0.0" styleClass="code-editor" />
+                <WebView fx:id="editorAfterView" maxHeight="9999.0" maxWidth="9999.0" prefHeight="0.0" prefWidth="0.0" />
               </content>
             </TitledPane>
             <TitledPane id="x3" animated="false" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" text="Before" GridPane.columnIndex="0" GridPane.rowIndex="0">
               <content>
-                <WebView fx:id="editorBeforeView" maxHeight="9999.0" maxWidth="9999.0" prefHeight="0.0" prefWidth="0.0" styleClass="code-editor" />
+                <WebView fx:id="editorBeforeView" maxHeight="9999.0" maxWidth="9999.0" prefHeight="0.0" prefWidth="0.0" />
               </content>
             </TitledPane>
           </children>
