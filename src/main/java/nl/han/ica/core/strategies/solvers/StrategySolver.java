@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.apache.log4j.Logger;
 
 public abstract class StrategySolver  {
 
@@ -23,8 +24,11 @@ public abstract class StrategySolver  {
     protected ASTParser astParser;
     protected IDocument document;
     private Parameters parameters;
-    
+    private Logger logger;
+
     public StrategySolver(IRuleViolation ruleViolation){
+        logger = Logger.getLogger(getClass().getName());
+
         this.ruleViolation = ruleViolation;
     }
 

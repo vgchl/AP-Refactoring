@@ -110,7 +110,7 @@ public class CodeEditor {
     /**
      * Represents a line and column in the JavaScript Editor.
      */
-    public class Position {
+    public static class Position {
         private int line;
         private int column;
 

@@ -6,6 +6,8 @@ import nl.han.ica.core.strategies.ReplaceMagicNumber;
 
 public class StrategySolverFactory {
 
+    private StrategySolverFactory() {}
+
     public static StrategySolver createStrategySolver(IRuleViolation violation){
         if(violation.getRule() instanceof XPathRule){
             //XPathRules are PMD-tool created rules,

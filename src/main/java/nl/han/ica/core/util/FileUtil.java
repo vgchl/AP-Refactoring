@@ -9,7 +9,7 @@ import java.util.Queue;
 /**
  * Contains helpers for common operations involving files and directories.
  */
-public class FileUtil {
+public final class FileUtil {
 
     /**
      * Private constructor to prevent class initialization.
@@ -66,13 +66,15 @@ public class FileUtil {
      */
     public static String getFileContent(File file) throws IOException {
         String lineSeparator = System.getProperty("line.separator");
-        BufferedReader reader = new BufferedReader(new FileReader(file.getAbsoluteFile()));
+        InputStreamReader fileReader = new InputStreamReader(new FileInputStream(file.getAbsoluteFile()), "UTF8");
+        BufferedReader reader = new BufferedReader(fileReader);
         String nextLine;
         StringBuffer buffer = new StringBuffer();
         while ((nextLine = reader.readLine()) != null) {
             buffer.append(nextLine);
             buffer.append(lineSeparator);
         }
+        reader.close();
         return buffer.toString();
     }
 
@@ -86,5 +88,6 @@ public class FileUtil {
     public static void setFileContent(File file, String content) throws IOException {
         FileOutputStream fileOutputStream = new FileOutputStream(file);
         fileOutputStream.write(content.getBytes());
+        fileOutputStream.close();
     }
 }

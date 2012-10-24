@@ -110,7 +110,7 @@ public class Job {
             String contents = FileUtil.getFileContent(issue.getFile());
             solution.setBefore(contents);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Could not open file.");
         }
         solution.setAfter(strategySolver.getDocument().get());
         logger.info("Done solving issue.");
