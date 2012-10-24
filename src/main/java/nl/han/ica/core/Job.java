@@ -95,8 +95,11 @@ public class Job {
     public Solution solve(Issue issue, Parameters parameters) {
         StrategySolver strategySolver = StrategySolverFactory.createStrategySolver(issue.getRuleViolation());
         strategySolver.setRuleViolation(issue.getRuleViolation());
-        parameters = null != parameters ? parameters : strategySolver.getDefaultParameters();
-        strategySolver.setParameters(parameters);
+
+        Parameters p = new Parameters();
+        p.merge(strategySolver.getDefaultParameters());
+        p.merge(parameters);
+        strategySolver.setParameters(p);
 
         logger.info("Solving issue…");
         logger.info("…with solver: " + strategySolver.getClass().getName());

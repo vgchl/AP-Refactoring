@@ -39,7 +39,7 @@
         <GridPane gridLinesVisible="false" hgap="10.0" styleClass="issue-patch-options" vgap="5.0">
           <children>
             <Label contentDisplay="RIGHT" text="Constant name" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="0" GridPane.vgrow="SOMETIMES" />
-            <TextField prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <TextField fx:id="magicConstantName" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" onKeyReleased="#parametersChanged" />
           </children>
           <columnConstraints>
             <ColumnConstraints fillWidth="true" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

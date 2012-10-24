@@ -1,18 +1,15 @@
 package nl.han.ica.core.strategies.solvers;
 
-import java.io.*;
-
 import junit.framework.Assert;
 import net.sourceforge.pmd.RuleContext;
 import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.ast.SimpleJavaNode;
 import net.sourceforge.pmd.rules.XPathRule;
 import net.sourceforge.pmd.symboltable.SourceFileScope;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.File;
 
 /**
  * User: Corne
@@ -57,7 +54,6 @@ public class ReplaceMagicNumberSolverTest {
     @Test
     public void testRewriteAST() throws Exception {
 
-        replaceMagicNumber.setReplaceName("MAGICINT");
         replaceMagicNumber.rewriteAST();
         Assert.assertEquals(replaceMagicNumber.getDocument().get(), rewrittenFile());
 

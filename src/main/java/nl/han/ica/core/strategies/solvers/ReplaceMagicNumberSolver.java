@@ -1,8 +1,6 @@
 package nl.han.ica.core.strategies.solvers;
 
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sourceforge.pmd.IRuleViolation;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
@@ -12,12 +10,15 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Solver for the Replace Magic Number with Constant violation.
  */
 public class ReplaceMagicNumberSolver extends StrategySolver {
 
-    private String replaceName = "MAGIC";
+    private static final String PARAMETER_CONSTANT_NAME = "magicConstantName";
 
     /**
      * The constructor for this solver.
@@ -38,18 +39,16 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
         addStaticFinalField(ast, visitor.getLiteralViolation().getToken());
     }
 
-    /**
-     * Sets the replace name for the constant.
-     *
-     * @param replaceName The constant name.
-     */
-    public void setReplaceName(String replaceName) {
-        this.replaceName = replaceName;
+    @Override
+    public Parameters getDefaultParameters() {
+        Parameters defaults = new Parameters();
+        defaults.set(PARAMETER_CONSTANT_NAME, "THAT_CONSTANT_NAME");
+        return defaults;
     }
-    
+
     private void rewriteMagicNumber(AST ast, NumberLiteral numberLiteral){
         ASTRewrite rewrite = ASTRewrite.create(numberLiteral.getAST());
-        SimpleName newSimpleName = ast.newSimpleName(replaceName);
+        SimpleName newSimpleName = ast.newSimpleName((String) parameters.get(PARAMETER_CONSTANT_NAME));
         rewrite.replace(numberLiteral, newSimpleName, null);
         
         applyChanges(rewrite);
@@ -80,7 +79,7 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
     
     private FieldDeclaration createNewFieldDeclaration(AST ast, String fieldValue){
         VariableDeclarationFragment variableDeclarationFragment = ast.newVariableDeclarationFragment();
-        variableDeclarationFragment.setName(ast.newSimpleName(replaceName));
+        variableDeclarationFragment.setName(ast.newSimpleName((String) parameters.get(PARAMETER_CONSTANT_NAME)));
         variableDeclarationFragment.setInitializer(ast.newNumberLiteral(fieldValue));
         FieldDeclaration fieldDeclaration = ast.newFieldDeclaration(variableDeclarationFragment);
         fieldDeclaration.setType(ast.newPrimitiveType(PrimitiveType.INT));

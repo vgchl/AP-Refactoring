@@ -1,5 +1,6 @@
 package nl.han.ica.app.controllers;
 
+import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -49,13 +50,20 @@ public class IssueResolveController extends BaseController {
         issueTitle.setText(issue.getStrategy().getName());
         issueDescription.setText(issue.getRuleViolation().getRule().getDescription().replaceAll("\n", " ").replaceAll("  ", ""));
 
-        showSolution(null);
+        final Parameters parameters = new Parameters();
+        parameters.addListener(new MapChangeListener<String, Object>() {
+            @Override
+            public void onChanged(Change<? extends String, ? extends Object> change) {
+                showSolution(parameters);
+            }
+        });
+
+        showSolution(parameters);
     }
 
-    private void showSolution(Parameters parameters) {
+    private void showSolution(final Parameters parameters) {
         solution = job.solve(issue, parameters);
         changeController.setSolution(solution);
-        // TODO: Add listener to resolve issue with updated params
     }
 
     /**

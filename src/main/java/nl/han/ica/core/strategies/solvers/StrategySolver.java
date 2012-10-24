@@ -1,18 +1,19 @@
 package nl.han.ica.core.strategies.solvers;
 
 
+import net.sourceforge.pmd.IRuleViolation;
+import org.apache.log4j.Logger;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
-import org.apache.log4j.Logger;
-import net.sourceforge.pmd.IRuleViolation;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
 
 public abstract class StrategySolver  {
 
@@ -21,8 +22,8 @@ public abstract class StrategySolver  {
     protected IRuleViolation ruleViolation;
     protected ASTParser astParser;
     protected IDocument document;
-    private Parameters parameters;
-    private Logger logger;
+    protected Parameters parameters;
+    protected Logger logger;
 
     /**
      * Creates a strategy solver with rule violation.

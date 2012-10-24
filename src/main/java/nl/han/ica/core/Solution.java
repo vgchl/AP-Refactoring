@@ -84,4 +84,11 @@ public class Solution {
         this.after = after;
     }
 
+    public Parameters getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Parameters parameters) {
+        this.parameters = parameters;
+    }
 }

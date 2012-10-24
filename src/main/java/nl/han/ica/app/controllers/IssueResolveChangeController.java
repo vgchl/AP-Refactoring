@@ -2,6 +2,8 @@ package nl.han.ica.app.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.web.WebView;
 import nl.han.ica.app.models.CodeEditor;
 import nl.han.ica.core.Solution;
@@ -71,4 +73,11 @@ public class IssueResolveChangeController extends BaseController {
             updateEditors();
         }
     }
+
+    @FXML
+    public void parametersChanged(KeyEvent event) {
+        TextField textField = (TextField) event.getSource();
+        solution.getParameters().set(textField.getId(), textField.getText());
+    }
+
 }
