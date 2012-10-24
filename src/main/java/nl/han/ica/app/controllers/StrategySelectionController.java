@@ -32,7 +32,7 @@ import java.util.ResourceBundle;
  */
 public class StrategySelectionController extends BaseController {
 
-    private static String FILES_SELECTION_TITLE = "Select source files";
+    private final static String FILES_SELECTION_TITLE = "Select source files";
 
     private Job job;
     private Scene scene;

@@ -44,7 +44,7 @@ public abstract class BaseController implements Initializable {
      *
      * @return The view belonging to the controller.
      */
-    abstract public Parent getView();
+    public abstract Parent getView();
 
     /**
      * Load and build the controller's view from its FXML resource.

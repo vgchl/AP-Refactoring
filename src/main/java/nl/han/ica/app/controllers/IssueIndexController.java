@@ -101,7 +101,7 @@ public class IssueIndexController extends BaseController {
         }
     }
 
-    private class IssueCell extends ListCell<Issue> {
+    private static class IssueCell extends ListCell<Issue> {
 
         @Override
         protected void updateItem(Issue issue, boolean empty) {
