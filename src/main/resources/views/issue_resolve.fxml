@@ -15,7 +15,7 @@
   <bottom>
     <HBox id="issue-actions-bar" alignment="TOP_RIGHT" spacing="10.0" styleClass="issue-actions">
       <children>
-        <Button cancelButton="true" mnemonicParsing="false" prefWidth="125.0" text="Ignore" HBox.hgrow="NEVER" />
+        <Button cancelButton="true" mnemonicParsing="false" prefWidth="125.0" text="Ignore" HBox.hgrow="NEVER" onAction="#ignoreSolution" />
         <Button cancelButton="false" defaultButton="false" mnemonicParsing="false" prefWidth="125.0" text="Apply" onAction="#applySolution" />
       </children>
       <padding>
