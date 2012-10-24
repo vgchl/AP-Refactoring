@@ -56,71 +56,46 @@ public class ReplaceMagicNumberSolverTest {
 
     @Test
     public void testRewriteAST() throws Exception {
-        BufferedReader in;
+
         replaceMagicNumber.setReplaceName("MAGICINT");
         replaceMagicNumber.rewriteAST();
-
-
-        ASTParser parser = ASTParser.newParser(AST.JLS3);
-        in = new BufferedReader(new FileReader(rewrittenFile()));
-        final StringBuffer buffer = new StringBuffer();
-        String line;
-        while (null != (line = in.readLine())) {
-            buffer.append(line).append("\n");
-        }
-
-        parser.setSource(buffer.toString().toCharArray());
-        parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        parser.setResolveBindings(true);
-
-        CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
-
-        Assert.assertEquals(replaceMagicNumber.getCompilationUnit().toString(), compilationUnit.toString());
+        Assert.assertEquals(replaceMagicNumber.getDocument().get(), rewrittenFile());
 
     }
 
-    private static File rewrittenFile(){
-        File file = null;
-        try {
-            file = File.createTempFile("TempFile.txt", ".tmp");
-            file.deleteOnExit();
-
-            BufferedWriter out = new BufferedWriter(new FileWriter(file));
-            out.write("public class UnusedCodeTester {\n" +
-                    "\n" +
-                    
-                    "\tpublic static String string1 = \"Si!\";\n" +
-                    " \tpublic static String string2 = \"No!\";\n" +
-                    "    public static String MYvariBal = \"x\";\n" +
-                    "\tprivate static final int MAGICINT0 = 0;\n" +
-                    "\n" +
-                    "\tpublic static void main(String[] args) {\n" +
-                    "    \tSystem.out.println(string1);    \n" +
-                    "    \tused();\n" +
-                    "    }\n" +
-                    "    \n" +
-                    "    private String unused(String a,\n" +
-                    "                          String b,\n" +
-                    "                          String c) {\n" +
-                    "        int i =0;\n" +
-                    "        if(i == MAGICINT0){\n" +
-                    "\n" +
-                    "        }else if(i == 23){\n" +
-                    "\n" +
-                    "        }\n" +
-                    "\n" +
-                    "    \treturn \"YES\";\n" +
-                    "    \t\n" +
-                    "    }\n" +
-                    "    \n" +
-                    "    private static boolean used() {\n" +
-                    "    \treturn true;\n" +
-                    "    }\n" +
-                    "}");
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return file;
+    private static String rewrittenFile(){
+        return "public class UnusedCodeTester {\n" +
+                "\n" +
+                
+                "\tprivate static final int MAGICINT = 0;\n" +
+                "\tpublic static String string1 = \"Si!\";\n" +
+                " \tpublic static String string2 = \"No!\";\n" +
+                "    public static String MYvariBal = \"x\";\n" +
+                
+                "\n" +
+                "\tpublic static void main(String[] args) {\n" +
+                "    \tSystem.out.println(string1);    \n" +
+                "    \tused();\n" +
+                "    }\n" +
+                "    \n" +
+                "    private String unused(String a,\n" +
+                "                          String b,\n" +
+                "                          String c) {\n" +
+                "        int i =0;\n" +
+                "        if(i == MAGICINT){\n" +
+                "\n" +
+                "        }else if(i == 23){\n" +
+                "\n" +
+                "        }\n" +
+                "\n" +
+                "    \treturn \"YES\";\n" +
+                "    \t\n" +
+                "    }\n" +
+                "    \n" +
+                "    private static boolean used() {\n" +
+                "    \treturn true;\n" +
+                "    }\n" +
+                "}";
     }
+
 }
