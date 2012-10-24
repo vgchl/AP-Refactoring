@@ -7,14 +7,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 import net.sourceforge.pmd.IRuleViolation;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.apache.log4j.Logger;
 
 public abstract class StrategySolver  {
 
@@ -70,7 +68,7 @@ public abstract class StrategySolver  {
 
         return sb.toString();
         } catch (IOException ex) {
-            Logger.getLogger(StrategySolver.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(StrategySolver.class.getName(), ex);
         }
         return null;
     }
