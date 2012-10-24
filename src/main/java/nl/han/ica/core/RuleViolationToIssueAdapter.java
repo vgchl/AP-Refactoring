@@ -32,8 +32,6 @@ public class RuleViolationToIssueAdapter extends Issue {
 
     /**
      * Sets the rule violation.
-     *
-     * @return Set the rule violation.
      */
     public void setRuleViolation(IRuleViolation ruleViolation) {
         this.ruleViolation = ruleViolation;

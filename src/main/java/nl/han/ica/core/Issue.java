@@ -3,12 +3,9 @@ package nl.han.ica.core;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.Node;
 import net.sourceforge.pmd.IRuleViolation;
-import net.sourceforge.pmd.RuleViolation;
 import nl.han.ica.core.strategies.Strategy;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Issue {
 

@@ -2,22 +2,14 @@ package nl.han.ica.app.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import nl.han.ica.core.Issue;
 import nl.han.ica.core.Job;
 import nl.han.ica.core.Solution;
 import nl.han.ica.core.strategies.solvers.Parameters;
-import nl.han.ica.core.strategies.solvers.ReplaceMagicNumberSolver;
-import nl.han.ica.core.strategies.solvers.StrategySolverFactory;
-import nl.han.ica.core.util.FileUtil;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;

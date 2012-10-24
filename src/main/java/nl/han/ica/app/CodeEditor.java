@@ -41,8 +41,8 @@ public class CodeEditor {
      * Highlights the given line number in the Code Editor.
      *
      * @param lineNr The line number to highlight.
-     * @param textClassname
-     * @param backgroundClassName
+     * @param textClassname The classname.
+     * @param backgroundClassName The background classname.
      */
     public void highlightLine(int lineNr, String textClassname, String backgroundClassName) {
         StringBuilder script = new StringBuilder("editor.setLineClass(");

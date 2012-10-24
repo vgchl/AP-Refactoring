@@ -1,7 +1,5 @@
 package nl.han.ica.core.util;
 
-import org.apache.tools.ant.util.FileUtils;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

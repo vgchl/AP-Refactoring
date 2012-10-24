@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 
 import net.sourceforge.pmd.IRuleViolation;
-import net.sourceforge.pmd.RuleViolation;
 
 public abstract class StrategySolver  {
 
