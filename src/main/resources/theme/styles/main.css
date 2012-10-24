@@ -72,7 +72,6 @@
     -fx-background-insets: 0;
 }
 
-#issue-files-container {
-
+#issue-changes-container {
     -fx-background-color: null;
 }

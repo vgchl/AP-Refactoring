@@ -25,31 +25,31 @@
 
 /**** Issue Change ****/
 
-.issue-change {
+.issue-patch {
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0.0, 0, 2);
     -fx-margin: 0 0 20 0;
 }
-.issue-change > .title {
+.issue-patch > .title {
     -fx-background-color: SB-header-bottom-border, linear-gradient(#d6d6d6 0%, #bbbbbb 100%);
     -fx-background-insets: 0, 0 0 1 0;
     -fx-background-radius: 3 3 0 0;
     -fx-padding: 5 11;
     -fx-font-weight: bold;
 }
-.issue-change > .title .text {
+.issue-patch > .title .text {
     -fx-effect: dropshadow(one-pass-box, white, 1, 0, 0, 1);
 }
-.issue-change > .title .label {
+.issue-patch > .title .label {
     -fx-text-alignment: center;
 }
-.issue-change .text-field {
+.issue-patch .text-field {
     -fx-font-family: "Courier New";
 }
-.issue-change .code-editor-after {
+.issue-patch .code-editor-after {
     -fx-padding: 0 0 0 1;
     -fx-background-color: #999;
 }
-.issue-change .issue-change-options {
+.issue-patch .issue-patch-options {
     -fx-background-color: #999, #e7e7e7;
     -fx-background-insets: 0, 1 0 0 0;
     -fx-padding: 2 5;

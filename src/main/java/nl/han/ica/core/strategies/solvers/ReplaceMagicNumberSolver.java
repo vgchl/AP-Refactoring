@@ -7,22 +7,21 @@ import japa.parser.ast.body.VariableDeclarator;
 import japa.parser.ast.body.VariableDeclaratorId;
 import japa.parser.ast.expr.IntegerLiteralExpr;
 import japa.parser.ast.visitor.VoidVisitorAdapter;
+import net.sourceforge.pmd.IRuleViolation;
 import net.sourceforge.pmd.RuleViolation;
 import nl.han.ica.core.ast.ASTStrategyHelper;
 import nl.han.ica.core.ast.FieldDeclarationVisitor;
-
 
 public class ReplaceMagicNumberSolver extends StrategySolver {
 
     private String replaceName = "MAGIC";
 
-    public ReplaceMagicNumberSolver(RuleViolation ruleViolation) {
+    public ReplaceMagicNumberSolver(IRuleViolation ruleViolation) {
         super(ruleViolation);
     }
 
     @Override
     public void rewriteAST() {
-        System.out.println(ruleViolation.toString());
         ReplaceMagicNumberLiteralExprVisitor expressionVisitor = new ReplaceMagicNumberLiteralExprVisitor();
         compilationUnit.accept(expressionVisitor, ruleViolation);
 
@@ -38,9 +37,7 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
     }
 
     private void addStaticFinalField(String magicNumber) {
-
-        VariableDeclarator variableDeclarator = new VariableDeclarator(new VariableDeclaratorId(replaceName + magicNumber),
-                new IntegerLiteralExpr(magicNumber));
+        VariableDeclarator variableDeclarator = new VariableDeclarator(new VariableDeclaratorId(replaceName + magicNumber), new IntegerLiteralExpr(magicNumber));
 
         int modifier = ModifierSet.addModifier(ModifierSet.PRIVATE, ModifierSet.STATIC);
         modifier = ModifierSet.addModifier(modifier, ModifierSet.FINAL);
@@ -51,8 +48,7 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
 
         FieldDeclarationVisitor fieldVisitor = new FieldDeclarationVisitor();
         compilationUnit.accept(fieldVisitor, null);
-        ASTStrategyHelper.insertMember(compilationUnit.getTypes().get(0),
-                fieldDeclaration, fieldVisitor.getNumberOfFields());
+        ASTStrategyHelper.insertMember(compilationUnit.getTypes().get(0), fieldDeclaration, fieldVisitor.getNumberOfFields());
     }
 
 
@@ -62,7 +58,6 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
 
         @Override
         public void visit(IntegerLiteralExpr n, Object arg) {
-            System.out.println("IntegerLiteral: " + n.getBeginLine() + " " + n.getBeginColumn());
             RuleViolation violation = (RuleViolation) arg;
             if (n.getBeginLine() == violation.getBeginLine() &&
                     n.getBeginColumn() == violation.getBeginColumn()) {
