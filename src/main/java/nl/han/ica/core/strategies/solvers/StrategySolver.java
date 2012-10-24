@@ -4,6 +4,7 @@ import japa.parser.JavaParser;
 import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
 import net.sourceforge.pmd.IRuleViolation;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +14,11 @@ public abstract class StrategySolver  {
     protected CompilationUnit compilationUnit;
     protected IRuleViolation ruleViolation;
     private Parameters parameters;
+    private Logger logger;
 
     public StrategySolver(IRuleViolation ruleViolation){
+        logger = Logger.getLogger(getClass().getName());
+
         this.ruleViolation = ruleViolation;
     }
 
@@ -30,7 +34,7 @@ public abstract class StrategySolver  {
         try {
             compilationUnit = JavaParser.parse(file);
         } catch (ParseException | IOException e) {
-            e.printStackTrace();
+            logger.error("Could not parse the Java File(s) to an AST.");
         }
     }
 

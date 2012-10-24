@@ -15,7 +15,9 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class ASTStrategyHelper  {
-    
+
+    private ASTStrategyHelper() {}
+
     public static void insertMember(TypeDeclaration type, BodyDeclaration decl, int insertIndex) {
         List<BodyDeclaration> members = type.getMembers();
         if (members == null) {
