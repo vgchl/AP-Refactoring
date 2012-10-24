@@ -1,4 +1,4 @@
-package nl.han.ica.app;
+package nl.han.ica.app.models;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
