@@ -3,7 +3,7 @@ package nl.han.ica.core.strategies.solvers;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sourceforge.pmd.RuleViolation;
+import net.sourceforge.pmd.IRuleViolation;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -80,11 +80,11 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
 
     private class LiteralExprVisitor extends ASTVisitor  {
 
-        private RuleViolation ruleViolation;
+        private IRuleViolation ruleViolation;
         private CompilationUnit compilationUnit;
         private NumberLiteral literalViolation;
 
-        public LiteralExprVisitor(RuleViolation ruleViolation, CompilationUnit compilationUnit) {
+        public LiteralExprVisitor(IRuleViolation ruleViolation, CompilationUnit compilationUnit) {
             this.ruleViolation = ruleViolation;
             this.compilationUnit = compilationUnit;
         }

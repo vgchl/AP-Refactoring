@@ -1,22 +1,14 @@
 package nl.han.ica.core;
 
-import japa.parser.ast.CompilationUnit;
-import japa.parser.ast.Node;
+import java.io.File;
 import net.sourceforge.pmd.IRuleViolation;
 import nl.han.ica.core.strategies.Strategy;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.internal.PowerMockitoCore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-
-import java.io.File;
-
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
-import static org.powermock.api.mockito.PowerMockito.mock;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 /**
  * @author: Wouter Konecny
