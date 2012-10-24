@@ -10,7 +10,6 @@ import javafx.collections.ObservableList;
 import net.sourceforge.pmd.*;
 import nl.han.ica.core.strategies.Strategy;
 import nl.han.ica.core.strategies.solvers.Parameters;
-import nl.han.ica.core.strategies.solvers.ReplaceMagicNumberSolver;
 import nl.han.ica.core.strategies.solvers.StrategySolver;
 import nl.han.ica.core.strategies.solvers.StrategySolverFactory;
 import nl.han.ica.core.util.FileUtil;
@@ -45,10 +44,12 @@ public class Job {
      * Process the files in this job and check them against the selected rules. Results are stored in the job report.
      */
     public void process() {
+        logger.info("Processing job…");
         issues.clear();
         for (Strategy strategy : strategies) {
             RuleContext ruleContext = new RuleContext();
             for (File file : files) {
+                logger.info("Processing file: " + file.getAbsolutePath());
                 ruleContext.setSourceCodeFilename(file.getName());
                 ruleContext.setSourceCodeFile(file);
                 try {
@@ -70,6 +71,7 @@ public class Job {
                 ruleContext.setReport(new Report());
             }
         }
+        logger.info("Job done processing.");
     }
 
     /**
@@ -93,6 +95,10 @@ public class Job {
         parameters = null != parameters ? parameters : strategySolver.getDefaultParameters();
         strategySolver.setParameters(parameters);
 
+        logger.info("Solving issue…");
+        logger.info("…with solver: " + strategySolver.getClass().getName());
+        logger.info("…with parameters: " + parameters.toString());
+
         strategySolver.buildAST(issue.getFile());
         strategySolver.rewriteAST();
 
@@ -104,6 +110,7 @@ public class Job {
             e.printStackTrace();
         }
         solution.setAfter(strategySolver.getCompilationUnit().toString());
+        logger.info("Done solving issue.");
         return solution;
     }
 
@@ -126,8 +133,8 @@ public class Job {
             byte[] content = solution.getAfter().getBytes();
             fileOutputStream.write(content);
             process();
-        } catch (FileNotFoundException e) {
         } catch (IOException e) {
+            logger.fatal("Could not apply solution: error during file write.");
         }
     }
 

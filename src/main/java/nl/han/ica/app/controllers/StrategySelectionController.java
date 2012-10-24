@@ -2,11 +2,15 @@ package nl.han.ica.app.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
+
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -28,11 +32,12 @@ import nl.han.ica.core.util.FileUtil;
  * Handles all interaction on the source and strategy selection screen.
  */
 public class StrategySelectionController extends BaseController {
+
     private static String FILES_SELECTION_TITLE = "Select source files";
 
     private Job job;
     private Scene scene;
-    private List<Strategy> strategyList = new ArrayList<>();
+    private List<Strategy> strategyList;
 
     @FXML
     protected VBox strategyOptions;
@@ -52,18 +57,21 @@ public class StrategySelectionController extends BaseController {
     public StrategySelectionController(Scene scene, Job job) {
         this.scene = scene;
         this.job = job;
+        strategyList = new ArrayList<>();
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        super.initialize(url, resourceBundle);
+        initializeStrategyCheckboxList();
     }
 
     @Override
     public Parent getView() {
         try {
-            Parent p = buildView("/views/strategy_selection.fxml");
-
-            fillStrategyCheckboxList();
-
-            return p;
+            return buildView("/views/strategy_selection.fxml");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.fatal("Could not build the view from the FXML document.", e);
             return null;
         }
     }
@@ -109,6 +117,7 @@ public class StrategySelectionController extends BaseController {
             event.consume();
         }
     }
+
     @FXML
     public void handleFilesDragDropped(DragEvent event) {
         Dragboard db = event.getDragboard();
@@ -168,7 +177,7 @@ public class StrategySelectionController extends BaseController {
         return fileList.toString();
     }
 
-    private void fillStrategyCheckboxList() {
+    private void initializeStrategyCheckboxList() {
         strategyList.add(new ReplaceMagicNumber());
 
         for (Strategy strategy : strategyList) {

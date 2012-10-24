@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class IssueResolveController extends BaseController implements Initializable {
+public class IssueResolveController extends BaseController {
 
     private Job job;
     private Issue issue;
@@ -43,10 +43,13 @@ public class IssueResolveController extends BaseController implements Initializa
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        super.initialize(url, resourceBundle);
         issueChangesContainer.getChildren().add(changeController.getView());
     }
 
     private void updateView() {
+        logger.info("Updating issue view");
+
         issueTitle.setText(issue.getStrategy().getName());
         issueDescription.setText(issue.getRuleViolation().getRule().getDescription().replaceAll("\n", " ").replaceAll("  ", ""));
 
@@ -69,7 +72,7 @@ public class IssueResolveController extends BaseController implements Initializa
         try {
             return (Pane) buildView("/views/issue_resolve.fxml");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.fatal("Could not build the view from the FXML document.", e);
             return null;
         }
     }
