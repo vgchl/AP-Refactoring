@@ -88,7 +88,6 @@ public class FileUtil {
      */
     public static void setFileContent(File file, String content) throws IOException {
         FileOutputStream fileOutputStream = new FileOutputStream(file);
-        fole.l
         fileOutputStream.write(content.getBytes());
         fileOutputStream.close();
     }
