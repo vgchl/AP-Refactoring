@@ -1,9 +1,6 @@
 package nl.han.ica.core.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,7 +64,7 @@ public class FileUtil {
      * @return The contents of a file
      * @throws IOException When the given file could not be found or read.
      */
-    public static String getFileContents(File file) throws IOException {
+    public static String getFileContent(File file) throws IOException {
         String lineSeparator = System.getProperty("line.separator");
         BufferedReader reader = new BufferedReader(new FileReader(file.getAbsoluteFile()));
         String nextLine;
@@ -77,5 +74,17 @@ public class FileUtil {
             buffer.append(lineSeparator);
         }
         return buffer.toString();
+    }
+
+    /**
+     * Sets the contents of a file from a String.
+     *
+     * @param file The file to write to.
+     * @param content The contents to set.
+     * @throws IOException When the file could not be found or written to.
+     */
+    public static void setFileContent(File file, String content) throws IOException {
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
+        fileOutputStream.write(content.getBytes());
     }
 }

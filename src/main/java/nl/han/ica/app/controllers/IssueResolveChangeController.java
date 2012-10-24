@@ -1,7 +1,6 @@
 package nl.han.ica.app.controllers;
 
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.web.WebView;
 import nl.han.ica.app.models.CodeEditor;
@@ -11,7 +10,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class IssueResolveChangeController extends BaseController implements Initializable {
+public class IssueResolveChangeController extends BaseController {
 
     private Solution solution;
     private CodeEditor editorBefore;
@@ -22,9 +21,9 @@ public class IssueResolveChangeController extends BaseController implements Init
     @FXML
     protected WebView editorAfterView;
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        super.initialize(url, resourceBundle);
         initializeEditors();
     }
 
@@ -34,6 +33,7 @@ public class IssueResolveChangeController extends BaseController implements Init
     }
 
     private void updateEditors() {
+        logger.info("Updating editors");
         editorBefore.setValue(solution.getBefore());
         editorAfter.setValue(solution.getAfter());
     }
@@ -43,7 +43,7 @@ public class IssueResolveChangeController extends BaseController implements Init
         try {
             return buildView("/views/issue_resolve_change.fxml");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.fatal("Could not build the view from the FXML document.", e);
             return null;
         }
     }

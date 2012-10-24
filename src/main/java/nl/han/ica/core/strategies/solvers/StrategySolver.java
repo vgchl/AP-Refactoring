@@ -3,10 +3,10 @@ package nl.han.ica.core.strategies.solvers;
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
+import net.sourceforge.pmd.IRuleViolation;
+
 import java.io.File;
 import java.io.IOException;
-
-import net.sourceforge.pmd.IRuleViolation;
 
 public abstract class StrategySolver  {
 

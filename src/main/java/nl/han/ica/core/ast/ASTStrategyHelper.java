@@ -2,6 +2,7 @@ package nl.han.ica.core.ast;
 
 import japa.parser.ast.body.BodyDeclaration;
 import japa.parser.ast.body.TypeDeclaration;
+
 import java.util.ArrayList;
 import java.util.List;
 

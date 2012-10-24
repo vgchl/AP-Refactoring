@@ -1,7 +1,5 @@
 package nl.han.ica.core;
 
-import japa.parser.ast.CompilationUnit;
-import japa.parser.ast.Node;
 import net.sourceforge.pmd.IRuleViolation;
 import nl.han.ica.core.strategies.Strategy;
 

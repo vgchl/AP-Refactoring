@@ -1,10 +1,5 @@
 package nl.han.ica.core;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import net.sourceforge.pmd.*;
@@ -14,6 +9,14 @@ import nl.han.ica.core.strategies.solvers.StrategySolver;
 import nl.han.ica.core.strategies.solvers.StrategySolverFactory;
 import nl.han.ica.core.util.FileUtil;
 import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Lists the files and the rules to check them for.
@@ -44,10 +47,12 @@ public class Job {
      * Process the files in this job and check them against the selected rules. Results are stored in the job report.
      */
     public void process() {
+        logger.info("Processing job…");
         issues.clear();
         for (Strategy strategy : strategies) {
             RuleContext ruleContext = new RuleContext();
             for (File file : files) {
+                logger.info("Processing file: " + file.getAbsolutePath());
                 ruleContext.setSourceCodeFilename(file.getName());
                 ruleContext.setSourceCodeFile(file);
                 try {
@@ -69,6 +74,7 @@ public class Job {
                 ruleContext.setReport(new Report());
             }
         }
+        logger.info("Job done processing.");
     }
 
     /**
@@ -92,17 +98,22 @@ public class Job {
         parameters = null != parameters ? parameters : strategySolver.getDefaultParameters();
         strategySolver.setParameters(parameters);
 
+        logger.info("Solving issue…");
+        logger.info("…with solver: " + strategySolver.getClass().getName());
+        logger.info("…with parameters: " + parameters.toString());
+
         strategySolver.buildAST(issue.getFile());
         strategySolver.rewriteAST();
 
         Solution solution = new Solution(strategySolver, parameters); // TODO: Move to StrategySolver
         try {
-            String contents = FileUtil.getFileContents(issue.getFile());
+            String contents = FileUtil.getFileContent(issue.getFile());
             solution.setBefore(contents);
         } catch (IOException e) {
             e.printStackTrace();
         }
         solution.setAfter(strategySolver.getCompilationUnit().toString());
+        logger.info("Done solving issue.");
         return solution;
     }
 
@@ -121,12 +132,10 @@ public class Job {
      */
     public void applySolution(Issue issue, Solution solution) {
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(issue.getFile());
-            byte[] content = solution.getAfter().getBytes();
-            fileOutputStream.write(content);
+            FileUtil.setFileContent(issue.getFile(), solution.getAfter());
             process();
-        } catch (FileNotFoundException e) {
         } catch (IOException e) {
+            logger.fatal("Could not apply solution: error during file write.");
         }
     }
 
