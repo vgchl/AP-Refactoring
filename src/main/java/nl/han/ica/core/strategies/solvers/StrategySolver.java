@@ -7,8 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
-import org.apache.log4j.Logger;
 import net.sourceforge.pmd.IRuleViolation;
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jface.text.Document;
@@ -54,7 +54,6 @@ public abstract class StrategySolver  {
      * @param file File to build the AST from.
      */
     public void buildAST(File file) {
-
         astParser = ASTParser.newParser(AST.JLS3);
 
         String existingFile = getExistingFileContents(file);
@@ -71,8 +70,7 @@ public abstract class StrategySolver  {
 
     }
     
-    private String getExistingFileContents(File file) {
-        
+    private String getExistingFileContents(File file) {        
         StringBuilder sb = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             char[] buffer = new char[1024];
@@ -89,6 +87,10 @@ public abstract class StrategySolver  {
         return null;
     }
     
+    /**
+     * Get the top level type declaration (class in the file)
+     * @return TypeDeclaration off the first typedeclarion
+     */
     protected TypeDeclaration getTopLevelTypeDeclaration(){
         Iterator iter = compilationUnit.types().iterator();
         while (iter.hasNext()) {
@@ -161,6 +163,11 @@ public abstract class StrategySolver  {
         return new Parameters();
     }
 
+    /**
+     * Get the document were changes will be applied on
+     * 
+     * @return docoument 
+     */
     public IDocument getDocument() {
         return document;
     }
