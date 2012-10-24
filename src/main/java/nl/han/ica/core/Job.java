@@ -112,7 +112,7 @@ public class Job {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        solution.setAfter(strategySolver.getCompilationUnit().toString());
+        solution.setAfter(strategySolver.getDocument().get());
         logger.info("Done solving issue.");
         return solution;
     }
