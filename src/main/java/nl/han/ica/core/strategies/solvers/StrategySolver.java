@@ -1,6 +1,5 @@
 package nl.han.ica.core.strategies.solvers;
 
-
 import net.sourceforge.pmd.IRuleViolation;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.JavaCore;
@@ -17,34 +16,23 @@ import java.util.Map;
 
 public abstract class StrategySolver  {
 
-    
     protected CompilationUnit compilationUnit;
     protected IRuleViolation ruleViolation;
     protected ASTParser astParser;
     protected IDocument document;
-    protected Parameters parameters;
     protected Logger logger;
+    protected Parameters parameters;
 
     /**
      * Creates a strategy solver with rule violation.
      *
      * @param ruleViolation The rule violation.
      */
-    public StrategySolver(IRuleViolation ruleViolation){
+    public StrategySolver(final IRuleViolation ruleViolation){
         logger = Logger.getLogger(getClass().getName());
-
         this.ruleViolation = ruleViolation;
-    }
 
-    /**
-     * Creates a strategy solver with rule violation and parameters.
-     *
-     * @param ruleViolation The rule violation.
-     * @param parameters The parameters that the solver needs to perform the refactoring.
-     */
-    public StrategySolver(IRuleViolation ruleViolation, Parameters parameters) {
-        this(ruleViolation);
-        this.parameters = parameters;
+        parameters = getDefaultParameters();
     }
 
     public abstract void rewriteAST();
@@ -55,7 +43,6 @@ public abstract class StrategySolver  {
      * @param file File to build the AST from.
      */
     public void buildAST(File file) {
-
         astParser = ASTParser.newParser(AST.JLS3);
 
         String existingFile = getExistingFileContents(file);
@@ -72,8 +59,7 @@ public abstract class StrategySolver  {
 
     }
     
-    private String getExistingFileContents(File file) {
-        
+    private String getExistingFileContents(File file) { // TODO: Replace by FileUtil.getFileContents(File)
         StringBuilder sb = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             char[] buffer = new char[1024];
@@ -122,7 +108,6 @@ public abstract class StrategySolver  {
      * @return The rule violation interface.
      */
     public IRuleViolation getRuleViolation() {
-
         return ruleViolation;
     }
 
@@ -150,13 +135,18 @@ public abstract class StrategySolver  {
      * @param parameters The parameters to set.
      */
     public void setParameters(Parameters parameters) {
+        for (Map.Entry<String, Object> entry : getDefaultParameters().entrySet()) {
+            if (! parameters.containsKey(entry.getKey())) {
+                parameters.put(entry.getKey(), entry.getValue());
+            }
+        }
         this.parameters = parameters;
     }
 
     /**
-     * Gets the default parameters (empty).
+     * Gets the default parameters.
      *
-     * @return A empty parameter list.
+     * @return The default parameters.
      */
     public Parameters getDefaultParameters() {
         return new Parameters();

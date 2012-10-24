@@ -42,7 +42,7 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
     @Override
     public Parameters getDefaultParameters() {
         Parameters defaults = new Parameters();
-        defaults.set(PARAMETER_CONSTANT_NAME, "THAT_CONSTANT_NAME");
+        defaults.put(PARAMETER_CONSTANT_NAME, "THAT_CONSTANT_NAME");
         return defaults;
     }
 

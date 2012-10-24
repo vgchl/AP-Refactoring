@@ -77,7 +77,7 @@ public class IssueResolveChangeController extends BaseController {
     @FXML
     public void parametersChanged(KeyEvent event) {
         TextField textField = (TextField) event.getSource();
-        solution.getParameters().set(textField.getId(), textField.getText());
+        solution.getParameters().put(textField.getId(), textField.getText());
     }
 
 }

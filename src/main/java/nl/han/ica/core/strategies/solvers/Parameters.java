@@ -4,6 +4,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * A holder for Parameters that are used in a solver.
  */
@@ -24,12 +27,24 @@ public class Parameters {
         return properties;
     }
 
-    public void set(String key, Object value) {
+    public void put(String key, Object value) {
         properties.put(key, value);
     }
 
     public void merge(Parameters parameters) {
         properties.putAll(parameters.getAll());
+    }
+
+    public Set<Map.Entry<String, Object>> entrySet() {
+        return properties.entrySet();
+    }
+
+    public Object remove(Object key) {
+        return properties.remove(key);
+    }
+
+    public boolean containsKey(Object key) {
+        return properties.containsKey(key);
     }
 
     public void addListener(MapChangeListener<? super String, ? super Object> mapChangeListener) {
