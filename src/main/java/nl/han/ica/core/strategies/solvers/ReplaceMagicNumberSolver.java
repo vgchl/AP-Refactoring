@@ -1,16 +1,10 @@
 package nl.han.ica.core.strategies.solvers;
 
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sourceforge.pmd.IRuleViolation;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.TextEdit;
 
 /**
  * Solver for the Replace Magic Number with Constant violation.
@@ -66,17 +60,8 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
         listRewrite.insertFirst(fieldDeclaration, null);
         
         applyChanges(rewrite);
-    }
-    
-    private void applyChanges(ASTRewrite rewrite){
-        TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
-        
-        try {
-            textEdit.apply(document);
-        } catch (MalformedTreeException | BadLocationException ex) {
-            Logger.getLogger(ReplaceMagicNumberSolver.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+    }    
+
     
     private FieldDeclaration createNewFieldDeclaration(AST ast, String fieldValue){
         VariableDeclarationFragment variableDeclarationFragment = ast.newVariableDeclarationFragment();

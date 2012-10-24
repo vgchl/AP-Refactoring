@@ -7,12 +7,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
 import net.sourceforge.pmd.IRuleViolation;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.TextEdit;
 
 public abstract class StrategySolver  {
 
@@ -103,9 +108,26 @@ public abstract class StrategySolver  {
         return null;      
     }
     
+    /**
+     * Refresh the compilation unit,
+     * use this method after you made some changes in the document
+     */
     protected void refreshCompilationUnit(){
         astParser.setSource(document.get().toCharArray());
         compilationUnit = (CompilationUnit) astParser.createAST(null);
+    }
+    
+    /**
+     * Apply rewrite changes on the document
+     * @param rewrite AstRewrite wich keeps the changes made in the ast.
+     */
+    protected void applyChanges(ASTRewrite rewrite){
+        TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());        
+        try {
+            textEdit.apply(document);
+        } catch (MalformedTreeException | BadLocationException ex) {
+            java.util.logging.Logger.getLogger(ReplaceMagicNumberSolver.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
