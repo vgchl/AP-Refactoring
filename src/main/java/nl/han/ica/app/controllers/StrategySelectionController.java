@@ -69,7 +69,7 @@ public class StrategySelectionController extends BaseController {
     }
 
     @FXML
-    private void selectSourceFiles(ActionEvent event) {
+    public void selectSourceFiles(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(FILES_SELECTION_TITLE);
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Java Files", "*.java"));
@@ -85,7 +85,7 @@ public class StrategySelectionController extends BaseController {
     }
 
     @FXML
-    private void selectSourceDirectory(ActionEvent event) {
+    public void selectSourceDirectory(ActionEvent event) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle(FILES_SELECTION_TITLE);
 
@@ -132,7 +132,7 @@ public class StrategySelectionController extends BaseController {
     }
 
     @FXML
-    private void analyze(ActionEvent event) {
+    public void analyze(ActionEvent event) {
         ObservableList<Node> checkboxes = strategyOptions.getChildren();
 
         for (int i = 0; i < checkboxes.size(); i++) {
@@ -143,8 +143,8 @@ public class StrategySelectionController extends BaseController {
             }
         }
 
-        ResolveIssuesController resolveIssuesController = new ResolveIssuesController(job);
-        scene.setRoot(resolveIssuesController.getView());
+        IssueIndexController issueIndexController = new IssueIndexController(job);
+        scene.setRoot(issueIndexController.getView());
     }
 
     private void onSourceFilesSelected() {
@@ -169,13 +169,13 @@ public class StrategySelectionController extends BaseController {
     }
 
     private void fillStrategyCheckboxList() {
-        strategyList.add( new ReplaceMagicNumber() );
-        //strategyList.add( new ReplacePublicFieldSolver() );
-        for (Strategy strategy : strategyList) {
-            CheckBox cb = new CheckBox();
+        strategyList.add(new ReplaceMagicNumber());
 
-            cb.setText(strategy.getName());
-            strategyOptions.getChildren().add(cb);
+        for (Strategy strategy : strategyList) {
+            CheckBox checkBox = new CheckBox();
+            checkBox.setText(strategy.getName());
+            checkBox.setSelected(true);
+            strategyOptions.getChildren().add(checkBox);
         }
     }
 

@@ -1,15 +1,38 @@
 package nl.han.ica.app;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
 import javafx.scene.web.WebView;
 import org.apache.commons.lang3.StringEscapeUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CodeEditor {
 
     private WebView webView;
+    private List<String> scriptCache;
 
     public CodeEditor(WebView webView) {
+        scriptCache = new ArrayList<>();
         this.webView = webView;
-        this.webView.getEngine().load(getClass().getResource("/editor/editor.html").toExternalForm());
+        initializeWebView();
+    }
+
+    private void initializeWebView() {
+        webView.getEngine().load(getClass().getResource("/editor/editor.html").toExternalForm());
+        webView.getEngine().getLoadWorker().stateProperty().addListener(
+                new ChangeListener<Worker.State>() {
+                    public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
+                        if (newState == Worker.State.SUCCEEDED && scriptCache.size() > 0) {
+                            for (String script : scriptCache) {
+                                execute(script);
+                            }
+                            scriptCache.clear();
+                        }
+                    }
+                });
     }
 
     public void setValue(String value) {
@@ -50,8 +73,12 @@ public class CodeEditor {
         execute(script.toString());
     }
 
-    private Object execute(String script) {
-        return webView.getEngine().executeScript(script);
+    private void execute(final String script) {
+        if (webView.getEngine().getLoadWorker().getState() == Worker.State.SUCCEEDED) {
+            webView.getEngine().executeScript(script);
+        } else {
+            scriptCache.add(script);
+        }
     }
 
     public class Position {
