@@ -9,7 +9,7 @@ import java.util.Queue;
 /**
  * Contains helpers for common operations involving files and directories.
  */
-public final class FileUtil {
+public class FileUtil {
 
     /**
      * Private constructor to prevent class initialization.
@@ -75,6 +75,7 @@ public final class FileUtil {
             buffer.append(lineSeparator);
         }
         reader.close();
+        fileReader.close();
         return buffer.toString();
     }
 
@@ -87,6 +88,7 @@ public final class FileUtil {
      */
     public static void setFileContent(File file, String content) throws IOException {
         FileOutputStream fileOutputStream = new FileOutputStream(file);
+        fole.l
         fileOutputStream.write(content.getBytes());
         fileOutputStream.close();
     }
