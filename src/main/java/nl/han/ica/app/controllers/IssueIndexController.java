@@ -75,6 +75,11 @@ public class IssueIndexController extends BaseController implements Initializabl
         });
     }
 
+    /**
+     * Builds and gets the required view.
+     *
+     * @return The view.
+     */
     @Override
     public Parent getView() {
         try {
