@@ -45,7 +45,14 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
     @Override
     public Map<String, Parameter> getDefaultParameters() {
         Map<String, Parameter> defaults = new HashMap<>();
-        defaults.put(PARAMETER_CONSTANT_NAME, new Parameter(PARAMETER_CONSTANT_NAME, "THAT_CONSTANT_NAME"));
+        Parameter constantName = new Parameter(PARAMETER_CONSTANT_NAME, "THAT_CONSTANT_NAME");
+        constantName.getConstraints().add(new Parameter.Constraint() {
+            @Override
+            public boolean isValid(Object value) {
+                return ((String) value).matches("^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$");
+            }
+        });
+        defaults.put(constantName.getTitle(), constantName);
         return defaults;
     }
 

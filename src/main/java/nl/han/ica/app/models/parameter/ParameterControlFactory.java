@@ -37,13 +37,27 @@ public class ParameterControlFactory {
     }
 
     private TextField createTextFieldControl(final Parameter parameter, final EventHandler<ParameterEvent> eventHandler) {
-        TextField textField = new TextField();
+        final TextField textField = new TextField();
         textField.setText((String) parameter.getValue());
-        textField.setOnAction(new EventHandler<ActionEvent> () {
+        textField.setOnKeyTyped(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                String value = textField.getText();
+                if (!event.isShortcutDown() && !event.isAltDown() && !event.isControlDown()) {
+                    value = value.substring(0, textField.getCaretPosition()) + event.getCharacter() + value.substring(textField.getCaretPosition());
+                }
+                if (parameter.isValidValue(value)) {
+                    parameter.setValue(value);
+                    textField.getStyleClass().remove("text-field-erroneous");
+                } else if (!textField.getStyleClass().contains("text-field-erroneous")) {
+                    textField.getStyleClass().add("text-field-erroneous");
+                }
+            }
+        });
+        textField.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                parameter.setValue(((TextField) event.getSource()).getText());
-                if (null != eventHandler) {
+                if (null != eventHandler && ((String) parameter.getValue()).equals(textField.getText())) {
                     eventHandler.handle(new ParameterEvent(parameter));
                 }
             }
