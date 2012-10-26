@@ -1,6 +1,8 @@
 package nl.han.ica.core.strategies.solvers;
 
 import net.sourceforge.pmd.IRuleViolation;
+import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
+import nl.han.ica.core.ast.visitors.NumberLiteralVisitor;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
@@ -23,13 +25,20 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
 
     @Override
     public void rewriteAST() {
-        LiteralExprVisitor visitor = new LiteralExprVisitor(ruleViolation, compilationUnit);
-        compilationUnit.accept(visitor);
+        NumberLiteralVisitor numberLiteralVisitor = new NumberLiteralVisitor(compilationUnit);
+        FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
+        
+        compilationUnit.accept(numberLiteralVisitor);
+        compilationUnit.accept(fieldDeclarationVisitor);
+        
         AST ast = compilationUnit.getAST();
         
-        rewriteMagicNumber(ast, visitor.getLiteralViolation());
-        addStaticFinalField(ast, visitor.getLiteralViolation().getToken());
+        NumberLiteral literalViolation = numberLiteralVisitor.getLiteralViolation(ruleViolation.getBeginLine(),
+                ruleViolation.getBeginColumn());
+        rewriteMagicNumber(ast, literalViolation);
+        addStaticFinalField(ast, literalViolation.getToken());
     }
+    
 
     /**
      * Sets the replace name for the constant.
@@ -79,30 +88,4 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
         return fieldDeclaration;
     }
 
-
-    private class LiteralExprVisitor extends ASTVisitor  {
-
-        private IRuleViolation ruleViolation;
-        private CompilationUnit compilationUnit;
-        private NumberLiteral literalViolation;
-
-        public LiteralExprVisitor(IRuleViolation ruleViolation, CompilationUnit compilationUnit) {
-            this.ruleViolation = ruleViolation;
-            this.compilationUnit = compilationUnit;
-        }
-        
-        @Override
-        public boolean visit(NumberLiteral node) {
-            if(compilationUnit.getColumnNumber(node.getStartPosition()) == ruleViolation.getBeginColumn()-1 &&
-                    compilationUnit.getLineNumber(node.getStartPosition()) == ruleViolation.getBeginLine()){
-                literalViolation = node;
-            }
-            return super.visit(node);
-        }
-
-        public NumberLiteral getLiteralViolation() {
-            return literalViolation;
-        }
-        
-    }
 }
