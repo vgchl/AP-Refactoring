@@ -12,7 +12,7 @@ import nl.han.ica.app.models.parameter.ParameterChangeListener;
 import nl.han.ica.app.models.parameter.ParameterControlFactory;
 import nl.han.ica.app.models.parameter.ParameterEvent;
 import nl.han.ica.core.Solution;
-import nl.han.ica.core.strategies.solvers.Parameter;
+import nl.han.ica.core.Parameter;
 
 import javax.swing.event.EventListenerList;
 import java.io.IOException;

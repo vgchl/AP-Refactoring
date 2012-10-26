@@ -2,6 +2,7 @@ package nl.han.ica.core.strategies.solvers;
 
 
 import net.sourceforge.pmd.IRuleViolation;
+import nl.han.ica.core.Parameter;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;

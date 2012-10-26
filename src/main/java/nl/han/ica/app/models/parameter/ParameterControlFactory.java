@@ -4,7 +4,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Control;
 import javafx.scene.control.TextField;
-import nl.han.ica.core.strategies.solvers.Parameter;
+import javafx.scene.input.KeyEvent;
+import nl.han.ica.core.Parameter;
 
 /**
  * Creates form controls based on the parameter value type. Furthermore, it configures the control to synchronize its

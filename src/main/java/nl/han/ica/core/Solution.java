@@ -1,6 +1,5 @@
 package nl.han.ica.core;
 
-import nl.han.ica.core.strategies.solvers.Parameter;
 import nl.han.ica.core.strategies.solvers.StrategySolver;
 
 import java.util.Map;

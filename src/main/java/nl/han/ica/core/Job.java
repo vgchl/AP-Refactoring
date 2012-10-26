@@ -4,7 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import net.sourceforge.pmd.*;
 import nl.han.ica.core.strategies.Strategy;
-import nl.han.ica.core.strategies.solvers.Parameter;
 import nl.han.ica.core.strategies.solvers.StrategySolver;
 import nl.han.ica.core.strategies.solvers.StrategySolverFactory;
 import nl.han.ica.core.util.FileUtil;
