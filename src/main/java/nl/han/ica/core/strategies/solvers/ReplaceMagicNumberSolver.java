@@ -29,30 +29,31 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
         NumberLiteralVisitor numberLiteralVisitor = new NumberLiteralVisitor(compilationUnit);       
         compilationUnit.accept(numberLiteralVisitor);
         
+        FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
+        compilationUnit.accept(fieldDeclarationVisitor);
+        
         AST ast = compilationUnit.getAST();
         
         NumberLiteral literalViolation = numberLiteralVisitor.getLiteralViolation(ruleViolation.getBeginLine(),
                 ruleViolation.getBeginColumn());
         
-        setDefaultReplaceName(literalViolation.getToken());
+        setDefaultReplaceName(fieldDeclarationVisitor, literalViolation.getToken());
         
         rewriteMagicNumber(ast, literalViolation);
-        addStaticFinalField(ast, literalViolation.getToken());
-    }
-    
-    private void setDefaultReplaceName(String violationValue){
-        List<FieldDeclaration> fieldDeclarations = getSuggestionDeclarations(violationValue);
-        if(!fieldDeclarations.isEmpty()){
-            VariableDeclaration variableDeclaration = (VariableDeclaration) fieldDeclarations.get(0).fragments().get(0);
-            this.replaceName = variableDeclaration.getName().toString();
+        
+        if(!fieldDeclarationVisitor.hasFieldName(replaceName)){
+            addStaticFinalField(ast, literalViolation.getToken());
         }
     }
     
-    private List<FieldDeclaration> getSuggestionDeclarations(String violationValue){
-        FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
-        compilationUnit.accept(fieldDeclarationVisitor);
-        return fieldDeclarationVisitor.getFieldDeclarationWithValue(violationValue);
+    private void setDefaultReplaceName(FieldDeclarationVisitor fieldDeclarationVisitor, String violationValue){
+        List<FieldDeclaration> fieldDeclarations = fieldDeclarationVisitor.getFieldDeclarationWithValue(violationValue);
+        if(!fieldDeclarations.isEmpty()){
+            VariableDeclaration variableDeclaration = (VariableDeclaration) fieldDeclarations.get(0).fragments().get(0);
+            replaceName = variableDeclaration.getName().toString();
+        }
     }
+
     
 
     /**
@@ -78,9 +79,10 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
         applyChanges(rewrite);
     }
     
-    private void addStaticFinalField(AST ast, String fieldValue){       
+    private void addStaticFinalField(AST ast, String fieldValue){
+        //TODO fix: Fails when file has multiple classes
         TypeDeclaration topLevelType = getTopLevelTypeDeclaration();
-
+    
         ASTRewrite rewrite = ASTRewrite.create(topLevelType.getRoot().getAST());
         ListRewrite listRewrite = rewrite.getListRewrite(topLevelType,
                 TypeDeclaration.BODY_DECLARATIONS_PROPERTY);        
@@ -103,10 +105,4 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
         return fieldDeclaration;
     }
     
-    private boolean usesExistingFieldName(){
-        
-        
-        return false;
-    }
-
 }
