@@ -10,6 +10,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,7 +20,7 @@ import java.util.logging.Logger;
  */
 public class ReplaceMagicNumberSolver extends StrategySolver {
 
-    private static final String PARAMETER_CONSTANT_NAME = "magicConstantName";
+    private static final String PARAMETER_CONSTANT_NAME = "Constant name";
 
     /**
      * The constructor for this solver.
@@ -40,20 +42,19 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
     }
 
     @Override
-    public Parameters getDefaultParameters() {
-        Parameters defaults = new Parameters();
-        defaults.put(PARAMETER_CONSTANT_NAME, "THAT_CONSTANT_NAME");
+    public Map<String, Parameter> getDefaultParameters() {
+        Map<String, Parameter> defaults = new HashMap<>();
+        defaults.put(PARAMETER_CONSTANT_NAME, new Parameter(PARAMETER_CONSTANT_NAME, "THAT_CONSTANT_NAME"));
         return defaults;
     }
 
     private void rewriteMagicNumber(AST ast, NumberLiteral numberLiteral){
         ASTRewrite rewrite = ASTRewrite.create(numberLiteral.getAST());
-        SimpleName newSimpleName = ast.newSimpleName((String) parameters.get(PARAMETER_CONSTANT_NAME));
+        SimpleName newSimpleName = ast.newSimpleName((String) parameters.get(PARAMETER_CONSTANT_NAME).getValue());
         rewrite.replace(numberLiteral, newSimpleName, null);
-        
         applyChanges(rewrite);
     }
-    
+
     private void addStaticFinalField(AST ast, String fieldValue){       
         TypeDeclaration topLevelType = getTopLevelTypeDeclaration();
 
@@ -79,12 +80,11 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
     
     private FieldDeclaration createNewFieldDeclaration(AST ast, String fieldValue){
         VariableDeclarationFragment variableDeclarationFragment = ast.newVariableDeclarationFragment();
-        variableDeclarationFragment.setName(ast.newSimpleName((String) parameters.get(PARAMETER_CONSTANT_NAME)));
+        variableDeclarationFragment.setName(ast.newSimpleName((String) parameters.get(PARAMETER_CONSTANT_NAME).getValue()));
         variableDeclarationFragment.setInitializer(ast.newNumberLiteral(fieldValue));
         FieldDeclaration fieldDeclaration = ast.newFieldDeclaration(variableDeclarationFragment);
         fieldDeclaration.setType(ast.newPrimitiveType(PrimitiveType.INT));
         fieldDeclaration.modifiers().addAll(ast.newModifiers(Modifier.PRIVATE | Modifier.STATIC | Modifier.FINAL));
-        
         return fieldDeclaration;
     }
 

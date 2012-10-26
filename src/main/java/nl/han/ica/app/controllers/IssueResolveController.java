@@ -1,17 +1,20 @@
 package nl.han.ica.app.controllers;
 
-import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import nl.han.ica.app.models.parameter.ParameterChangeListener;
+import nl.han.ica.app.models.parameter.ParameterEvent;
 import nl.han.ica.core.Issue;
 import nl.han.ica.core.Job;
 import nl.han.ica.core.Solution;
-import nl.han.ica.core.strategies.solvers.Parameters;
+import nl.han.ica.core.strategies.solvers.Parameter;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class IssueResolveController extends BaseController {
@@ -50,18 +53,17 @@ public class IssueResolveController extends BaseController {
         issueTitle.setText(issue.getStrategy().getName());
         issueDescription.setText(issue.getRuleViolation().getRule().getDescription().replaceAll("\n", " ").replaceAll("  ", ""));
 
-        final Parameters parameters = new Parameters();
-        parameters.addListener(new MapChangeListener<String, Object>() {
+        final Map<String, Parameter> parameters = new HashMap<>();
+        changeController.addParameterChangeListener(new ParameterChangeListener() {
             @Override
-            public void onChanged(Change<? extends String, ? extends Object> change) {
+            public void changed(ParameterEvent event) {
                 showSolution(parameters);
             }
         });
-
         showSolution(parameters);
     }
 
-    private void showSolution(final Parameters parameters) {
+    private void showSolution(Map<String, Parameter> parameters) {
         solution = job.solve(issue, parameters);
         changeController.setSolution(solution);
     }

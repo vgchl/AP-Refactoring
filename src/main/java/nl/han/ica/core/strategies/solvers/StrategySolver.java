@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public abstract class StrategySolver  {
     protected ASTParser astParser;
     protected IDocument document;
     protected Logger logger;
-    protected Parameters parameters;
+    protected Map<String, Parameter> parameters;
 
     /**
      * Creates a strategy solver with rule violation.
@@ -125,7 +126,7 @@ public abstract class StrategySolver  {
      *
      * @return The parameters for this strategy solver.
      */
-    public Parameters getParameters() {
+    public Map<String, Parameter> getParameters() {
         return parameters;
     }
 
@@ -134,8 +135,8 @@ public abstract class StrategySolver  {
      *
      * @param parameters The parameters to set.
      */
-    public void setParameters(Parameters parameters) {
-        for (Map.Entry<String, Object> entry : getDefaultParameters().entrySet()) {
+    public void setParameters(Map<String, Parameter> parameters) {
+        for (Map.Entry<String, Parameter> entry: getDefaultParameters().entrySet()) {
             if (! parameters.containsKey(entry.getKey())) {
                 parameters.put(entry.getKey(), entry.getValue());
             }
@@ -148,8 +149,8 @@ public abstract class StrategySolver  {
      *
      * @return The default parameters.
      */
-    public Parameters getDefaultParameters() {
-        return new Parameters();
+    public Map<String, Parameter> getDefaultParameters() {
+        return new HashMap<>();
     }
 
     public IDocument getDocument() {
