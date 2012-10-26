@@ -31,6 +31,12 @@ public class NumberLiteralVisitor extends ASTVisitor  {
     }
 
 
+    /**
+     * Get the number literal that violated the rules
+     * @param beginLine beginline of the ruleviolation
+     * @param beginColumn begincolumn of the ruleviolation
+     * @return numberliteral that starts on same beginline and begincolumn
+     */
     public NumberLiteral getLiteralViolation(int beginLine, int beginColumn) {
         NumberLiteral literalViolation = null;
 

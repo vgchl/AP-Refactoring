@@ -90,11 +90,10 @@ public abstract class StrategySolver  {
     }
     
     /**
-     * Get the top level type declaration (class in the file)
-     * @return TypeDeclaration off the first typedeclarion
+     * Get the top level type declaration (public class/interface in the file)
+     * @return TypeDeclaration top level typedeclaration
      */
     protected TypeDeclaration getTopLevelTypeDeclaration(){
-        //TODO fix: Fails when file has multiple classes
         Iterator iter = compilationUnit.types().iterator();
         while (iter.hasNext()) {
             TypeDeclaration td = (TypeDeclaration) iter.next();
@@ -104,6 +103,22 @@ public abstract class StrategySolver  {
             }
         }
         return null;      
+    }
+    
+    /**
+     * Get the type declaration in the file with a given name
+     * @param name name of interface/class
+     * @return TypeDeclaration with the matching name
+     */
+    protected TypeDeclaration getTypeDeclaration(String name){
+        Iterator iter = compilationUnit.types().iterator();
+        while (iter.hasNext()) {
+            TypeDeclaration td = (TypeDeclaration) iter.next();
+            if(td.getName().toString().equals(name)){
+                return td;
+            }
+        }
+        return null;
     }
     
     /**

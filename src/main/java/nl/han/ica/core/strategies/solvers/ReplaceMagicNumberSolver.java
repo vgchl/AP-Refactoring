@@ -26,23 +26,23 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
 
     @Override
     public void rewriteAST() {
+        TypeDeclaration typeDeclaration = getTypeDeclaration(ruleViolation.getClassName());
+        
         NumberLiteralVisitor numberLiteralVisitor = new NumberLiteralVisitor(compilationUnit);       
-        compilationUnit.accept(numberLiteralVisitor);
-        
+
+        typeDeclaration.accept(numberLiteralVisitor);
         FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
-        compilationUnit.accept(fieldDeclarationVisitor);
-        
-        AST ast = compilationUnit.getAST();
+        typeDeclaration.accept(fieldDeclarationVisitor);
         
         NumberLiteral literalViolation = numberLiteralVisitor.getLiteralViolation(ruleViolation.getBeginLine(),
                 ruleViolation.getBeginColumn());
         
         setDefaultReplaceName(fieldDeclarationVisitor, literalViolation.getToken());
         
-        rewriteMagicNumber(ast, literalViolation);
+        rewriteMagicNumber(typeDeclaration.getAST(), literalViolation);
         
         if(!fieldDeclarationVisitor.hasFieldName(replaceName)){
-            addStaticFinalField(ast, literalViolation.getToken());
+            addStaticFinalField(typeDeclaration, literalViolation.getToken());
         }
     }
     
@@ -53,8 +53,6 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
             replaceName = variableDeclaration.getName().toString();
         }
     }
-
-    
 
     /**
      * Sets the replace name for the constant.
@@ -79,11 +77,10 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
         applyChanges(rewrite);
     }
     
-    private void addStaticFinalField(AST ast, String fieldValue){        
-        TypeDeclaration topLevelType = getTopLevelTypeDeclaration();
-    
-        ASTRewrite rewrite = ASTRewrite.create(topLevelType.getRoot().getAST());
-        ListRewrite listRewrite = rewrite.getListRewrite(topLevelType,
+    private void addStaticFinalField(TypeDeclaration typeDeclaration, String fieldValue){        
+        AST ast = typeDeclaration.getAST();
+        ASTRewrite rewrite = ASTRewrite.create(ast);
+        ListRewrite listRewrite = rewrite.getListRewrite(typeDeclaration,
                 TypeDeclaration.BODY_DECLARATIONS_PROPERTY);        
                 
         FieldDeclaration fieldDeclaration = createNewFieldDeclaration(ast, fieldValue);
