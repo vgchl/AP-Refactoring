@@ -1,6 +1,9 @@
 package nl.han.ica.core.strategies.solvers;
 
+import java.util.List;
 import net.sourceforge.pmd.IRuleViolation;
+import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
+import nl.han.ica.core.ast.visitors.NumberLiteralVisitor;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
@@ -23,13 +26,34 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
 
     @Override
     public void rewriteAST() {
-        LiteralExprVisitor visitor = new LiteralExprVisitor(ruleViolation, compilationUnit);
-        compilationUnit.accept(visitor);
+        NumberLiteralVisitor numberLiteralVisitor = new NumberLiteralVisitor(compilationUnit);       
+        compilationUnit.accept(numberLiteralVisitor);
+        
         AST ast = compilationUnit.getAST();
         
-        rewriteMagicNumber(ast, visitor.getLiteralViolation());
-        addStaticFinalField(ast, visitor.getLiteralViolation().getToken());
+        NumberLiteral literalViolation = numberLiteralVisitor.getLiteralViolation(ruleViolation.getBeginLine(),
+                ruleViolation.getBeginColumn());
+        
+        setDefaultReplaceName(literalViolation.getToken());
+        
+        rewriteMagicNumber(ast, literalViolation);
+        addStaticFinalField(ast, literalViolation.getToken());
     }
+    
+    private void setDefaultReplaceName(String violationValue){
+        List<FieldDeclaration> fieldDeclarations = getSuggestionDeclarations(violationValue);
+        if(!fieldDeclarations.isEmpty()){
+            VariableDeclaration variableDeclaration = (VariableDeclaration) fieldDeclarations.get(0).fragments().get(0);
+            this.replaceName = variableDeclaration.getName().toString();
+        }
+    }
+    
+    private List<FieldDeclaration> getSuggestionDeclarations(String violationValue){
+        FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
+        compilationUnit.accept(fieldDeclarationVisitor);
+        return fieldDeclarationVisitor.getFieldDeclarationWithValue(violationValue);
+    }
+    
 
     /**
      * Sets the replace name for the constant.
@@ -78,31 +102,11 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
         
         return fieldDeclaration;
     }
-
-
-    private class LiteralExprVisitor extends ASTVisitor  {
-
-        private IRuleViolation ruleViolation;
-        private CompilationUnit compilationUnit;
-        private NumberLiteral literalViolation;
-
-        public LiteralExprVisitor(IRuleViolation ruleViolation, CompilationUnit compilationUnit) {
-            this.ruleViolation = ruleViolation;
-            this.compilationUnit = compilationUnit;
-        }
+    
+    private boolean usesExistingFieldName(){
         
-        @Override
-        public boolean visit(NumberLiteral node) {
-            if(compilationUnit.getColumnNumber(node.getStartPosition()) == ruleViolation.getBeginColumn()-1 &&
-                    compilationUnit.getLineNumber(node.getStartPosition()) == ruleViolation.getBeginLine()){
-                literalViolation = node;
-            }
-            return super.visit(node);
-        }
-
-        public NumberLiteral getLiteralViolation() {
-            return literalViolation;
-        }
         
+        return false;
     }
+
 }
