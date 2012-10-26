@@ -1,5 +1,6 @@
 package nl.han.ica.core.strategies.solvers;
 
+import java.util.List;
 import net.sourceforge.pmd.IRuleViolation;
 import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
 import nl.han.ica.core.ast.visitors.NumberLiteralVisitor;
@@ -25,18 +26,32 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
 
     @Override
     public void rewriteAST() {
-        NumberLiteralVisitor numberLiteralVisitor = new NumberLiteralVisitor(compilationUnit);
-        FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
-        
+        NumberLiteralVisitor numberLiteralVisitor = new NumberLiteralVisitor(compilationUnit);       
         compilationUnit.accept(numberLiteralVisitor);
-        compilationUnit.accept(fieldDeclarationVisitor);
         
         AST ast = compilationUnit.getAST();
         
         NumberLiteral literalViolation = numberLiteralVisitor.getLiteralViolation(ruleViolation.getBeginLine(),
                 ruleViolation.getBeginColumn());
+        
+        setDefaultReplaceName(literalViolation.getToken());
+        
         rewriteMagicNumber(ast, literalViolation);
         addStaticFinalField(ast, literalViolation.getToken());
+    }
+    
+    private void setDefaultReplaceName(String violationValue){
+        List<FieldDeclaration> fieldDeclarations = getSuggestionDeclarations(violationValue);
+        if(!fieldDeclarations.isEmpty()){
+            VariableDeclaration variableDeclaration = (VariableDeclaration) fieldDeclarations.get(0).fragments().get(0);
+            this.replaceName = variableDeclaration.getName().toString();
+        }
+    }
+    
+    private List<FieldDeclaration> getSuggestionDeclarations(String violationValue){
+        FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
+        compilationUnit.accept(fieldDeclarationVisitor);
+        return fieldDeclarationVisitor.getFieldDeclarationWithValue(violationValue);
     }
     
 
@@ -86,6 +101,12 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
         fieldDeclaration.modifiers().addAll(ast.newModifiers(Modifier.PRIVATE | Modifier.STATIC | Modifier.FINAL));
         
         return fieldDeclaration;
+    }
+    
+    private boolean usesExistingFieldName(){
+        
+        
+        return false;
     }
 
 }

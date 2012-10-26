@@ -28,12 +28,22 @@ public class FieldDeclarationVisitor extends ASTVisitor {
     public List<FieldDeclaration> getFieldDeclarationWithValue(String value){
         List<FieldDeclaration> equalFieldDeclarations = new ArrayList<>();
         for(FieldDeclaration fieldDeclaration : fieldDeclarations){
-            VariableDeclaration variableDeclaration = (VariableDeclaration) fieldDeclaration.fragments();
+            VariableDeclaration variableDeclaration = (VariableDeclaration) fieldDeclaration.fragments().get(0);
             if(variableDeclaration.getInitializer().toString().equals(value)){
                 equalFieldDeclarations.add(fieldDeclaration);
             }
         }
         return equalFieldDeclarations;
+    }
+    
+    public boolean hasFieldName(String name){
+        for(FieldDeclaration fieldDeclaration : fieldDeclarations){
+            VariableDeclaration variableDeclaration = (VariableDeclaration) fieldDeclaration.fragments().get(0);
+            if(variableDeclaration.getName().toString().equals(name)){
+                return true;
+            }
+        }
+        return false;
     }
     
 }
