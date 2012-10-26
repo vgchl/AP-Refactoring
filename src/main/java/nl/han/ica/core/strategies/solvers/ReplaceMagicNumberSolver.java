@@ -79,8 +79,7 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
         applyChanges(rewrite);
     }
     
-    private void addStaticFinalField(AST ast, String fieldValue){
-        //TODO fix: Fails when file has multiple classes
+    private void addStaticFinalField(AST ast, String fieldValue){        
         TypeDeclaration topLevelType = getTopLevelTypeDeclaration();
     
         ASTRewrite rewrite = ASTRewrite.create(topLevelType.getRoot().getAST());

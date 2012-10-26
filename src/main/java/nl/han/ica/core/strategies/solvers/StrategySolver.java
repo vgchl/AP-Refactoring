@@ -94,6 +94,7 @@ public abstract class StrategySolver  {
      * @return TypeDeclaration off the first typedeclarion
      */
     protected TypeDeclaration getTopLevelTypeDeclaration(){
+        //TODO fix: Fails when file has multiple classes
         Iterator iter = compilationUnit.types().iterator();
         while (iter.hasNext()) {
             TypeDeclaration td = (TypeDeclaration) iter.next();
