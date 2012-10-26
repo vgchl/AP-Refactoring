@@ -6,12 +6,27 @@ import javafx.scene.control.Control;
 import javafx.scene.control.TextField;
 import nl.han.ica.core.strategies.solvers.Parameter;
 
+/**
+ * Creates form controls based on the parameter value type. Furthermore, it configures the control to synchronize its
+ * value with the parameter and to trigger user-defined events.
+ */
 public class ParameterControlFactory {
 
+    /**
+     * Create a control for a parameter.
+     * @param parameter The parameter to base the control on.
+     * @return Control capable of displaying the parameter value.
+     */
     public Control controlForParameter(final Parameter parameter) {
         return controlForParameter(parameter, null);
     }
 
+    /**
+     * Create a control for a parameter, and add a change event handler.
+     * @param parameter The parameter to base the control on.
+     * @param eventHandler Event handler that handles changes to the parameter value.
+     * @return Control capable of displaying the parameter value.
+     */
     public Control controlForParameter(final Parameter parameter, final EventHandler<ParameterEvent> eventHandler) {
         if (parameter.getValue().getClass() == String.class) {
             return createTextFieldControl(parameter, eventHandler);
@@ -34,5 +49,6 @@ public class ParameterControlFactory {
         });
         return textField;
     }
+
 
 }

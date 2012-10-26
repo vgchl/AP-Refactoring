@@ -86,11 +86,12 @@ public class Solution {
         this.after = after;
     }
 
+    /**
+     * Returns the parameters that were used in the creation of this solution.
+     * @return the parameters that were used in the creation of this solution.
+     */
     public Map<String, Parameter> getParameters() {
         return parameters;
     }
 
-    public void setParameters(Map<String, Parameter> parameters) {
-        this.parameters = parameters;
-    }
 }

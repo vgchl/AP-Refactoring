@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Handles the presentation of a solution to an issue.
+ */
 public class IssueResolveChangeController extends BaseController {
 
     private Solution solution;
