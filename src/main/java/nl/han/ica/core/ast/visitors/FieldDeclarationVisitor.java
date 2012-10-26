@@ -4,11 +4,12 @@
  */
 package nl.han.ica.core.ast.visitors;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *

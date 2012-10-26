@@ -4,7 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import net.sourceforge.pmd.*;
 import nl.han.ica.core.strategies.Strategy;
-import nl.han.ica.core.strategies.solvers.Parameters;
 import nl.han.ica.core.strategies.solvers.StrategySolver;
 import nl.han.ica.core.strategies.solvers.StrategySolverFactory;
 import nl.han.ica.core.util.FileUtil;
@@ -17,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Lists the files and the rules to check them for.
@@ -92,15 +92,14 @@ public class Job {
      * @param parameters The parameters to use when creating the solution.
      * @return The created solution.
      */
-    public Solution solve(Issue issue, Parameters parameters) {
+    public Solution solve(Issue issue, Map<String, Parameter> parameters) {
         StrategySolver strategySolver = StrategySolverFactory.createStrategySolver(issue.getRuleViolation());
         strategySolver.setRuleViolation(issue.getRuleViolation());
-        parameters = null != parameters ? parameters : strategySolver.getDefaultParameters();
         strategySolver.setParameters(parameters);
 
-        logger.info("Solving issue…");
-        logger.info("…with solver: " + strategySolver.getClass().getName());
-        logger.info("…with parameters: " + parameters.toString());
+        logger.info("Solving issue...");
+        logger.info("...with solver: " + strategySolver.getClass().getName());
+        logger.info("...with parameters: " + parameters.toString());
 
         strategySolver.buildAST(issue.getFile());
         strategySolver.rewriteAST();

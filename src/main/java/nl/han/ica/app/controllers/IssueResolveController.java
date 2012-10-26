@@ -4,13 +4,17 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import nl.han.ica.app.models.parameter.ParameterChangeListener;
+import nl.han.ica.app.models.parameter.ParameterEvent;
 import nl.han.ica.core.Issue;
 import nl.han.ica.core.Job;
+import nl.han.ica.core.Parameter;
 import nl.han.ica.core.Solution;
-import nl.han.ica.core.strategies.solvers.Parameters;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class IssueResolveController extends BaseController {
@@ -49,13 +53,19 @@ public class IssueResolveController extends BaseController {
         issueTitle.setText(issue.getStrategy().getName());
         issueDescription.setText(issue.getRuleViolation().getRule().getDescription().replaceAll("\n", " ").replaceAll("  ", ""));
 
-        showSolution(null);
+        final Map<String, Parameter> parameters = new HashMap<>();
+        changeController.addParameterChangeListener(new ParameterChangeListener() {
+            @Override
+            public void changed(ParameterEvent event) {
+                showSolution(parameters);
+            }
+        });
+        showSolution(parameters);
     }
 
-    private void showSolution(Parameters parameters) {
+    private void showSolution(Map<String, Parameter> parameters) {
         solution = job.solve(issue, parameters);
         changeController.setSolution(solution);
-        // TODO: Add listener to resolve issue with updated params
     }
 
     /**
