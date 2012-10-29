@@ -22,7 +22,6 @@ public class ReplaceMagicNumberSolverTest {
     @Before
     public void setUp() throws Exception {
 
-
         XPathRule magicNumberRule = new XPathRule();
         magicNumberRule.setName("Avoid using Literals in Conditional Statements");
         magicNumberRule.setMessage("Avoid using Literals in Conditional Statements:16");
@@ -36,23 +35,21 @@ public class ReplaceMagicNumberSolverTest {
 
         context.setSourceCodeFilename(file.getAbsolutePath());
         SimpleJavaNode node = new SimpleJavaNode(1);
-
+       
         SourceFileScope scope = new SourceFileScope(file.getAbsolutePath());
         node.setScope(scope);
-
+       
         node.testingOnly__setBeginColumn(17);
         node.testingOnly__setBeginLine(16);
 
         RuleViolation ruleViolation = new RuleViolation(magicNumberRule, context, node);
         
         replaceMagicNumber = new ReplaceMagicNumberSolver(ruleViolation);
-        
         replaceMagicNumber.buildAST(file);
     }
 
     @Test
     public void testRewriteAST() throws Exception {
-
         replaceMagicNumber.setReplaceName("MAGICINT");
         replaceMagicNumber.rewriteAST();
         Assert.assertEquals(replaceMagicNumber.getDocument().get(), rewrittenFile());
