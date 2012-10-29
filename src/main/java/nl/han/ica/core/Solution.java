@@ -1,12 +1,13 @@
 package nl.han.ica.core;
 
-import nl.han.ica.core.strategies.solvers.Parameters;
 import nl.han.ica.core.strategies.solvers.StrategySolver;
+
+import java.util.Map;
 
 public class Solution {
 
     private StrategySolver strategySolver;
-    private Parameters parameters;
+    private Map<String, Parameter> parameters;
     private String before;
     private String after;
 
@@ -25,7 +26,7 @@ public class Solution {
      * @param strategySolver The strategy solver to use.
      * @param parameters The parameters that the solver needs to apply the refactoring.
      */
-    public Solution(StrategySolver strategySolver, Parameters parameters) {
+    public Solution(StrategySolver strategySolver, Map<String, Parameter> parameters) {
         this(strategySolver);
         this.parameters = parameters;
     }
@@ -82,6 +83,14 @@ public class Solution {
      */
     public void setAfter(String after) {
         this.after = after;
+    }
+
+    /**
+     * Returns the parameters that were used in the creation of this solution.
+     * @return the parameters that were used in the creation of this solution.
+     */
+    public Map<String, Parameter> getParameters() {
+        return parameters;
     }
 
 }

@@ -12,6 +12,8 @@
     -fx-text-base-color: #111111;
     -fx-focus-color: rgb(23,134,248);
     SB_focus-blur-color: rgba(23,134,248,0.2);
+    SB_focus-error-color: rgb(248,44,23);
+    SB_focus-blur-error-color: rgba(248,44,23,0.2);
 
     -fx-control-inner-background: white;
     -fx-text-inner-color: -fx-text-base-color;
@@ -215,6 +217,26 @@
     -fx-background-insets: -1.4, 0, 1, 2 1 1 1, 3 2 1 2;
 }
 
+.text-field-erroneous {
+    -fx-background-color:
+        SB_focus-error-color,
+        SB_textbox-border-inner,
+        SB_textbox-border-inner2,
+        -fx-control-inner-background;
+    -fx-background-radius: 2;
+    -fx-background-insets: 0, 1, 2 1 1 1, 3 2 1 2;
+}
+.text-field-erroneous:focused {
+    -fx-background-color:
+        SB_focus-blur-error-color,
+        SB_focus-error-color,
+        SB_textbox-border-inner,
+        SB_textbox-border-inner2,
+        -fx-control-inner-background;
+    -fx-background-insets: -1.4, 0, 1, 2 1 1 1, 3 2 1 2;
+}
+
+
 /* ============ TEXT AREA =================================================== */
 .text-area {
     -fx-padding: 0;
@@ -309,6 +331,12 @@
 .scroll-bar .track {
     -fx-background-color: null;
 }
+.scroll-bar:horizontal .track-background {
+    -fx-background-insets: 0, 1 0 0 0;
+}
+.scroll-bar:vertical .track-background {
+    -fx-background-insets: 0, 0 0 0 1;
+}
 .scroll-bar .thumb {
     -fx-background-color: SB_scrollbar-thumb;
     -fx-background-insets: 3;
@@ -330,7 +358,7 @@
     -fx-background-color:
         SB_scrollbar-corner-border,
         SB_scrollbar-track;
-    -fx-background-insets: 0,1 0 0 1;
+    -fx-background-insets: 0, 1 0 0 1;
 }
 /* Scrolbars in ScrollPane */
 .scroll-pane > * > .scroll-bar:horizontal {

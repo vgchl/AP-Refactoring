@@ -7,8 +7,13 @@ import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.ast.SimpleJavaNode;
 import net.sourceforge.pmd.rules.XPathRule;
 import net.sourceforge.pmd.symboltable.SourceFileScope;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.File;
 
 /**
  * User: Corne

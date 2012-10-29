@@ -5,6 +5,9 @@ import nl.han.ica.core.strategies.Strategy;
 
 import java.io.File;
 
+/**
+ * Represents a problem found at a certain spot in the source code.
+ */
 public class Issue {
 
     private Strategy strategy;
@@ -37,6 +40,7 @@ public class Issue {
     public void setStrategy(Strategy strategy) {
         this.strategy = strategy;
     }
+
 
     public File getFile() {
         return file;
