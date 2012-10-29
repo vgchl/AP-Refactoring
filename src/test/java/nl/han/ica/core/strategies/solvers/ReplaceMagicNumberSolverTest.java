@@ -55,7 +55,7 @@ public class ReplaceMagicNumberSolverTest {
 
     @Test
     public void testRewriteAST() throws Exception {
-        replaceMagicNumber.setReplaceName("MAGICINT");
+        //replaceMagicNumber.setReplaceName("MAGICINT");
         replaceMagicNumber.rewriteAST();
         Assert.assertEquals(replaceMagicNumber.getDocument().get(), rewrittenFile());
 
