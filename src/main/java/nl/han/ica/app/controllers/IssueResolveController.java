@@ -1,9 +1,12 @@
 package nl.han.ica.app.controllers;
 
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import nl.han.ica.app.models.IssueSolvingService;
 import nl.han.ica.app.models.parameter.ParameterChangeListener;
 import nl.han.ica.app.models.parameter.ParameterEvent;
 import nl.han.ica.core.Issue;
@@ -23,6 +26,7 @@ public class IssueResolveController extends BaseController {
     private Issue issue;
     private IssueResolveChangeController changeController;
     private Solution solution;
+    private IssueSolvingService issueSolvingService;
 
     @FXML
     protected Label issueTitle;
@@ -39,6 +43,22 @@ public class IssueResolveController extends BaseController {
     public IssueResolveController(Job job) {
         this.job = job;
         changeController = new IssueResolveChangeController();
+        issueSolvingService = new IssueSolvingService(job, issue);
+
+        issueSolvingService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent workerStateEvent) {
+                solution = issueSolvingService.getValue();
+                showSolution(issueSolvingService.getParameters());
+            }
+        });
+        issueSolvingService.setOnFailed(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent workerStateEvent) {
+                logger.fatal("FAILED SOLVING", issueSolvingService.getException());
+            }
+        });
+
     }
 
     @Override
@@ -57,14 +77,19 @@ public class IssueResolveController extends BaseController {
         changeController.addParameterChangeListener(new ParameterChangeListener() {
             @Override
             public void changed(ParameterEvent event) {
-                showSolution(parameters);
+                issueSolvingService.setParameters(parameters);
+                issueSolvingService.start();
+//                showSolution(parameters);
             }
         });
-        showSolution(parameters);
+        issueSolvingService.setParameters(parameters);
+        issueSolvingService.start();
+//        showSolution(parameters);
     }
 
     private void showSolution(Map<String, Parameter> parameters) {
-        solution = job.solve(issue, parameters);
+//        issueSolvingService.start();
+//        solution = job.solve(issue, parameters);
         changeController.setSolution(solution);
     }
 
