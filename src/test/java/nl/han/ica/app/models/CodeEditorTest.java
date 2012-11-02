@@ -25,11 +25,9 @@ public class CodeEditorTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
         webView = PowerMockito.mock(WebView.class);
-
+        codeEditor = PowerMockito.mock(CodeEditor.class);
         doNothing().when(codeEditor).initializeWebView();
-        codeEditor = new CodeEditor(webView);
     }
 
     @Test
