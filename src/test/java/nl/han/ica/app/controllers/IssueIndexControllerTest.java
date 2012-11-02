@@ -58,16 +58,4 @@ public class IssueIndexControllerTest {
     public void testNotNull() {
         assertTrue(issueIndexController != null);
     }
-
-    @Test
-    public void testInitialize() throws Exception {
-        doNothing().when(baseController).initialize(url, resourceBundle);
-//        issueIndexController.initialize(url, resourceBundle);
-    }
-
-    @Test
-    public void testGetView() throws Exception {
-        when(baseController.buildView(anyString())).thenReturn(parent);
-        assertSame(parent, issueIndexController.getView());
-    }
 }
