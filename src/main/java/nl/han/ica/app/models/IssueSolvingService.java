@@ -8,7 +8,9 @@ import nl.han.ica.core.Issue;
 import nl.han.ica.core.Job;
 import nl.han.ica.core.Parameter;
 import nl.han.ica.core.Solution;
+import org.apache.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class IssueSolvingService extends Service<Solution> {
@@ -16,11 +18,14 @@ public class IssueSolvingService extends Service<Solution> {
     private ObjectProperty<Job> jobProperty;
     private ObjectProperty<Issue> issueProperty;
     private ObjectProperty<Map<String, Parameter>> parametersProperty;
+    private final Logger logger;
 
-    public IssueSolvingService(Job job, Issue issue) {
+    public IssueSolvingService(Job job) {
+        logger = Logger.getLogger(getClass().getName());
+
         jobProperty = new SimpleObjectProperty<>(job);
-        issueProperty = new SimpleObjectProperty<>(issue);
-        parametersProperty = new SimpleObjectProperty<>();
+        issueProperty = new SimpleObjectProperty<>();
+        parametersProperty = new SimpleObjectProperty<Map<String, Parameter>>(new HashMap<String, Parameter>());
     }
 
     @Override
@@ -28,12 +33,16 @@ public class IssueSolvingService extends Service<Solution> {
         return new Task<Solution>() {
             @Override
             protected Solution call() throws Exception {
-                System.out.println("START SOLVING");
-                Solution solution = jobProperty.get().solve(issueProperty.get(), parametersProperty.get());
-                System.out.println("STOP SOLVING");
+                Solution solution = jobProperty.get().solve(issueProperty.get());
+                parametersProperty.set(solution.getParameters());
                 return solution;
             }
         };
+    }
+
+    @Override
+    protected void failed() {
+        logger.fatal("Task execution failed.", getException());
     }
 
     public void setIssue(Issue issue) {
@@ -56,7 +65,8 @@ public class IssueSolvingService extends Service<Solution> {
         return jobProperty;
     }
 
-    public Map<String,Parameter> getParameters() {
+    public Map<String, Parameter> getParameters() {
         return parametersProperty.get();
     }
+
 }

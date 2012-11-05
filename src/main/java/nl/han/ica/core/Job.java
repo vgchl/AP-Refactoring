@@ -8,6 +8,7 @@ import nl.han.ica.core.strategies.solvers.StrategySolver;
 import nl.han.ica.core.strategies.solvers.StrategySolverFactory;
 import nl.han.ica.core.util.FileUtil;
 import org.apache.log4j.Logger;
+import org.eclipse.jdt.core.dom.ASTParser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -104,14 +105,18 @@ public class Job {
         strategySolver.buildAST(issue.getFile());
         strategySolver.rewriteAST();
 
-        Solution solution = new Solution(strategySolver, parameters); // TODO: Move to StrategySolver
-        try {
-            String contents = FileUtil.getFileContent(issue.getFile());
+        Solution solution = new Solution(strategySolver); // TODO: Move to StrategySolver
+
+        Delta delta = new Delta(FileUtil.getFileContent(issue.getFile(), strategySolver.getDocument().get());
+
+        new ASTParser().createASTs();
+        String contents = FileUtil.getFileContent(issue.getFile());
             solution.setBefore(contents);
         } catch (IOException e) {
             logger.error("Could not open file.");
         }
-        solution.setAfter(strategySolver.getDocument().get());
+//        solution.setAfter(strategySolver.getDocument().get());
+        solution.getDeltas().add(delta)
         logger.info("Done solving issue.");
         return solution;
     }

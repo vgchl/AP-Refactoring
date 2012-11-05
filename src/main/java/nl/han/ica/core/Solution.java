@@ -2,14 +2,15 @@ package nl.han.ica.core;
 
 import nl.han.ica.core.strategies.solvers.StrategySolver;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class Solution {
 
     private StrategySolver strategySolver;
     private Map<String, Parameter> parameters;
-    private String before;
-    private String after;
+    private List<Delta> deltas;
 
     /**
      * Creates a solution with a strategy solver.
@@ -18,6 +19,7 @@ public class Solution {
      */
     public Solution(StrategySolver strategySolver) {
         this.strategySolver = strategySolver;
+        this.deltas = new ArrayList<>();
     }
 
     /**
@@ -49,40 +51,12 @@ public class Solution {
         this.strategySolver = strategySolver;
     }
 
-    /**
-     * Get the before solution state.
-     *
-     * @return A string that contains the before-solution-applied state
-     */
-    public String getBefore() {
-        return before;
+    public List<Delta> getDeltas() {
+        return deltas;
     }
 
-    /**
-     * Sets the before state of a file as String.
-     *
-     * @param before The contents of the file before an solution is applied.
-     */
-    public void setBefore(String before) {
-        this.before = before;
-    }
-
-    /**
-     * Get the after solution state.
-     *
-     * @return A string that contains the after-solution-applied state
-     */
-    public String getAfter() {
-        return after;
-    }
-
-    /**
-     * Sets the after state of a file as String.
-     *
-     * @param after The contents of the file after an solution is applied.
-     */
-    public void setAfter(String after) {
-        this.after = after;
+    public void setDeltas(List<Delta> deltas) {
+        this.deltas = deltas;
     }
 
     /**

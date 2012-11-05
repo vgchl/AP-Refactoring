@@ -7,7 +7,7 @@ import org.junit.Test;
  * @author: Wouter Konecny
  * @created: 26-10-12
  */
-public class IssueResolveChangeControllerTest {
+public class IssueSolveControllerTest {
     @Before
     public void setUp() throws Exception {
 
@@ -19,22 +19,17 @@ public class IssueResolveChangeControllerTest {
     }
 
     @Test
-    public void testInitializeEditors() throws Exception {
-
-    }
-
-    @Test
     public void testGetView() throws Exception {
 
     }
 
     @Test
-    public void testGetSolution() throws Exception {
+    public void testGetIssue() throws Exception {
 
     }
 
     @Test
-    public void testSetSolution() throws Exception {
+    public void testSetIssue() throws Exception {
 
     }
 }
