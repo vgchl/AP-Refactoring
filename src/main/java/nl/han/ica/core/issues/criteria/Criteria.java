@@ -6,7 +6,8 @@ package nl.han.ica.core.issues.criteria;
 
 import java.util.ArrayList;
 import java.util.List;
-import nl.han.ica.core.Issue;
+import nl.han.ica.core.strategies.Strategy;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 
 /**
@@ -14,10 +15,13 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
  * @author Corne
  */
 public abstract class Criteria extends ASTVisitor {
-    
-    protected List<Issue> issues = new ArrayList<>();
+   
+    //maybe needed to have 2d list, because 1 issue can get multiple violationNodes
+    protected List<ASTNode> violatedNodes = new ArrayList<>();
 
-    public List<Issue> getIssues() {
-        return issues;
+    public List<ASTNode> getViolatedNodes() {
+        return violatedNodes;
     }
+    
+    public abstract Strategy getStrategy();
 }

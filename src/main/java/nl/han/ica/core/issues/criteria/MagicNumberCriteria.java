@@ -19,11 +19,9 @@ import org.eclipse.jdt.core.dom.NumberLiteral;
  */
 public class MagicNumberCriteria extends Criteria {
 
-    private Strategy strategy = new ReplaceMagicNumber();
-    private SourceHolder sourceHolder;
+    private static final Strategy strategy = new ReplaceMagicNumber();
 
-    public MagicNumberCriteria(SourceHolder sourceHolder) {
-        this.sourceHolder = sourceHolder;
+    public MagicNumberCriteria() {
     }
     
     
@@ -32,11 +30,16 @@ public class MagicNumberCriteria extends Criteria {
     public boolean visit(NumberLiteral node) {
         //ASTNode
         if(node.getParent().getNodeType() != ASTNode.VARIABLE_DECLARATION_FRAGMENT){
-            List<ASTNode> templist = new ArrayList<>();
-            templist.add(node);
-            issues.add(new Issue(strategy, templist, sourceHolder));
+            violatedNodes.add(node);
             
         }
         return super.visit(node);
     }
+
+    @Override
+    public Strategy getStrategy() {
+        return strategy;
+    }
+    
+    
 }

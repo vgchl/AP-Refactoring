@@ -89,9 +89,9 @@ public class StrategySelectionController extends BaseController {
 
         List<File> files = fileChooser.showOpenMultipleDialog(null);
         if (null != files) {
-            job.createSourceHolders(files);
+            job.setFiles(files);
         } else {
-            job.getSourceHolders().clear();
+            job.getFiles().clear();
         }
 
         onSourceFilesSelected();
@@ -109,10 +109,10 @@ public class StrategySelectionController extends BaseController {
 
         File directory = directoryChooser.showDialog(null);
         if (null != directory) {
-            job.createSourceHolders(FileUtil.listFilesRecursively(directory, ".java"));
+            job.setFiles(FileUtil.listFilesRecursively(directory, ".java"));
         }
         else {
-            job.getSourceHolders().clear();
+            job.getFiles().clear();
         }
 
         onSourceFilesSelected();
@@ -144,15 +144,15 @@ public class StrategySelectionController extends BaseController {
         boolean success = false;
         if (db.hasFiles()) {
             success = true;
-            job.getSourceHolders().clear();
+            job.getFiles().clear();
             for (File file : db.getFiles()) {
                 if (file.isDirectory()) {
                     for (File directoryFile : FileUtil.listFilesRecursively(file, ".java")) {
                         //job.getFiles().add(directoryFile);
-                        job.addSourceHolder(file);
+                        job.addFile(file);
                     }
                 } else if (file.getName().endsWith(".java")) {
-                    job.addSourceHolder(file);
+                    job.addFile(file);
                 }
             }
             onSourceFilesSelected();
@@ -183,8 +183,8 @@ public class StrategySelectionController extends BaseController {
     }
 
     private void onSourceFilesSelected() {
-        if (job.getSourceHolders().size() > 0) {
-            selectedFilePath.setText(formatFileList(job.getSourceHolders()));
+        if (job.getFiles().size() > 0) {
+            selectedFilePath.setText(formatFileList(job.getFiles()));
             selectedFilePath.setVisible(true);
             selectedFile.setVisible(true);
             analyzeButton.setDisable(false);
@@ -195,10 +195,10 @@ public class StrategySelectionController extends BaseController {
         }
     }
 
-    private String formatFileList(List<SourceHolder> sources) {
+    private String formatFileList(List<File> files) {
         StringBuilder fileList = new StringBuilder();
-        for (SourceHolder source : sources) {
-            fileList.append(source.getFile().getName()).append("\n");
+        for (File file : files) {
+            fileList.append(file.getName()).append("\n");
         }
         return fileList.toString();
     }

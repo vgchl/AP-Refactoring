@@ -11,6 +11,7 @@ import nl.han.ica.core.Issue;
 import nl.han.ica.core.SourceHolder;
 import nl.han.ica.core.issues.criteria.Criteria;
 import nl.han.ica.core.issues.criteria.MagicNumberCriteria;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 /**
@@ -31,14 +32,28 @@ public class IssueFinder {
         this.criterias = criterias;
     }
     
-    public List<Issue> findIssues(){   
-        criterias.add(new MagicNumberCriteria(context.getSourceHolders().get(0)));
+    public List<Issue> findIssues(){
+        List<Issue> issues = new ArrayList<>();
+        //TODO instead of adding magicnumbercriteria add list off selected criterias
+        criterias.add(new MagicNumberCriteria());
         
-        for(CompilationUnit compilationUnit : context.getCompilationUnits()){
-            //TODO only accepts 1 criteria atm
-            compilationUnit.accept(criterias.get(0));
+        for(SourceHolder sourceHolder : context.getSourceHolders()){
+            sourceHolder.getCompilationUnit().accept(criterias.get(0));
+            issues.addAll(createIssues(sourceHolder, criterias.get(0)));
         }
-        return criterias.get(0).getIssues();
+
+        return issues;
+    }
+    
+    private List<Issue> createIssues(SourceHolder sourceHolder, Criteria criteria){
+        List<Issue> issues = new ArrayList<>();
+        
+        List<ASTNode> nodes = criteria.getViolatedNodes();
+        for(ASTNode node : nodes){
+            Issue issue = new Issue(criteria.getStrategy(), node, sourceHolder);
+            issues.add(issue);
+        }
+        return issues;
     }
 
 }

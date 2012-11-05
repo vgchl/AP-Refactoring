@@ -4,6 +4,7 @@
  */
 package nl.han.ica.core.ast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import nl.han.ica.core.SourceHolder;
@@ -17,8 +18,8 @@ import org.eclipse.jdt.core.dom.IBinding;
  */
 public class ARTASTFileRequestor extends FileASTRequestor {
 
-    private List<CompilationUnit> compilationUnits = new ArrayList<>();;
-
+    private List<SourceHolder> sourceHolders = new ArrayList<>();
+ 
     public ARTASTFileRequestor() {
 
     }
@@ -26,7 +27,14 @@ public class ARTASTFileRequestor extends FileASTRequestor {
     @Override
     public void acceptAST(String sourceFilePath, CompilationUnit ast) {
         super.acceptAST(sourceFilePath, ast);
-        compilationUnits.add(ast);
+        addSourceHolder(new File(sourceFilePath), ast);      
+    }
+    
+    private void addSourceHolder(File file, CompilationUnit compilationUnit){
+        SourceHolder sourceHolder = new SourceHolder();
+        sourceHolder.setCompilationUnit(compilationUnit);
+        sourceHolder.setFile(file);
+        sourceHolders.add(sourceHolder);
     }
     
     @Override
@@ -34,8 +42,8 @@ public class ARTASTFileRequestor extends FileASTRequestor {
         super.acceptBinding(bindingKey, binding);
     }
 
-    public List<CompilationUnit> getCompilationUnits() {
-        return compilationUnits;
+    public List<SourceHolder> getSourceHolders() {
+        return sourceHolders;
     }
     
     

@@ -21,6 +21,7 @@ public class SourceHolder {
     
     private File file;    
     private IDocument document;    
+    private CompilationUnit compilationUnit;
     
 
     public IDocument getDocument() {
@@ -35,6 +36,14 @@ public class SourceHolder {
         this.file = file;
         setDocument(file);
     }
+
+    public void setCompilationUnit(CompilationUnit compilationUnit) {
+        this.compilationUnit = compilationUnit;
+    }
+
+    public CompilationUnit getCompilationUnit() {
+        return compilationUnit;
+    } 
     
     private void setDocument(File file){
         try {

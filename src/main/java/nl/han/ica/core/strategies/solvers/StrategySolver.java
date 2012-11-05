@@ -24,8 +24,9 @@ public abstract class StrategySolver  {
     protected Logger logger;
     protected Map<String, Parameter> parameters;
     
-    protected List<SourceHolder> sourceHolders;
-    protected List<ASTNode> violationNodes;
+    //protected List<SourceHolder> sourceHolders;
+    protected SourceHolder sourceHolder;
+    protected ASTNode violationNode;
 
     /**
      * Creates a strategy solver with rule violation.
@@ -71,21 +72,21 @@ public abstract class StrategySolver  {
      */
     protected void applyChanges(ASTRewrite rewrite){
         //TODO only applys changes on 1 doc
-        TextEdit textEdit = rewrite.rewriteAST(sourceHolders.get(0).getDocument(), JavaCore.getOptions());
+        TextEdit textEdit = rewrite.rewriteAST(sourceHolder.getDocument(), JavaCore.getOptions());
         
         try {
-            textEdit.apply(sourceHolders.get(0).getDocument());
+            textEdit.apply(sourceHolder.getDocument());
         } catch (MalformedTreeException | BadLocationException ex) {
             logger.error(StrategySolver.class.getName(), ex);
         }
     }
 
-    public void setSourceHolders(List<SourceHolder> sourceHolders) {
-        this.sourceHolders = sourceHolders;
+    public void setSourceHolder(SourceHolder sourceHolder) {
+        this.sourceHolder = sourceHolder;
     }
 
-    public void setViolationNodes(List<ASTNode> violationNodes) {
-        this.violationNodes = violationNodes;
+    public void setViolationNodes(ASTNode violationNode) {
+        this.violationNode = violationNode;
     }
     
     
@@ -128,6 +129,6 @@ public abstract class StrategySolver  {
      * @return docoument 
      */
     public IDocument getDocument() {
-        return sourceHolders.get(0).getDocument();
+        return sourceHolder.getDocument();
     }
 }
