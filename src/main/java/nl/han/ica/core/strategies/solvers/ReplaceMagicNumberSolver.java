@@ -1,78 +1,115 @@
 package nl.han.ica.core.strategies.solvers;
 
-import japa.parser.ASTHelper;
-import japa.parser.ast.body.BodyDeclaration;
-import japa.parser.ast.body.ModifierSet;
-import japa.parser.ast.body.VariableDeclarator;
-import japa.parser.ast.body.VariableDeclaratorId;
-import japa.parser.ast.expr.IntegerLiteralExpr;
-import japa.parser.ast.visitor.VoidVisitorAdapter;
-import net.sourceforge.pmd.RuleViolation;
-import nl.han.ica.core.ast.ASTStrategyHelper;
-import nl.han.ica.core.ast.FieldDeclarationVisitor;
+import net.sourceforge.pmd.IRuleViolation;
+import nl.han.ica.core.Parameter;
+import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
+import nl.han.ica.core.ast.visitors.NumberLiteralVisitor;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+/**
+ * Solver for the Replace Magic Number with Constant violation.
+ */
 public class ReplaceMagicNumberSolver extends StrategySolver {
 
-    private String replaceName = "MAGIC";
+    private static final String PARAMETER_CONSTANT_NAME = "Constant name";
+    private Map<String, Parameter> defaultParameters;
 
-    public ReplaceMagicNumberSolver(RuleViolation ruleViolation) {
+    /**
+     * The constructor for this solver.
+     *
+     * @param ruleViolation The rule violation.
+     */
+    public ReplaceMagicNumberSolver(IRuleViolation ruleViolation) {
         super(ruleViolation);
+        initializeDefaultParameters();
     }
 
     @Override
     public void rewriteAST() {
-        System.out.println(ruleViolation.toString());
-        ReplaceMagicNumberLiteralExprVisitor expressionVisitor = new ReplaceMagicNumberLiteralExprVisitor();
-        compilationUnit.accept(expressionVisitor, ruleViolation);
+        TypeDeclaration typeDeclaration = getTypeDeclaration(ruleViolation.getClassName());
+        
+        NumberLiteralVisitor numberLiteralVisitor = new NumberLiteralVisitor(compilationUnit);
 
-        IntegerLiteralExpr literalExpr = expressionVisitor.getIntegerLiteralViolationExpr();
-        if (literalExpr != null) {
-            addStaticFinalField(literalExpr.getValue());
-            literalExpr.setValue(replaceName + literalExpr.getValue());
+        typeDeclaration.accept(numberLiteralVisitor);
+        FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
+        typeDeclaration.accept(fieldDeclarationVisitor);
+        
+        NumberLiteral literalViolation = numberLiteralVisitor.getLiteralViolation(ruleViolation.getBeginLine(),
+                ruleViolation.getBeginColumn());
+        
+        setDefaultReplaceName(fieldDeclarationVisitor, literalViolation.getToken());
+        
+        rewriteMagicNumber(typeDeclaration.getAST(), literalViolation);
+        
+        if (!fieldDeclarationVisitor.hasFieldName((String) parameters.get(PARAMETER_CONSTANT_NAME).getValue())){
+            addStaticFinalField(typeDeclaration, literalViolation.getToken());
+        }
+    }
+    
+    private void setDefaultReplaceName(FieldDeclarationVisitor fieldDeclarationVisitor, String violationValue){
+        List<FieldDeclaration> fieldDeclarations = fieldDeclarationVisitor.getFieldDeclarationWithValue(violationValue);
+        if (!fieldDeclarations.isEmpty()){
+            VariableDeclaration variableDeclaration = (VariableDeclaration) fieldDeclarations.get(0).fragments().get(0);
+            defaultParameters.get(PARAMETER_CONSTANT_NAME).setValue(variableDeclaration.getName().toString());
         }
     }
 
-    public void setReplaceName(String replaceName) {
-        this.replaceName = replaceName;
-    }
-
-    private void addStaticFinalField(String magicNumber) {
-
-        VariableDeclarator variableDeclarator = new VariableDeclarator(new VariableDeclaratorId(replaceName + magicNumber),
-                new IntegerLiteralExpr(magicNumber));
-
-        int modifier = ModifierSet.addModifier(ModifierSet.PRIVATE, ModifierSet.STATIC);
-        modifier = ModifierSet.addModifier(modifier, ModifierSet.FINAL);
-
-        BodyDeclaration fieldDeclaration = ASTHelper.createFieldDeclaration(modifier, ASTHelper.INT_TYPE, variableDeclarator);
-        fieldDeclaration.setBeginLine(4);
-        fieldDeclaration.setEndLine(5);
-
-        FieldDeclarationVisitor fieldVisitor = new FieldDeclarationVisitor();
-        compilationUnit.accept(fieldVisitor, null);
-        ASTStrategyHelper.insertMember(compilationUnit.getTypes().get(0),
-                fieldDeclaration, fieldVisitor.getNumberOfFields());
-    }
-
-
-    private static class ReplaceMagicNumberLiteralExprVisitor extends VoidVisitorAdapter {
-
-        private IntegerLiteralExpr integerLiteralViolationExpr = null;
-
-        @Override
-        public void visit(IntegerLiteralExpr n, Object arg) {
-            System.out.println("IntegerLiteral: " + n.getBeginLine() + " " + n.getBeginColumn());
-            RuleViolation violation = (RuleViolation) arg;
-            if (n.getBeginLine() == violation.getBeginLine() &&
-                    n.getBeginColumn() == violation.getBeginColumn()) {
-                integerLiteralViolationExpr = n;
+    private void initializeDefaultParameters() {
+        defaultParameters = new HashMap<>();
+        Parameter constantName = new Parameter(PARAMETER_CONSTANT_NAME, "THAT_CONSTANT_NAME");
+        constantName.getConstraints().add(new Parameter.Constraint() {
+            @Override
+            public boolean isValid(Object value) {
+                return ((String) value).matches("^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$");
             }
-        }
-
-        public IntegerLiteralExpr getIntegerLiteralViolationExpr() {
-            return integerLiteralViolationExpr;
-        }
-
+        });
+        defaultParameters.put(constantName.getTitle(), constantName);
     }
+
+    @Override
+    public Map<String, Parameter> getDefaultParameters() {
+        return defaultParameters;
+    }
+
+    /**
+     * Rewrites the code so the magic number is replaced with an constant.
+     *
+     * @param ast The AST to use when adding the constant to the code.
+     * @param numberLiteral The constant.
+     */
+    private void rewriteMagicNumber(AST ast, NumberLiteral numberLiteral){
+        ASTRewrite rewrite = ASTRewrite.create(numberLiteral.getAST());
+        SimpleName newSimpleName = ast.newSimpleName((String) parameters.get(PARAMETER_CONSTANT_NAME).getValue());
+        rewrite.replace(numberLiteral, newSimpleName, null);
+        applyChanges(rewrite);
+    }
+    
+    private void addStaticFinalField(TypeDeclaration typeDeclaration, String fieldValue){        
+        AST ast = typeDeclaration.getAST();
+        ASTRewrite rewrite = ASTRewrite.create(ast);
+        ListRewrite listRewrite = rewrite.getListRewrite(typeDeclaration,
+                TypeDeclaration.BODY_DECLARATIONS_PROPERTY);        
+                
+        FieldDeclaration fieldDeclaration = createNewFieldDeclaration(ast, fieldValue);
+        listRewrite.insertFirst(fieldDeclaration, null);
+        
+        applyChanges(rewrite);
+    }    
+
+    private FieldDeclaration createNewFieldDeclaration(AST ast, String fieldValue){
+        VariableDeclarationFragment variableDeclarationFragment = ast.newVariableDeclarationFragment();
+        variableDeclarationFragment.setName(ast.newSimpleName((String) parameters.get(PARAMETER_CONSTANT_NAME).getValue()));
+        variableDeclarationFragment.setInitializer(ast.newNumberLiteral(fieldValue));
+        FieldDeclaration fieldDeclaration = ast.newFieldDeclaration(variableDeclarationFragment);
+        fieldDeclaration.setType(ast.newPrimitiveType(PrimitiveType.INT));
+        fieldDeclaration.modifiers().addAll(ast.newModifiers(Modifier.PRIVATE | Modifier.STATIC | Modifier.FINAL));
+        return fieldDeclaration;
+    }
+    
 }

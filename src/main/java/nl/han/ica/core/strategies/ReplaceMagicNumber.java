@@ -4,10 +4,11 @@
  */
 package nl.han.ica.core.strategies;
 
-import java.io.InputStream;
 import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.RuleSet;
 import net.sourceforge.pmd.RuleSetFactory;
+
+import java.io.InputStream;
 
 /**
  *

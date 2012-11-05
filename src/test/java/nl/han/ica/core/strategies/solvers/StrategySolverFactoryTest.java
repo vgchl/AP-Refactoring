@@ -22,7 +22,7 @@ import java.io.File;
  * Time: 12:19
  * To change this template use File | Settings | File Templates.
  */
-public class StrategyFactoryTest {
+public class StrategySolverFactoryTest {
     @Before
     public void setUp() throws Exception {
 

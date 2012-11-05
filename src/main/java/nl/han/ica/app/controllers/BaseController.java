@@ -1,22 +1,25 @@
 package nl.han.ica.app.controllers;
 
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 import static org.apache.log4j.Logger.getLogger;
 
 /**
  * Provides all basic functionality for standard controllers.
  */
-public abstract class BaseController {
+public abstract class BaseController implements Initializable {
 
     /**
      * Debugging logger.
      */
-    private final Logger logger;
+    protected final Logger logger;
     protected FXMLLoader fxmlLoader;
 
     /**
@@ -24,8 +27,16 @@ public abstract class BaseController {
      */
     public BaseController() {
         logger = getLogger(getClass().getName());
+
+        logger.info("Constructing.");
+
         fxmlLoader = new FXMLLoader();
         fxmlLoader.setController(this);
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        logger.info("Initializing.");
     }
 
     /**
@@ -33,7 +44,7 @@ public abstract class BaseController {
      *
      * @return The view belonging to the controller.
      */
-    abstract public Parent getView();
+    public abstract Parent getView();
 
     /**
      * Load and build the controller's view from its FXML resource.
@@ -45,10 +56,9 @@ public abstract class BaseController {
         if (viewPath == null) {
             throw new IllegalArgumentException("No viewPath given.");
         }
-
+        logger.info("Building view: " + viewPath);
         fxmlLoader.setLocation(getClass().getResource(viewPath));
         fxmlLoader.load();
-
         return (Parent) fxmlLoader.getRoot();
     }
 

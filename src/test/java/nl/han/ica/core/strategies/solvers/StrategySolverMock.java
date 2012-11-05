@@ -10,9 +10,9 @@ import net.sourceforge.pmd.RuleViolation;
  * Time: 9:44
  * To change this template use File | Settings | File Templates.
  */
-public class StrategyMock extends StrategySolver {
+public class StrategySolverMock extends StrategySolver {
 
-    public StrategyMock(RuleViolation ruleViolation) {
+    public StrategySolverMock(RuleViolation ruleViolation) {
         super(ruleViolation);
     }
 

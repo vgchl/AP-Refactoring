@@ -1,8 +1,5 @@
 package nl.han.ica.core.strategies.solvers;
 
-import nl.han.ica.core.strategies.solvers.StrategySolver;
-import japa.parser.JavaParser;
-import japa.parser.ast.CompilationUnit;
 import net.sourceforge.pmd.Rule;
 import net.sourceforge.pmd.RuleContext;
 import net.sourceforge.pmd.RuleViolation;
@@ -10,13 +7,18 @@ import net.sourceforge.pmd.ast.SimpleJavaNode;
 import net.sourceforge.pmd.rules.UnusedLocalVariableRule;
 import net.sourceforge.pmd.symboltable.SourceFileScope;
 
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 
-public class StrategyTest {
+public class StrategySolverTest {
 
     private StrategySolver strategy;
     private File file;
@@ -39,17 +41,30 @@ public class StrategyTest {
         node.testingOnly__setBeginLine(1);
 
         RuleViolation testViolation = new RuleViolation(rule, context, node);
-        strategy = new StrategyMock(testViolation);
+        strategy = new StrategySolverMock(testViolation);
     }
 
     @Test
     public void testBuildAST() throws Exception {
         strategy.buildAST(file);
 
-        CompilationUnit unit = JavaParser.parse(file);
+        BufferedReader in;
+        ASTParser parser = ASTParser.newParser(AST.JLS3);
+        in = new BufferedReader(new FileReader(file));
+        final StringBuffer buffer = new StringBuffer();
+        String line;
+        while (null != (line = in.readLine())) {
+            buffer.append(line).append("\n");
+        }
+
+        parser.setSource(buffer.toString().toCharArray());
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
+        parser.setResolveBindings(true);
+
+        CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
 
         Assert.assertNotNull(strategy.getCompilationUnit());
-        Assert.assertEquals(strategy.getCompilationUnit(), unit);
+        Assert.assertEquals(strategy.getCompilationUnit().toString(), compilationUnit.toString());
 
     }
 }
