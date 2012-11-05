@@ -15,13 +15,6 @@ import org.junit.Test;
 
 import java.io.File;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Corne
- * Date: 1-10-12
- * Time: 12:19
- * To change this template use File | Settings | File Templates.
- */
 public class StrategySolverFactoryTest {
     @Before
     public void setUp() throws Exception {

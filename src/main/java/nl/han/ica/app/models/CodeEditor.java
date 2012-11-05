@@ -84,7 +84,7 @@ public class CodeEditor {
         execute(script.toString());
     }
 
-    private void initializeWebView() {
+    protected void initializeWebView() {
         webView.getEngine().load(getClass().getResource("/editor/editor.html").toExternalForm());
         webView.getEngine().getLoadWorker().stateProperty().addListener(
                 new ChangeListener<Worker.State>() {

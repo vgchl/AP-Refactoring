@@ -12,24 +12,17 @@ import org.junit.*;
  * @author Corne
  */
 public class ReplaceMagicNumberTest {
-    
-    public ReplaceMagicNumberTest() {
-    }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
+    private ReplaceMagicNumber instance;
     
     @Before
     public void setUp() {
+        instance = new ReplaceMagicNumber();
     }
     
     @After
     public void tearDown() {
+        instance = null;
     }
 
     /**
@@ -37,8 +30,6 @@ public class ReplaceMagicNumberTest {
      */
     @Test
     public void testGetName() {
-        System.out.println("getName");
-        ReplaceMagicNumber instance = new ReplaceMagicNumber();
         String expResult = "Replace Magic Number with Symbolic Constant";
         String result = instance.getName();
         assertEquals(expResult, result);

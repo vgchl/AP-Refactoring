@@ -14,24 +14,17 @@ import org.junit.*;
  * @author Corne
  */
 public class StrategyTest {
-    
-    public StrategyTest() {
-    }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
+    private Strategy instance = null;
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-    
     @Before
     public void setUp() {
+        instance = new StrategyImpl();
     }
     
     @After
     public void tearDown() {
+        instance = null;
     }
 
     /**
@@ -39,7 +32,6 @@ public class StrategyTest {
      */
     @Test
     public void testGetName() {
-        Strategy instance = new StrategyImpl();
         String expResult = "";
         String result = instance.getName();
         assertEquals(expResult, result);
@@ -50,7 +42,6 @@ public class StrategyTest {
      */
     @Test
     public void testGetRuleSet() {
-        Strategy instance = new StrategyImpl();
         RuleSet expResult = null;
         RuleSet result = instance.getRuleSet();
         assertEquals(expResult, result);

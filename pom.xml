@@ -6,7 +6,7 @@
 
     <groupId>nl.han</groupId>
     <artifactId>Refactor-Tool</artifactId>
-    <version>0.Ivysaur</version>
+    <version>0.Venusaur</version>
 
     <dependencies>
         <dependency>
@@ -84,6 +84,11 @@
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito</artifactId>
+            <version>1.4.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
             <version>1.4.12</version>
         </dependency>
     </dependencies>

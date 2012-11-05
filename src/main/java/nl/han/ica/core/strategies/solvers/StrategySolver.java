@@ -2,9 +2,11 @@ package nl.han.ica.core.strategies.solvers;
 
 import nl.han.ica.core.Parameter;
 import org.apache.log4j.Logger;
+import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.MalformedTreeException;
