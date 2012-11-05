@@ -1,9 +1,7 @@
 package nl.han.ica.core.strategies.solvers;
 
-import net.sourceforge.pmd.IRuleViolation;
 import nl.han.ica.core.Parameter;
 import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
-import nl.han.ica.core.ast.visitors.NumberLiteralVisitor;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
