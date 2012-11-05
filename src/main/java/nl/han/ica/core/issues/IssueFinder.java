@@ -35,11 +35,14 @@ public class IssueFinder {
     public List<Issue> findIssues(){
         List<Issue> issues = new ArrayList<>();
         //TODO instead of adding magicnumbercriteria add list off selected criterias
-        criterias.add(new MagicNumberCriteria());
+        
         
         for(SourceHolder sourceHolder : context.getSourceHolders()){
-            sourceHolder.getCompilationUnit().accept(criterias.get(0));
-            issues.addAll(createIssues(sourceHolder, criterias.get(0)));
+            
+            //REALLY UGLY BUT TEST FOR BUG FIX
+            criterias.add(new MagicNumberCriteria());
+            sourceHolder.getCompilationUnit().accept(criterias.get(criterias.size()-1));
+            issues.addAll(createIssues(sourceHolder, criterias.get(criterias.size()-1)));
         }
 
         return issues;

@@ -103,47 +103,16 @@ public class Job {
         
         Solution solution = new Solution(strategySolver);     
         
-        solution.setBefore(issue.getSourceHolder().getDocument().get());
-        
+               
         strategySolver.setSourceHolder(issue.getSourceHolder());
         strategySolver.setViolationNodes(issue.getViolatedNodes());
+        
+        solution.setBefore(strategySolver.getDocument().get()); 
         strategySolver.rewriteAST();
         solution.setAfter(strategySolver.getDocument().get());
         
         return solution;
-    }
-    
-    /**
-     * Create a solution for an issue, using given parameters.
-     * @param issue The issue to solve.
-     * @param parameters The parameters to use when creating the solution.
-     * @return The created solution.
-     */
-    /*public Solution solve(Issue issue, Map<String, Parameter> parameters) {
-        StrategySolver strategySolver = StrategySolverFactory.createStrategySolver(issue.getRuleViolation());
-        strategySolver.setRuleViolation(issue.getRuleViolation());
-        strategySolver.setParameters(parameters);
-
-        logger.info("Solving issue...");
-        logger.info("...with solver: " + strategySolver.getClass().getName());
-        logger.info("...with parameters: " + parameters.toString());
-
-        strategySolver.buildAST(issue.getFile());
-        strategySolver.rewriteAST();
-
-        Solution solution = new Solution(strategySolver, parameters); // TODO: Move to StrategySolver
-        try {
-            String contents = FileUtil.getFileContent(issue.getFile());
-            solution.setBefore(contents);
-        } catch (IOException e) {
-            logger.error("Could not open file.");
-        }
-        solution.setAfter(strategySolver.getDocument().get());
-        logger.info("Done solving issue.");
-        return solution;
-    }*/
-    
-    
+    }    
 
     /**
      * Checks whether the conditions are right so the job can be processed.

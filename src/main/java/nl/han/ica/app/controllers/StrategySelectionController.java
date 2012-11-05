@@ -148,8 +148,7 @@ public class StrategySelectionController extends BaseController {
             for (File file : db.getFiles()) {
                 if (file.isDirectory()) {
                     for (File directoryFile : FileUtil.listFilesRecursively(file, ".java")) {
-                        //job.getFiles().add(directoryFile);
-                        job.addFile(file);
+                        job.addFile(directoryFile);
                     }
                 } else if (file.getName().endsWith(".java")) {
                     job.addFile(file);

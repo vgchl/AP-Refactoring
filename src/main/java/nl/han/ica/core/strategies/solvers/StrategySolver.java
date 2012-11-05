@@ -1,33 +1,32 @@
 package nl.han.ica.core.strategies.solvers;
 
+import java.io.File;
+import java.io.IOException;
 import nl.han.ica.core.Parameter;
 import org.apache.log4j.Logger;
-import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import nl.han.ica.core.SourceHolder;
+import nl.han.ica.core.util.FileUtil;
 import org.eclipse.jface.text.Document;
 
 public abstract class StrategySolver  {
 
     protected Logger logger;
+    protected IDocument document;
     protected Map<String, Parameter> parameters;
-    
-    //protected List<SourceHolder> sourceHolders;
     protected SourceHolder sourceHolder;
     protected ASTNode violationNode;
-
+    
     /**
      * Creates a strategy solver with rule violation.
      *
@@ -71,11 +70,9 @@ public abstract class StrategySolver  {
      * @param rewrite AstRewrite wich keeps the changes made in the ast.
      */
     protected void applyChanges(ASTRewrite rewrite){
-        //TODO only applys changes on 1 doc
-        TextEdit textEdit = rewrite.rewriteAST(sourceHolder.getDocument(), JavaCore.getOptions());
-        
+        TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
         try {
-            textEdit.apply(sourceHolder.getDocument());
+            textEdit.apply(document);
         } catch (MalformedTreeException | BadLocationException ex) {
             logger.error(StrategySolver.class.getName(), ex);
         }
@@ -83,7 +80,18 @@ public abstract class StrategySolver  {
 
     public void setSourceHolder(SourceHolder sourceHolder) {
         this.sourceHolder = sourceHolder;
+        setDocument(sourceHolder.getFile());
     }
+    
+    private void setDocument(File file){
+        try {
+            String fileContent = FileUtil.getFileContent(file);
+            document = new Document(fileContent);
+        } catch (IOException ex) {
+            logger.error(StrategySolver.class.getName(), ex);
+        }
+    }
+    
 
     public void setViolationNodes(ASTNode violationNode) {
         this.violationNode = violationNode;
@@ -129,6 +137,6 @@ public abstract class StrategySolver  {
      * @return docoument 
      */
     public IDocument getDocument() {
-        return sourceHolder.getDocument();
+        return document;
     }
 }
