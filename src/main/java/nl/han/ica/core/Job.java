@@ -22,8 +22,9 @@ import org.eclipse.core.internal.resources.Workspace;
  */
 public class Job {
 
-    //private List<File> files;
-    private List<SourceHolder> sourceHolders;
+    private List<File> files;
+    //private List<SourceHolder> sourceHolders;
+    
     private List<Strategy> strategies;
     private ObservableList<Issue> issues;
     private Logger logger;
@@ -36,7 +37,8 @@ public class Job {
         logger = Logger.getLogger(getClass().getName());
 
         strategies = new ArrayList<>();
-        sourceHolders = new ArrayList<>();
+        files = new ArrayList<>();
+        //sourceHolders = new ArrayList<>();
         issues = FXCollections.observableArrayList();
 
         pmd = new PMD();
@@ -78,8 +80,7 @@ public class Job {
     }*/
     
     public void process(){
-        //TODO replace comilationunit list with compilationunits in Context
-        Context context = new Context(sourceHolders);
+        Context context = new Context(files);
         context.createCompilationUnits();
         
         IssueFinder issueFinder = new IssueFinder(context);
@@ -100,10 +101,11 @@ public class Job {
         StrategySolver strategySolver = StrategySolverFactory.createStrategySolver(issue.getStrategy());
         strategySolver.setParameters(parameters);
         
-        Solution solution = new Solution(strategySolver);
+        Solution solution = new Solution(strategySolver);     
+        
         solution.setBefore(issue.getSourceHolder().getDocument().get());
         
-        strategySolver.setSourceHolders(sourceHolders);
+        strategySolver.setSourceHolder(issue.getSourceHolder());
         strategySolver.setViolationNodes(issue.getViolatedNodes());
         strategySolver.rewriteAST();
         solution.setAfter(strategySolver.getDocument().get());
@@ -148,7 +150,7 @@ public class Job {
      * @return Whether files and rules are present.
      */
     public boolean canProcess() {
-        return sourceHolders.size() > 0 && strategies.size() > 0;
+        return files.size() > 0 && strategies.size() > 0;
     }
 
     /**
@@ -175,30 +177,26 @@ public class Job {
         issues.remove(issue);
     }
 
+    
+    
     /**
      * Returns the job's files.
      * @return The job's files.
      */
-    public List<SourceHolder> getSourceHolders() {
-        return sourceHolders;
+    public List<File> getFiles() {
+        return files;
     }
     
-    public void addSourceHolder(File file){
-        SourceHolder newHolder = new SourceHolder();
-        newHolder.setFile(file);
-        sourceHolders.add(newHolder);
+    public void addFile(File file){
+        files.add(file);
     }
 
     /**
      * Sets the job's files.
      * @param files The job's files.
      */
-    public void createSourceHolders(List<File> files) {
-        for(File file : files){
-            SourceHolder newHolder = new SourceHolder();
-            newHolder.setFile(file);
-            sourceHolders.add(newHolder);
-        }
+    public void setFiles(List<File> files) {
+        this.files = files;
     }
 
     /**

@@ -11,7 +11,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 public class Issue {
 
     private Strategy strategy;
-    private List<ASTNode> violatedNodes;
+    private ASTNode violatedNode;
     private SourceHolder sourceHolder;
     
     /**
@@ -19,10 +19,17 @@ public class Issue {
      *
      * @param strategy The strategy to solve the issue with.
      */
-    public Issue(Strategy strategy, List<ASTNode> violationNodes, SourceHolder sourceHolder) {
+    public Issue(Strategy strategy, ASTNode violationNode, SourceHolder sourceHolder) {
         this.strategy = strategy;
-        this.violatedNodes = violationNodes;
-        this.sourceHolder = sourceHolder;
+        this.violatedNode = violationNode;
+        cloneSourceHolder(sourceHolder);
+    }
+    
+    private void cloneSourceHolder(SourceHolder sourceHolder){
+        SourceHolder newHolder = new SourceHolder();
+        newHolder.setFile(sourceHolder.getFile());
+        newHolder.setCompilationUnit(sourceHolder.getCompilationUnit());
+        this.sourceHolder = newHolder;
     }
 
     /**
@@ -34,16 +41,14 @@ public class Issue {
         return strategy;
     }
 
-    public void setSourceHolder(SourceHolder sourceHolder) {
-        this.sourceHolder = sourceHolder;
-    }
+    
     
     public SourceHolder getSourceHolder() {
         return sourceHolder;
     }
 
-    public List<ASTNode> getViolatedNodes() {
-        return violatedNodes;
+    public ASTNode getViolatedNodes() {
+        return violatedNode;
     }
 
     public String getDescription() {
