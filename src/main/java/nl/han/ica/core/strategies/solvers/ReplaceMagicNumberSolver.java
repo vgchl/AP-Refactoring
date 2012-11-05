@@ -26,23 +26,22 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
     }
 
     @Override
-    public void rewriteAST() {
-  
+    public void rewriteAST() {  
         if(violationNode instanceof NumberLiteral){
 
             NumberLiteral literal = (NumberLiteral) violationNode;
-            if(literal.getRoot().getNodeType() == ASTNode.COMPILATION_UNIT){
-                CompilationUnit compilationUnit = (CompilationUnit) literal.getRoot();
-                TypeDeclaration typeDeclaration = (TypeDeclaration) compilationUnit.types().get(0);
-                rewriteMagicNumber(typeDeclaration.getAST(), literal);
 
-                FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
-                typeDeclaration.accept(fieldDeclarationVisitor);
-                if (!fieldDeclarationVisitor.hasFieldName((String) parameters.get(PARAMETER_CONSTANT_NAME).getValue())){
-                    System.out.println("LITERAL ROOT NODETYPE: " + literal.getRoot().getNodeType());
-                    addStaticFinalField(typeDeclaration, literal.getToken());
-                }
+            //CompilationUnit compilationUnit = (CompilationUnit) literal.getRoot();
+            CompilationUnit compilationUnit = sourceHolder.getCompilationUnit();
+            TypeDeclaration typeDeclaration = (TypeDeclaration) compilationUnit.types().get(0);
+            rewriteMagicNumber(typeDeclaration.getAST(), literal);
+
+            FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
+            typeDeclaration.accept(fieldDeclarationVisitor);
+            if (!fieldDeclarationVisitor.hasFieldName((String) parameters.get(PARAMETER_CONSTANT_NAME).getValue())){
+                addStaticFinalField(typeDeclaration, literal.getToken());
             }
+            
         }
         
     }

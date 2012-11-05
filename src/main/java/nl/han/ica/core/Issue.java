@@ -22,15 +22,9 @@ public class Issue {
     public Issue(Strategy strategy, ASTNode violationNode, SourceHolder sourceHolder) {
         this.strategy = strategy;
         this.violatedNode = violationNode;
-        cloneSourceHolder(sourceHolder);
+        this.sourceHolder = sourceHolder;
     }
     
-    private void cloneSourceHolder(SourceHolder sourceHolder){
-        SourceHolder newHolder = new SourceHolder();
-        newHolder.setFile(sourceHolder.getFile());
-        newHolder.setCompilationUnit(sourceHolder.getCompilationUnit());
-        this.sourceHolder = newHolder;
-    }
 
     /**
      * Gets the strategy for this issue.
@@ -52,7 +46,7 @@ public class Issue {
     }
 
     public String getDescription() {
-        return "HOMOOOOOOOOOOOOO";
+        return sourceHolder.getFile().getName();
     }
 
 }
