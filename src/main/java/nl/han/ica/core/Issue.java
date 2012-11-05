@@ -1,9 +1,9 @@
 package nl.han.ica.core;
 
-import net.sourceforge.pmd.IRuleViolation;
 import nl.han.ica.core.strategies.Strategy;
 
-import java.io.File;
+import java.util.List;
+import org.eclipse.jdt.core.dom.ASTNode;
 
 /**
  * Represents a problem found at a certain spot in the source code.
@@ -11,16 +11,18 @@ import java.io.File;
 public class Issue {
 
     private Strategy strategy;
-    private File file;
-    private IRuleViolation ruleViolation;
-
+    private List<ASTNode> violatedNodes;
+    private SourceHolder sourceHolder;
+    
     /**
      * Creates a new issue with given strategy.
      *
      * @param strategy The strategy to solve the issue with.
      */
-    public Issue(Strategy strategy) {
+    public Issue(Strategy strategy, List<ASTNode> violationNodes, SourceHolder sourceHolder) {
         this.strategy = strategy;
+        this.violatedNodes = violationNodes;
+        this.sourceHolder = sourceHolder;
     }
 
     /**
@@ -32,29 +34,20 @@ public class Issue {
         return strategy;
     }
 
-    /**
-     * Sets the strategy for this issue.
-     *
-     * @param strategy The strategy to set.
-     */
-    public void setStrategy(Strategy strategy) {
-        this.strategy = strategy;
+    public void setSourceHolder(SourceHolder sourceHolder) {
+        this.sourceHolder = sourceHolder;
+    }
+    
+    public SourceHolder getSourceHolder() {
+        return sourceHolder;
     }
 
-
-    public File getFile() {
-        return file;
+    public List<ASTNode> getViolatedNodes() {
+        return violatedNodes;
     }
 
-    public void setFile(File file) {
-        this.file = file;
+    public String getDescription() {
+        return "HOMOOOOOOOOOOOOO";
     }
 
-    public IRuleViolation getRuleViolation() {
-        return ruleViolation;
-    }
-
-    public void setRuleViolation(IRuleViolation ruleViolation) {
-        this.ruleViolation = ruleViolation;
-    }
 }

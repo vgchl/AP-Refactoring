@@ -10,20 +10,20 @@ import nl.han.ica.core.util.FileUtil;
 import org.apache.log4j.Logger;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import nl.han.ica.core.issues.IssueFinder;
+import org.eclipse.core.internal.resources.Workspace;
 
 /**
  * Lists the files and the rules to check them for.
  */
 public class Job {
 
-    private List<File> files;
+    //private List<File> files;
+    private List<SourceHolder> sourceHolders;
     private List<Strategy> strategies;
     private ObservableList<Issue> issues;
     private Logger logger;
@@ -36,7 +36,7 @@ public class Job {
         logger = Logger.getLogger(getClass().getName());
 
         strategies = new ArrayList<>();
-        files = new ArrayList<>();
+        sourceHolders = new ArrayList<>();
         issues = FXCollections.observableArrayList();
 
         pmd = new PMD();
@@ -46,7 +46,7 @@ public class Job {
     /**
      * Process the files in this job and check them against the selected rules. Results are stored in the job report.
      */
-    public void process() {
+    /*public void process() {
         logger.info("Processing job…");
         issues.clear();
         for (Strategy strategy : strategies) {
@@ -75,6 +75,15 @@ public class Job {
             }
         }
         logger.info("Job done processing.");
+    }*/
+    
+    public void process(){
+        //TODO replace comilationunit list with compilationunits in Context
+        Context context = new Context(sourceHolders);
+        context.createCompilationUnits();
+        
+        IssueFinder issueFinder = new IssueFinder(context);
+        issues.addAll(issueFinder.findIssues());
     }
 
     /**
@@ -83,16 +92,32 @@ public class Job {
      * @return The created solution.
      */
     public Solution solve(Issue issue) {
+        
         return solve(issue, null);
     }
 
+    public Solution solve(Issue issue, Map<String, Parameter> parameters) {
+        StrategySolver strategySolver = StrategySolverFactory.createStrategySolver(issue.getStrategy());
+        strategySolver.setParameters(parameters);
+        
+        Solution solution = new Solution(strategySolver);
+        solution.setBefore(issue.getSourceHolder().getDocument().get());
+        
+        strategySolver.setSourceHolders(sourceHolders);
+        strategySolver.setViolationNodes(issue.getViolatedNodes());
+        strategySolver.rewriteAST();
+        solution.setAfter(strategySolver.getDocument().get());
+        
+        return solution;
+    }
+    
     /**
      * Create a solution for an issue, using given parameters.
      * @param issue The issue to solve.
      * @param parameters The parameters to use when creating the solution.
      * @return The created solution.
      */
-    public Solution solve(Issue issue, Map<String, Parameter> parameters) {
+    /*public Solution solve(Issue issue, Map<String, Parameter> parameters) {
         StrategySolver strategySolver = StrategySolverFactory.createStrategySolver(issue.getRuleViolation());
         strategySolver.setRuleViolation(issue.getRuleViolation());
         strategySolver.setParameters(parameters);
@@ -114,14 +139,16 @@ public class Job {
         solution.setAfter(strategySolver.getDocument().get());
         logger.info("Done solving issue.");
         return solution;
-    }
+    }*/
+    
+    
 
     /**
      * Checks whether the conditions are right so the job can be processed.
      * @return Whether files and rules are present.
      */
     public boolean canProcess() {
-        return files.size() > 0 && strategies.size() > 0;
+        return sourceHolders.size() > 0 && strategies.size() > 0;
     }
 
     /**
@@ -131,12 +158,12 @@ public class Job {
      * @param solution The solution to apply.
      */
     public void applySolution(Issue issue, Solution solution) {
-        try {
+       /* try {
             FileUtil.setFileContent(issue.getFile(), solution.getAfter());
             process();
         } catch (IOException e) {
             logger.fatal("Could not apply solution: error during file write.");
-        }
+        }*/
     }
 
     /**
@@ -152,16 +179,26 @@ public class Job {
      * Returns the job's files.
      * @return The job's files.
      */
-    public List<File> getFiles() {
-        return files;
+    public List<SourceHolder> getSourceHolders() {
+        return sourceHolders;
+    }
+    
+    public void addSourceHolder(File file){
+        SourceHolder newHolder = new SourceHolder();
+        newHolder.setFile(file);
+        sourceHolders.add(newHolder);
     }
 
     /**
      * Sets the job's files.
      * @param files The job's files.
      */
-    public void setFiles(List<File> files) {
-        this.files = files;
+    public void createSourceHolders(List<File> files) {
+        for(File file : files){
+            SourceHolder newHolder = new SourceHolder();
+            newHolder.setFile(file);
+            sourceHolders.add(newHolder);
+        }
     }
 
     /**

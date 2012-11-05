@@ -51,8 +51,8 @@ public class IssueResolveController extends BaseController {
         logger.info("Updating issue view");
 
         issueTitle.setText(issue.getStrategy().getName());
-        issueDescription.setText(issue.getRuleViolation().getRule().getDescription().replaceAll("\n", " ").replaceAll("  ", ""));
-
+        //issueDescription.setText(issue.getRuleViolation().getRule().getDescription().replaceAll("\n", " ").replaceAll("  ", ""));
+        issueDescription.setText(issue.getDescription());
         final Map<String, Parameter> parameters = new HashMap<>();
         changeController.addParameterChangeListener(new ParameterChangeListener() {
             @Override

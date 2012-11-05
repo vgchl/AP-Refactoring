@@ -1,7 +1,5 @@
 package nl.han.ica.core.strategies.solvers;
 
-import net.sourceforge.pmd.RuleViolation;
-
 /**
  * Created with IntelliJ IDEA.
  * User: Niek
@@ -11,9 +9,6 @@ import net.sourceforge.pmd.RuleViolation;
  */
 public class ReplacePublicFieldSolver extends StrategySolver {
 
-    public ReplacePublicFieldSolver(RuleViolation ruleViolation) {
-        super(ruleViolation);
-    }
     
     @Override
     public void rewriteAST() {

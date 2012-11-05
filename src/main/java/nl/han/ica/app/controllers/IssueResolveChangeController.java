@@ -51,22 +51,24 @@ public class IssueResolveChangeController extends BaseController {
 
     private void initializeParametersForm() {
         int i = 0, row, col;
-        for (Parameter parameter : solution.getParameters().values()) {
-            Control control = parameterControlFactory.controlForParameter(parameter, new EventHandler<ParameterEvent>() {
-                @Override
-                public void handle(ParameterEvent event) {
-                    triggerParameterChange(event);
-                }
-            });
-            Label label = new Label(parameter.getTitle());
-            label.setLabelFor(control);
+        if(solution.getParameters() != null){
+            for (Parameter parameter : solution.getParameters().values()) {
+                Control control = parameterControlFactory.controlForParameter(parameter, new EventHandler<ParameterEvent>() {
+                    @Override
+                    public void handle(ParameterEvent event) {
+                        triggerParameterChange(event);
+                    }
+                });
+                Label label = new Label(parameter.getTitle());
+                label.setLabelFor(control);
 
-            row = (int) Math.floor(i / 2);
-            col = (i % 2 == 0) ? 0 : 2;
+                row = (int) Math.floor(i / 2);
+                col = (i % 2 == 0) ? 0 : 2;
 
-            parametersContainer.add(label, col, row);
-            parametersContainer.add(control, col + 1, row);
-            i++;
+                parametersContainer.add(label, col, row);
+                parametersContainer.add(control, col + 1, row);
+                i++;
+            }
         }
     }
 

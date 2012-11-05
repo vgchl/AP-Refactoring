@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import nl.han.ica.core.SourceHolder;
 
 /**
  * Handles all interaction on the source and strategy selection screen.
@@ -88,9 +89,9 @@ public class StrategySelectionController extends BaseController {
 
         List<File> files = fileChooser.showOpenMultipleDialog(null);
         if (null != files) {
-            job.setFiles(files);
+            job.createSourceHolders(files);
         } else {
-            job.getFiles().clear();
+            job.getSourceHolders().clear();
         }
 
         onSourceFilesSelected();
@@ -108,10 +109,10 @@ public class StrategySelectionController extends BaseController {
 
         File directory = directoryChooser.showDialog(null);
         if (null != directory) {
-            job.setFiles(FileUtil.listFilesRecursively(directory, ".java"));
+            job.createSourceHolders(FileUtil.listFilesRecursively(directory, ".java"));
         }
         else {
-            job.getFiles().clear();
+            job.getSourceHolders().clear();
         }
 
         onSourceFilesSelected();
@@ -143,14 +144,15 @@ public class StrategySelectionController extends BaseController {
         boolean success = false;
         if (db.hasFiles()) {
             success = true;
-            job.getFiles().clear();
+            job.getSourceHolders().clear();
             for (File file : db.getFiles()) {
                 if (file.isDirectory()) {
                     for (File directoryFile : FileUtil.listFilesRecursively(file, ".java")) {
-                        job.getFiles().add(directoryFile);
+                        //job.getFiles().add(directoryFile);
+                        job.addSourceHolder(file);
                     }
                 } else if (file.getName().endsWith(".java")) {
-                    job.getFiles().add(file);
+                    job.addSourceHolder(file);
                 }
             }
             onSourceFilesSelected();
@@ -181,8 +183,8 @@ public class StrategySelectionController extends BaseController {
     }
 
     private void onSourceFilesSelected() {
-        if (job.getFiles().size() > 0) {
-            selectedFilePath.setText(formatFileList(job.getFiles()));
+        if (job.getSourceHolders().size() > 0) {
+            selectedFilePath.setText(formatFileList(job.getSourceHolders()));
             selectedFilePath.setVisible(true);
             selectedFile.setVisible(true);
             analyzeButton.setDisable(false);
@@ -193,10 +195,10 @@ public class StrategySelectionController extends BaseController {
         }
     }
 
-    private String formatFileList(List<File> files) {
+    private String formatFileList(List<SourceHolder> sources) {
         StringBuilder fileList = new StringBuilder();
-        for (File file : files) {
-            fileList.append(file.getName()).append("\n");
+        for (SourceHolder source : sources) {
+            fileList.append(source.getFile().getName()).append("\n");
         }
         return fileList.toString();
     }

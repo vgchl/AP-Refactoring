@@ -20,17 +20,38 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
     private static final String PARAMETER_CONSTANT_NAME = "Constant name";
     private Map<String, Parameter> defaultParameters;
 
-    /**
-     * The constructor for this solver.
-     *
-     * @param ruleViolation The rule violation.
-     */
-    public ReplaceMagicNumberSolver(IRuleViolation ruleViolation) {
-        super(ruleViolation);
+    
+    //TODO this constructor will replace the one with the ruleviolation as parameter
+    public ReplaceMagicNumberSolver(){
+        super();
         initializeDefaultParameters();
     }
 
     @Override
+    public void rewriteAST() {
+        for(ASTNode node : violationNodes){
+            System.out.println(node.getNodeType());
+            if(node instanceof NumberLiteral){
+                
+                NumberLiteral literal = (NumberLiteral) node;
+                if(literal.getRoot().getNodeType() == ASTNode.COMPILATION_UNIT){
+                    CompilationUnit compilationUnit = (CompilationUnit) literal.getRoot();
+                    TypeDeclaration typeDeclaration = (TypeDeclaration) compilationUnit.types().get(0);
+                    rewriteMagicNumber(typeDeclaration.getAST(), literal);
+
+                    FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
+                    typeDeclaration.accept(fieldDeclarationVisitor);
+                    if (!fieldDeclarationVisitor.hasFieldName((String) parameters.get(PARAMETER_CONSTANT_NAME).getValue())){
+                        System.out.println("LITERAL ROOT NODETYPE: " + literal.getRoot().getNodeType());
+                        addStaticFinalField(typeDeclaration, literal.getToken());
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    /*@Override
     public void rewriteAST() {
         TypeDeclaration typeDeclaration = getTypeDeclaration(ruleViolation.getClassName());
         
@@ -50,7 +71,7 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
         if (!fieldDeclarationVisitor.hasFieldName((String) parameters.get(PARAMETER_CONSTANT_NAME).getValue())){
             addStaticFinalField(typeDeclaration, literalViolation.getToken());
         }
-    }
+    }*/
     
     private void setDefaultReplaceName(FieldDeclarationVisitor fieldDeclarationVisitor, String violationValue){
         List<FieldDeclaration> fieldDeclarations = fieldDeclarationVisitor.getFieldDeclarationWithValue(violationValue);
