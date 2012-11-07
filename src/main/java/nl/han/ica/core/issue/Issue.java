@@ -2,7 +2,7 @@ package nl.han.ica.core.issue;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Represents a problem found at a certain spot in the source code.
@@ -10,7 +10,7 @@ import java.util.Set;
 public class Issue {
 
     private IssueDetector detector;
-    private Set<ASTNode> nodes;
+    private List<ASTNode> nodes;
 
     public Issue(IssueDetector detector) {
         this.detector = detector;
@@ -20,11 +20,11 @@ public class Issue {
         return detector;
     }
 
-    public Set<ASTNode> getNodes() {
+    public List<ASTNode> getNodes() {
         return nodes;
     }
 
-    public void setNodes(Set<ASTNode> nodes) {
+    public void setNodes(List<ASTNode> nodes) {
         this.nodes = nodes;
     }
 

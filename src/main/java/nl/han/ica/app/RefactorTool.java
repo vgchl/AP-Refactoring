@@ -4,7 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import nl.han.ica.app.controllers.BaseController;
-import nl.han.ica.app.controllers.StrategySelectionController;
+import nl.han.ica.app.controllers.IssueDetectorIndexController;
 import nl.han.ica.core.Job;
 
 import java.io.IOException;
@@ -33,7 +33,7 @@ public class RefactorTool extends Application {
     public void start(Stage stage) throws IOException, InterruptedException {
         Scene scene = new Scene(null);
 
-        BaseController strategySelectionController = new StrategySelectionController(scene, new Job());
+        BaseController strategySelectionController = new IssueDetectorIndexController(scene, new Job());
         scene.setRoot(strategySelectionController.getView());
 
         stage.setScene(scene);

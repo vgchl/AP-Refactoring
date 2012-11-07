@@ -1,7 +1,7 @@
 package nl.han.ica.core.strategies.solvers;
 
 import nl.han.ica.core.strategies.solvers.StrategySolverFactory;
-import nl.han.ica.core.strategies.solvers.ReplaceMagicNumberSolver;
+import nl.han.ica.core.issue.solver.ReplaceMagicNumberSolver;
 import nl.han.ica.core.strategies.solvers.StrategySolver;
 import junit.framework.Assert;
 import net.sourceforge.pmd.RuleContext;

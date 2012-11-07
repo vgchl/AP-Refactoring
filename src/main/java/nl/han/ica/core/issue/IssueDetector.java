@@ -1,5 +1,6 @@
 package nl.han.ica.core.issue;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 
 import java.util.HashSet;
@@ -20,6 +21,18 @@ public abstract class IssueDetector extends ASTVisitor {
 
     public Set<Issue> getIssues() {
         return issues;
+    }
+
+    protected Issue createIssue() {
+        Issue issue = new Issue(this);
+        issues.add(issue);
+        return issue;
+    }
+
+    protected Issue createIssue(ASTNode node) {
+        Issue issue = createIssue();
+        issue.getNodes().add(node);
+        return issue;
     }
 
 }

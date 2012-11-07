@@ -16,8 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import nl.han.ica.core.Job;
-import nl.han.ica.core.strategies.ReplaceMagicNumber;
-import nl.han.ica.core.strategies.Strategy;
+import nl.han.ica.core.issue.IssueDetector;
 import nl.han.ica.core.util.FileUtil;
 
 import java.io.File;
@@ -26,17 +25,18 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * Handles all interaction on the source and strategy selection screen.
  */
-public class StrategySelectionController extends BaseController {
+public class IssueDetectorIndexController extends BaseController {
 
     private final static String FILES_SELECTION_TITLE = "Select source files";
 
     private Job job;
     private Scene scene;
-    private List<Strategy> strategyList;
+    private Set<IssueDetector> issueDetectors;
 
     @FXML
     protected VBox strategyOptions;
@@ -48,12 +48,12 @@ public class StrategySelectionController extends BaseController {
     protected Button analyzeButton;
 
     /**
-     * Initialize a new StrategySelectionController.
+     * Initialize a new IssueDetectorIndexController.
      *
      * @param scene The scene in which the controller's view is located.
      * @param job   The job to select source files and strategies for.
      */
-    public StrategySelectionController(Scene scene, Job job) {
+    public IssueDetectorIndexController(Scene scene, Job job) {
         this.scene = scene;
         this.job = job;
         strategyList = new ArrayList<>();
