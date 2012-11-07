@@ -4,10 +4,6 @@
  */
 package nl.han.ica.core.issues.criteria;
 
-import java.util.ArrayList;
-import java.util.List;
-import nl.han.ica.core.Issue;
-import nl.han.ica.core.SourceHolder;
 import nl.han.ica.core.strategies.ReplaceMagicNumber;
 import nl.han.ica.core.strategies.Strategy;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -17,11 +13,11 @@ import org.eclipse.jdt.core.dom.NumberLiteral;
  *
  * @author Corne
  */
-public class MagicNumberCriteria extends Criteria {
+public class MagicNumberIssueDetector extends IssueDetector {
 
     private static final Strategy strategy = new ReplaceMagicNumber();
 
-    public MagicNumberCriteria() {
+    public MagicNumberIssueDetector() {
     }
     
     

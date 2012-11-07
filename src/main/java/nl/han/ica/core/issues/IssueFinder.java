@@ -7,12 +7,11 @@ package nl.han.ica.core.issues;
 import java.util.ArrayList;
 import java.util.List;
 import nl.han.ica.core.Context;
-import nl.han.ica.core.Issue;
-import nl.han.ica.core.SourceHolder;
-import nl.han.ica.core.issues.criteria.Criteria;
-import nl.han.ica.core.issues.criteria.MagicNumberCriteria;
+import nl.han.ica.core.issue.Issue;
+import nl.han.ica.core.SourceFile;
+import nl.han.ica.core.issues.criteria.IssueDetector;
+import nl.han.ica.core.issues.criteria.MagicNumberIssueDetector;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 
 /**
  *
@@ -21,39 +20,39 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 public class IssueFinder {
     
     private Context context;
-    private List<Criteria> criterias = new ArrayList<>();
+    private List<IssueDetector> issueDetectors = new ArrayList<>();
     
     
     public IssueFinder(Context context) {
         this.context = context;
     }
 
-    public void setCriterias(List<Criteria> criterias) {
-        this.criterias = criterias;
+    public void setIssueDetectors(List<IssueDetector> issueDetectors) {
+        this.issueDetectors = issueDetectors;
     }
     
     public List<Issue> findIssues(){
         List<Issue> issues = new ArrayList<>();
-        //TODO instead of adding magicnumbercriteria add list off selected criterias
+        //TODO instead of adding magicnumbercriteria add list off selected issueDetectors
         
         
-        for(SourceHolder sourceHolder : context.getSourceHolders()){
+        for(SourceFile sourceFile : context.getSourceHolders()){
             
             //REALLY UGLY BUT TEST FOR BUG FIX
-            criterias.add(new MagicNumberCriteria());
-            sourceHolder.getCompilationUnit().accept(criterias.get(criterias.size()-1));
-            issues.addAll(createIssues(sourceHolder, criterias.get(criterias.size()-1)));
+            issueDetectors.add(new MagicNumberIssueDetector());
+            sourceFile.getCompilationUnit().accept(issueDetectors.get(issueDetectors.size()-1));
+            issues.addAll(createIssues(sourceFile, issueDetectors.get(issueDetectors.size()-1)));
         }
 
         return issues;
     }
     
-    private List<Issue> createIssues(SourceHolder sourceHolder, Criteria criteria){
+    private List<Issue> createIssues(SourceFile sourceFile, IssueDetector issueDetector){
         List<Issue> issues = new ArrayList<>();
         
-        List<ASTNode> nodes = criteria.getViolatedNodes();
+        List<ASTNode> nodes = issueDetector.getViolatedNodes();
         for(ASTNode node : nodes){
-            Issue issue = new Issue(criteria.getStrategy(), node, sourceHolder);
+            Issue issue = new Issue(issueDetector.getStrategy(), node, sourceFile);
             issues.add(issue);
         }
         return issues;

@@ -5,8 +5,9 @@
 package nl.han.ica.core.issues;
 
 import java.util.List;
-import nl.han.ica.core.issues.criteria.Criteria;
+import nl.han.ica.core.issues.criteria.IssueDetector;
 import static org.junit.Assert.fail;
+
 import org.junit.*;
 
 /**
@@ -35,14 +36,14 @@ public class IssueFinderTest {
     }
 
     /**
-     * Test of setCriterias method, of class IssueFinder.
+     * Test of setIssueDetectors method, of class IssueFinder.
      */
     @Test
     public void testSetCriterias() {
-        System.out.println("setCriterias");
-        List<Criteria> criterias = null;
+        System.out.println("setIssueDetectors");
+        List<IssueDetector> issueDetectors = null;
         IssueFinder instance = new IssueFinder();
-        instance.setCriterias(criterias);
+        instance.setIssueDetectors(issueDetectors);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

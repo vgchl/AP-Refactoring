@@ -5,17 +5,13 @@
 package nl.han.ica.core;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import nl.han.ica.core.ast.ARTASTFileRequestor;
-import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.ClassInstanceCreation;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 
 /**
  *
@@ -61,7 +57,7 @@ public class Context {
         astParser.createASTs(getFilePaths(files), null, bindings, requestor, null);       
     }
     
-    public List<SourceHolder> getSourceHolders(){
-        return requestor.getSourceHolders();
+    public List<SourceFile> getSourceHolders(){
+        return requestor.getSourceFiles();
     }
 }

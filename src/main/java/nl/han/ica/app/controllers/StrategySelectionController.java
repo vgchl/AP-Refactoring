@@ -26,7 +26,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import nl.han.ica.core.SourceHolder;
 
 /**
  * Handles all interaction on the source and strategy selection screen.

@@ -1,9 +1,7 @@
 package nl.han.ica.core.strategies.solvers;
 
-import net.sourceforge.pmd.IRuleViolation;
 import nl.han.ica.core.Parameter;
 import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
-import nl.han.ica.core.ast.visitors.NumberLiteralVisitor;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
@@ -20,35 +18,33 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
     private static final String PARAMETER_CONSTANT_NAME = "Constant name";
     private Map<String, Parameter> defaultParameters;
 
-    
+
     //TODO this constructor will replace the one with the ruleviolation as parameter
-    public ReplaceMagicNumberSolver(){
+    public ReplaceMagicNumberSolver() {
         super();
         initializeDefaultParameters();
     }
 
     @Override
-    public void rewriteAST() {  
-        if(violationNode instanceof NumberLiteral){
-
+    public void rewriteAST() {
+        if (violationNode instanceof NumberLiteral) {
             NumberLiteral literal = (NumberLiteral) violationNode;
-
             //CompilationUnit compilationUnit = (CompilationUnit) literal.getRoot();
-            CompilationUnit compilationUnit = sourceHolder.getCompilationUnit();
+            CompilationUnit compilationUnit = sourceFile.getCompilationUnit();
             TypeDeclaration typeDeclaration = (TypeDeclaration) compilationUnit.types().get(0);
             rewriteMagicNumber(typeDeclaration.getAST(), literal);
 
             FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
             typeDeclaration.accept(fieldDeclarationVisitor);
-            if (!fieldDeclarationVisitor.hasFieldName((String) parameters.get(PARAMETER_CONSTANT_NAME).getValue())){
+            if (!fieldDeclarationVisitor.hasFieldName((String) parameters.get(PARAMETER_CONSTANT_NAME).getValue())) { // TODO: Check for inherited constants.
                 addStaticFinalField(typeDeclaration, literal.getToken());
             }
-            
+
         }
-        
+
     }
-    
-    
+
+
     /*@Override
     public void rewriteAST() {
         TypeDeclaration typeDeclaration = getTypeDeclaration(ruleViolation.getClassName());
@@ -70,10 +66,10 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
             addStaticFinalField(typeDeclaration, literalViolation.getToken());
         }
     }*/
-    
-    private void setDefaultReplaceName(FieldDeclarationVisitor fieldDeclarationVisitor, String violationValue){
+
+    private void setDefaultReplaceName(FieldDeclarationVisitor fieldDeclarationVisitor, String violationValue) {
         List<FieldDeclaration> fieldDeclarations = fieldDeclarationVisitor.getFieldDeclarationWithValue(violationValue);
-        if (!fieldDeclarations.isEmpty()){
+        if (!fieldDeclarations.isEmpty()) {
             VariableDeclaration variableDeclaration = (VariableDeclaration) fieldDeclarations.get(0).fragments().get(0);
             defaultParameters.get(PARAMETER_CONSTANT_NAME).setValue(variableDeclaration.getName().toString());
         }
@@ -99,29 +95,29 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
     /**
      * Rewrites the code so the magic number is replaced with an constant.
      *
-     * @param ast The AST to use when adding the constant to the code.
+     * @param ast           The AST to use when adding the constant to the code.
      * @param numberLiteral The constant.
      */
-    private void rewriteMagicNumber(AST ast, NumberLiteral numberLiteral){
+    private void rewriteMagicNumber(AST ast, NumberLiteral numberLiteral) {
         ASTRewrite rewrite = ASTRewrite.create(numberLiteral.getAST());
         SimpleName newSimpleName = ast.newSimpleName((String) parameters.get(PARAMETER_CONSTANT_NAME).getValue());
         rewrite.replace(numberLiteral, newSimpleName, null);
         applyChanges(rewrite);
     }
-    
-    private void addStaticFinalField(TypeDeclaration typeDeclaration, String fieldValue){        
+
+    private void addStaticFinalField(TypeDeclaration typeDeclaration, String fieldValue) {
         AST ast = typeDeclaration.getAST();
         ASTRewrite rewrite = ASTRewrite.create(ast);
         ListRewrite listRewrite = rewrite.getListRewrite(typeDeclaration,
-                TypeDeclaration.BODY_DECLARATIONS_PROPERTY);        
-                
+                TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
+
         FieldDeclaration fieldDeclaration = createNewFieldDeclaration(ast, fieldValue);
         listRewrite.insertFirst(fieldDeclaration, null);
-        
-        applyChanges(rewrite);
-    }    
 
-    private FieldDeclaration createNewFieldDeclaration(AST ast, String fieldValue){
+        applyChanges(rewrite);
+    }
+
+    private FieldDeclaration createNewFieldDeclaration(AST ast, String fieldValue) {
         VariableDeclarationFragment variableDeclarationFragment = ast.newVariableDeclarationFragment();
         variableDeclarationFragment.setName(ast.newSimpleName((String) parameters.get(PARAMETER_CONSTANT_NAME).getValue()));
         variableDeclarationFragment.setInitializer(ast.newNumberLiteral(fieldValue));
@@ -130,5 +126,5 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
         fieldDeclaration.modifiers().addAll(ast.newModifiers(Modifier.PRIVATE | Modifier.STATIC | Modifier.FINAL));
         return fieldDeclaration;
     }
-    
+
 }

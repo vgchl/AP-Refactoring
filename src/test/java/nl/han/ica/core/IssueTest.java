@@ -2,6 +2,7 @@ package nl.han.ica.core;
 
 import java.io.File;
 import net.sourceforge.pmd.IRuleViolation;
+import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.strategies.Strategy;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;

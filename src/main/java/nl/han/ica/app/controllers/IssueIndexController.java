@@ -9,7 +9,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
-import nl.han.ica.core.Issue;
+import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.Job;
 
 import java.io.IOException;

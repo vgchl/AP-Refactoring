@@ -6,7 +6,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import nl.han.ica.app.models.parameter.ParameterChangeListener;
 import nl.han.ica.app.models.parameter.ParameterEvent;
-import nl.han.ica.core.Issue;
+import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.Job;
 import nl.han.ica.core.Parameter;
 import nl.han.ica.core.Solution;
