@@ -24,7 +24,7 @@ public class NumberLiteralVisitor extends ASTVisitor  {
         this.compilationUnit = compilationUnit;
         numberLiterals = new ArrayList<>();
     }
-
+    
     @Override
     public boolean visit(NumberLiteral node) {
         numberLiterals.add(node);

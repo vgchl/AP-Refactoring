@@ -101,7 +101,7 @@ public class Job {
         
                
         strategySolver.setSourceHolder(issue.getSourceHolder());
-        strategySolver.setViolationNodes(issue.getViolatedNodes());
+        strategySolver.setViolationNodes(issue.getViolationNode());
         
         solution.setBefore(strategySolver.getDocument().get()); 
         strategySolver.rewriteAST();

@@ -4,10 +4,14 @@
  */
 package nl.han.ica.core.issues;
 
+import java.util.ArrayList;
 import java.util.List;
+import nl.han.ica.core.Context;
 import nl.han.ica.core.issues.criteria.Criteria;
-import static org.junit.Assert.fail;
 import org.junit.*;
+import static org.junit.Assert.*;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 /**
  *
@@ -15,24 +19,19 @@ import org.junit.*;
  */
 public class IssueFinderTest {
     
-    public IssueFinderTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
+    private IssueFinder issueFinder;
+    
+    @Mock
+    private Context context;
+    @Mock
+    private List<Criteria> criterias;
     
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        issueFinder = new IssueFinder(context);
     }
     
-    @After
-    public void tearDown() {
-    }
 
     /**
      * Test of setCriterias method, of class IssueFinder.
@@ -40,11 +39,9 @@ public class IssueFinderTest {
     @Test
     public void testSetCriterias() {
         System.out.println("setCriterias");
-        List<Criteria> criterias = null;
-        IssueFinder instance = new IssueFinder();
-        instance.setCriterias(criterias);
+        issueFinder.setCriterias(criterias);
+        //no getter for criterias..
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -53,9 +50,9 @@ public class IssueFinderTest {
     @Test
     public void testFindIssues() {
         System.out.println("findIssues");
-        IssueFinder instance = new IssueFinder();
-        instance.findIssues();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
+        List expResult = new ArrayList<>();
+        List result = issueFinder.findIssues();
+        assertEquals(expResult, result);
     }
 }

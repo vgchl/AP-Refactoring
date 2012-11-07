@@ -12,7 +12,7 @@ import java.io.IOException;
  * Time: 15:40
  * To change this template use File | Settings | File Templates.
  */
-public class TestInputFile {
+public class InputFile {
 
     public static File createTempFile(){
         File file = null;

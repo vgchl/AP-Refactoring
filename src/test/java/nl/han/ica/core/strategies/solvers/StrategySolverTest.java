@@ -1,70 +1,139 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package nl.han.ica.core.strategies.solvers;
 
-import net.sourceforge.pmd.Rule;
-import net.sourceforge.pmd.RuleContext;
-import net.sourceforge.pmd.RuleViolation;
-import net.sourceforge.pmd.ast.SimpleJavaNode;
-import net.sourceforge.pmd.rules.UnusedLocalVariableRule;
-import net.sourceforge.pmd.symboltable.SourceFileScope;
+import java.util.HashMap;
+import java.util.Map;
+import nl.han.ica.core.Parameter;
+import nl.han.ica.core.SourceHolder;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jface.text.IDocument;
+import org.junit.*;
+import static org.junit.Assert.*;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-
+/**
+ *
+ * @author Corne
+ */
 public class StrategySolverTest {
-
-    private StrategySolver strategy;
-    private File file;
-
+    
+    private StrategySolver strategySolver;
+    @Mock
+    private SourceHolder sourceHolder;
+    @Mock
+    private ASTRewrite rewrite;
+    
     @Before
     public void setUp() throws Exception {
-
-        Rule rule = new UnusedLocalVariableRule();
-        RuleContext context = new RuleContext();
-
-        file = TestInputFile.createTempFile();
-
-        context.setSourceCodeFilename(file.getAbsolutePath());
-        SimpleJavaNode node = new SimpleJavaNode(1);
-
-        SourceFileScope scope = new SourceFileScope(file.getAbsolutePath());
-        node.setScope(scope);
-
-        node.testingOnly__setBeginColumn(1);
-        node.testingOnly__setBeginLine(1);
-
-        RuleViolation testViolation = new RuleViolation(rule, context, node);
-        strategy = new StrategySolverMock(testViolation);
+        MockitoAnnotations.initMocks(this);
+        strategySolver = new StrategySolverImpl();
     }
 
+    /**
+     * Test of rewriteAST method, of class StrategySolver.
+     */
     @Test
-    public void testBuildAST() throws Exception {
-        strategy.buildAST(file);
+    public void testRewriteAST() {
+        System.out.println("rewriteAST");
+        StrategySolver instance = new StrategySolverImpl();
+        instance.rewriteAST();
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
 
-        BufferedReader in;
-        ASTParser parser = ASTParser.newParser(AST.JLS3);
-        in = new BufferedReader(new FileReader(file));
-        final StringBuffer buffer = new StringBuffer();
-        String line;
-        while (null != (line = in.readLine())) {
-            buffer.append(line).append("\n");
+    /**
+     * Test of applyChanges method, of class StrategySolver.
+     */
+    @Test
+    public void testApplyChanges() {
+        System.out.println("applyChanges");
+        
+        strategySolver.applyChanges(rewrite);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of setSourceHolder method, of class StrategySolver.
+     */
+    @Test
+    public void testSetSourceHolder() {
+        System.out.println("setSourceHolder");
+
+        strategySolver.setSourceHolder(sourceHolder);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of setViolationNodes method, of class StrategySolver.
+     */
+    @Test
+    public void testSetViolationNodes() {
+        System.out.println("setViolationNodes");
+        ASTNode violationNode = null;
+        strategySolver.setViolationNodes(violationNode);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of getParameters method, of class StrategySolver.
+     */
+    @Test
+    public void testGetParameters() {
+        System.out.println("getParameters");
+        Map expResult = new HashMap<>();
+        Map result = strategySolver.getParameters();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of setParameters method, of class StrategySolver.
+     */
+    @Test
+    public void testSetParameters() {
+        System.out.println("setParameters");
+        Map<String, Parameter> parameters = new HashMap<>();
+        strategySolver.setParameters(parameters);
+        assertEquals(parameters, strategySolver.getParameters());
+    }
+
+    /**
+     * Test of getDefaultParameters method, of class StrategySolver.
+     */
+    @Test
+    public void testGetDefaultParameters() {
+        System.out.println("getDefaultParameters");
+        Map expResult = new HashMap<>();
+        Map result = strategySolver.getDefaultParameters();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getDocument method, of class StrategySolver.
+     */
+    @Test
+    public void testGetDocument() {
+        System.out.println("getDocument");
+        IDocument expResult = null;
+        IDocument result = strategySolver.getDocument();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    public class StrategySolverImpl extends StrategySolver {
+
+        @Override
+        public void rewriteAST() {
         }
-
-        parser.setSource(buffer.toString().toCharArray());
-        parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        parser.setResolveBindings(true);
-
-        CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
-
-        Assert.assertNotNull(strategy.getCompilationUnit());
-        Assert.assertEquals(strategy.getCompilationUnit().toString(), compilationUnit.toString());
-
     }
 }
