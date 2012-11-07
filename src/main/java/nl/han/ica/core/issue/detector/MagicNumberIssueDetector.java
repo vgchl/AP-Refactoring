@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.han.ica.core.issues.criteria;
+package nl.han.ica.core.issue.detector;
 
 import nl.han.ica.core.strategies.ReplaceMagicNumber;
 import nl.han.ica.core.strategies.Strategy;
