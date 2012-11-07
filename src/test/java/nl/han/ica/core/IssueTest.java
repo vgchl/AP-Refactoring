@@ -1,8 +1,8 @@
 package nl.han.ica.core;
 
 import java.io.File;
-import net.sourceforge.pmd.IRuleViolation;
 import nl.han.ica.core.strategies.Strategy;
+import org.eclipse.jdt.core.dom.ASTNode;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import org.junit.Before;
@@ -21,39 +21,39 @@ public class IssueTest {
     @Mock
     private File file;
     @Mock
-    private IRuleViolation ruleViolation;
-    @Mock
     private Strategy strategy;
     @Mock
     private Strategy strategy2;
+    @Mock
+    private ASTNode aSTNode;
+    @Mock
+    private SourceHolder sourceHolder;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        issue = new Issue(strategy);
+        issue = new Issue(strategy, aSTNode, sourceHolder);
     }
 
     @Test
     public void testGetStrategy() throws Exception {
         assertSame(strategy, issue.getStrategy());
     }
-
+    
     @Test
-    public void testSetStrategy() throws Exception {
-        issue.setStrategy(strategy2);
-        assertSame(strategy2, issue.getStrategy());
-        assertNotSame(strategy, issue.getStrategy());
+    public void testGetSourceHolder() throws Exception {
+        assertSame(sourceHolder, issue.getSourceHolder());
+    }
+    
+    @Test
+    public void testGetViolationNode() throws Exception {
+        assertSame(aSTNode, issue.getViolationNode());
+    }
+    
+    @Test
+    public void testGetDescription() throws Exception {
+        assertSame(file.getName(), issue.getDescription());
     }
 
-    @Test
-    public void testSetAndGetFile() throws Exception {
-        issue.setFile(file);
-        assertSame(file, issue.getFile());
-    }
 
-    @Test
-    public void testSetAndGetRuleViolation() throws Exception {
-        issue.setRuleViolation(ruleViolation);
-        assertSame(ruleViolation, issue.getRuleViolation());
-    }
 }

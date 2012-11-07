@@ -1,7 +1,10 @@
 package nl.han.ica.core.strategies.solvers;
 
 import nl.han.ica.core.Parameter;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
+import nl.han.ica.core.SourceHolder;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,21 +19,34 @@ import java.util.Map;
  */
 public class PullUpFieldSolver extends StrategySolver {
 
-    private Map<String, Parameter> defaultParameters;
-    private static final String PARAMETER_CONSTANT_NAME = "Field name";
+    private static final String FIELD_NAME = "Field name";
+
+    private List<SourceHolder> subclasses;
 
     // TODO: which parameter? Issue?
-    public PullUpFieldSolver() {
+    public PullUpFieldSolver(SourceHolder superclass, List<SourceHolder> subclasses, Map<String, Parameter> parameters) {
         // TODO get node for superclass field declarations, from Issue
         // TODO get nodes from subclasses field declarations, from Issue
 
-        initializeDefaultParameters();
+        setSourceHolder(superclass);
+        this.subclasses = subclasses;
+
+        if (parameters == null) {
+            this.parameters = initializeDefaultParameters();
+        } else {
+            this.parameters = parameters;
+        }
     }
 
-    private void initializeDefaultParameters() {
-        // TODO: use a default name for the new superfield
-        defaultParameters = new HashMap<String, Parameter>();
-        Parameter constantName = new Parameter(PARAMETER_CONSTANT_NAME, "newFieldFromSubclass");
+    public PullUpFieldSolver(SourceHolder superclass, List<SourceHolder> subclasses) {
+        this(superclass, subclasses, null);
+    }
+
+
+
+    private Map<String, Parameter> initializeDefaultParameters() {
+        Map<String, Parameter> defaultParameters = new HashMap<String, Parameter>();
+        Parameter constantName = new Parameter(FIELD_NAME, "newFieldFromSubclass");
 
         constantName.getConstraints().add(new Parameter.Constraint() {
             @Override
@@ -39,6 +55,7 @@ public class PullUpFieldSolver extends StrategySolver {
             }
         });
 
+        return defaultParameters;
     }
 
     @Override
@@ -48,19 +65,63 @@ public class PullUpFieldSolver extends StrategySolver {
         // TODO remove getters/setters from subclasses
         // TODO add fieldDeclaration of same type to superclass
         // TODO add getter and setter to superclass (if they existed in subclasses)
-        addFieldToSuperClass();
+        //addFieldToSuperClass();
+        addGetterAndSetter();
+        removeFieldsFromSubClasses();
+        removeGettersAndSettersFromSubClasses();
+    }
+
+    private void removeGettersAndSettersFromSubClasses() {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
+    private void removeFieldsFromSubClasses() {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
+    private void addGetterAndSetter() {
+        // TODO: ALL
     }
 
     /**
      *
      */
-    private void addFieldToSuperClass() {
+    private void addFieldToSuperClass(TypeDeclaration typeDeclaration, String fieldValue) {
 
         // TODO get field that is present in subclasses and add it to the superclass
+        AST ast = typeDeclaration.getAST();
+        ASTRewrite rewrite = ASTRewrite.create(ast);
+        ListRewrite listRewrite = rewrite.getListRewrite(typeDeclaration, TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
+
+        FieldDeclaration newField = createNewFieldDeclaration(ast, fieldValue);
+        listRewrite.insertLast(newField, null);
+
+        /* TODO: Rewrites the document only, make sure document is superclass file?*/
+        applyChanges(rewrite);
     }
 
-    @Override
-    public Map<String, Parameter> getDefaultParameters() {
-        return defaultParameters;
+    /**
+     * Create a new FieldDeclaration based on the duplicates found in subclasses. Copies
+     *
+     * @param ast
+     * @param fieldValue
+     * @return
+     */
+    private FieldDeclaration createNewFieldDeclaration(AST ast, String fieldValue) {
+
+        VariableDeclarationFragment variableDeclarationFragment = ast.newVariableDeclarationFragment();
+        variableDeclarationFragment.setName(ast.newSimpleName((String) parameters.get(FIELD_NAME).getValue()));
+
+        // TODO: choose correct literal type from the thing that we're moving : use Enum in TypeDeclaration?
+        variableDeclarationFragment.setInitializer(ast.newNumberLiteral());
+
+        // TODO: choose correct literal type from the thing that we're moving
+        FieldDeclaration fieldDeclaration = ast.newFieldDeclaration(variableDeclarationFragment);
+
+        // TODO: choose correct Modifier: should basically always be private.
+        fieldDeclaration.setType(ast.newPrimitiveType(PrimitiveType.INT));
+        fieldDeclaration.modifiers().addAll(ast.newModifiers(Modifier.PRIVATE));
+
+        return fieldDeclaration;
     }
 }

@@ -34,14 +34,13 @@ public class Issue {
     public Strategy getStrategy() {
         return strategy;
     }
-
     
     
     public SourceHolder getSourceHolder() {
         return sourceHolder;
     }
 
-    public ASTNode getViolatedNodes() {
+    public ASTNode getViolationNode() {
         return violatedNode;
     }
 

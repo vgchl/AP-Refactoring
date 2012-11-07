@@ -2,7 +2,6 @@ package nl.han.ica.core;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import net.sourceforge.pmd.*;
 import nl.han.ica.core.strategies.Strategy;
 import nl.han.ica.core.strategies.solvers.StrategySolver;
 import nl.han.ica.core.strategies.solvers.StrategySolverFactory;
@@ -28,7 +27,6 @@ public class Job {
     private List<Strategy> strategies;
     private ObservableList<Issue> issues;
     private Logger logger;
-    private PMD pmd;
 
     /**
      * Instantiate a new job.
@@ -41,8 +39,6 @@ public class Job {
         //sourceHolders = new ArrayList<>();
         issues = FXCollections.observableArrayList();
 
-        pmd = new PMD();
-        pmd.setJavaVersion(SourceType.JAVA_17);
     }
 
     /**
@@ -105,7 +101,7 @@ public class Job {
         
                
         strategySolver.setSourceHolder(issue.getSourceHolder());
-        strategySolver.setViolationNodes(issue.getViolatedNodes());
+        strategySolver.setViolationNodes(issue.getViolationNode());
         
         solution.setBefore(strategySolver.getDocument().get()); 
         strategySolver.rewriteAST();
