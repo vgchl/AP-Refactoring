@@ -4,6 +4,7 @@ import net.sourceforge.pmd.IRuleViolation;
 import nl.han.ica.core.Parameter;
 import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
 import nl.han.ica.core.ast.visitors.NumberLiteralVisitor;
+import nl.han.ica.core.ast.visitors.TypeDeclarationVisitor;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
@@ -39,6 +40,8 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
             rewriteMagicNumber(typeDeclaration.getAST(), literal);
 
             FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
+            TypeDeclarationVisitor typeDeclarationVisitor = new TypeDeclarationVisitor();
+            typeDeclaration.accept(typeDeclarationVisitor);
             typeDeclaration.accept(fieldDeclarationVisitor);
             if (!fieldDeclarationVisitor.hasFieldName((String) parameters.get(PARAMETER_CONSTANT_NAME).getValue())){
                 addStaticFinalField(typeDeclaration, literal.getToken());

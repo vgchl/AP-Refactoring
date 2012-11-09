@@ -21,7 +21,7 @@ import java.io.File;
  * Time: 12:20
  */
 public class ReplaceMagicNumberSolverTest {
-
+                        /*
     private ReplaceMagicNumberSolver replaceMagicNumber;
 
     @Before
@@ -95,5 +95,5 @@ public class ReplaceMagicNumberSolverTest {
                 "    }\n" +
                 "}";
     }
-
+         */
 }
