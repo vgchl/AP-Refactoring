@@ -9,6 +9,7 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import nl.han.ica.core.ast.ASTHelper;
 
 /**
  * Solver for the Replace Magic Number with Constant violation.
@@ -16,7 +17,6 @@ import java.util.Map;
 public class ReplaceMagicNumberSolver extends StrategySolver {
 
     private static final String PARAMETER_CONSTANT_NAME = "Constant name";
-    private Map<String, Parameter> defaultParameters;
 
     
     //TODO this constructor will replace the one with the ruleviolation as parameter
@@ -27,58 +27,39 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
 
     @Override
     public void rewriteAST() {  
-        if(violationNode instanceof NumberLiteral){
-
+        if(violationNode instanceof NumberLiteral){//should alwasys be true
             NumberLiteral literal = (NumberLiteral) violationNode;
 
-            //CompilationUnit compilationUnit = (CompilationUnit) literal.getRoot();
-            CompilationUnit compilationUnit = sourceHolder.getCompilationUnit();
-            TypeDeclaration typeDeclaration = (TypeDeclaration) compilationUnit.types().get(0);
-            rewriteMagicNumber(typeDeclaration.getAST(), literal);
+            TypeDeclaration typeDeclaration = ASTHelper.getTypeDeclarationForNode(violationNode);
 
-            FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
+            FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();            
             typeDeclaration.accept(fieldDeclarationVisitor);
-            if (!fieldDeclarationVisitor.hasFieldName((String) parameters.get(PARAMETER_CONSTANT_NAME).getValue())){
+            
+            boolean setDefaultReplaceName = setDefaultReplaceName(fieldDeclarationVisitor, violationNode.toString());
+            
+            rewriteMagicNumber(typeDeclaration.getAST(), literal);
+            
+            if (!fieldDeclarationVisitor.hasFieldName((String) parameters.get(PARAMETER_CONSTANT_NAME).getValue()) &&
+                    !setDefaultReplaceName){
                 addStaticFinalField(typeDeclaration, literal.getToken());
             }
-            
         }
         
     }
-    
-    
-    /*@Override
-    public void rewriteAST() {
-        TypeDeclaration typeDeclaration = getTypeDeclaration(ruleViolation.getClassName());
-        
-        NumberLiteralVisitor numberLiteralVisitor = new NumberLiteralVisitor(compilationUnit);
 
-        typeDeclaration.accept(numberLiteralVisitor);
-        FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
-        typeDeclaration.accept(fieldDeclarationVisitor);
-        
-        NumberLiteral literalViolation = numberLiteralVisitor.getLiteralViolation(ruleViolation.getBeginLine(),
-                ruleViolation.getBeginColumn());
-        
-        setDefaultReplaceName(fieldDeclarationVisitor, literalViolation.getToken());
-        
-        rewriteMagicNumber(typeDeclaration.getAST(), literalViolation);
-        
-        if (!fieldDeclarationVisitor.hasFieldName((String) parameters.get(PARAMETER_CONSTANT_NAME).getValue())){
-            addStaticFinalField(typeDeclaration, literalViolation.getToken());
-        }
-    }*/
     
-    private void setDefaultReplaceName(FieldDeclarationVisitor fieldDeclarationVisitor, String violationValue){
+    private boolean setDefaultReplaceName(FieldDeclarationVisitor fieldDeclarationVisitor, String violationValue){
         List<FieldDeclaration> fieldDeclarations = fieldDeclarationVisitor.getFieldDeclarationWithValue(violationValue);
         if (!fieldDeclarations.isEmpty()){
             VariableDeclaration variableDeclaration = (VariableDeclaration) fieldDeclarations.get(0).fragments().get(0);
-            defaultParameters.get(PARAMETER_CONSTANT_NAME).setValue(variableDeclaration.getName().toString());
+            parameters.get(PARAMETER_CONSTANT_NAME).setValue(variableDeclaration.getName().toString());
+            return true;
         }
+        return false;
     }
 
     private void initializeDefaultParameters() {
-        defaultParameters = new HashMap<>();
+        parameters = new HashMap<>();
         Parameter constantName = new Parameter(PARAMETER_CONSTANT_NAME, "THAT_CONSTANT_NAME");
         constantName.getConstraints().add(new Parameter.Constraint() {
             @Override
@@ -86,12 +67,12 @@ public class ReplaceMagicNumberSolver extends StrategySolver {
                 return ((String) value).matches("^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$");
             }
         });
-        defaultParameters.put(constantName.getTitle(), constantName);
+        parameters.put(constantName.getTitle(), constantName);
     }
 
     @Override
     public Map<String, Parameter> getDefaultParameters() {
-        return defaultParameters;
+        return parameters;
     }
 
     /**

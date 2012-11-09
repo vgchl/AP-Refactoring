@@ -3,7 +3,8 @@ package nl.han.ica.core;
 import java.io.File;
 import nl.han.ica.core.strategies.Strategy;
 import org.eclipse.jdt.core.dom.ASTNode;
-import static org.junit.Assert.assertNotSame;
+
+
 import static org.junit.Assert.assertSame;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,8 +51,8 @@ public class IssueTest {
         assertSame(aSTNode, issue.getViolationNode());
     }
     
-    @Test
-    public void testGetDescription() throws Exception {
+    @Test(expected = NullPointerException.class)
+    public void testGetDescription() throws NullPointerException {
         assertSame(file.getName(), issue.getDescription());
     }
 

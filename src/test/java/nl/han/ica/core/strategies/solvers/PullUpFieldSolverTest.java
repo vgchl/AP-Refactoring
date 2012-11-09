@@ -30,9 +30,17 @@ public class PullUpFieldSolverTest {
     public void setUP() throws Exception {
 
         superClass = new SourceHolder();
+        superClass.setFile(getSuperClassFile());
 
         subclasses = new ArrayList<SourceHolder>();
+        List<File> subclassFiles = getSubclassFiles();
 
+        for (File file : subclassFiles) {
+            SourceHolder holder = new SourceHolder();
+            holder.setFile(file);
+            subclasses.add(holder);
+            // TODO: add compilation unit
+        }
         solver = new PullUpFieldSolver(superClass, subclasses);
     }
 
@@ -69,31 +77,27 @@ public class PullUpFieldSolverTest {
                 "public class Banaan extends Fruit {\n" +
                 "\n" +
                 "\tprivate String naam;\n" +
-                "\t\n" +
-                "\tpublic Banaan()\n" +
-                "\t{\n" +
+                "\n" +
+                "\tpublic Banaan() {\n" +
                 "\t\tnaam = \"Banaan\";\n" +
                 "\t}\n" +
-                "\t\n" +
-                "\tpublic String getNaam()\n" +
-                "\t{\n" +
+                "\n" +
+                "\tpublic String getNaam() {\n" +
                 "\t\treturn naam;\n" +
                 "\t}\n" +
                 "}\n";
 
         String appel = "package nl.random.test;\n" +
                 "\n" +
-                "public class Appel extends Fruit{\n" +
+                "public class Appel extends Fruit {\n" +
                 "\n" +
                 "\tprivate String naam = \"\";\n" +
-                "\t\n" +
-                "\tpublic Appel()\n" +
-                "\t{\n" +
+                "\n" +
+                "\tpublic Appel() {\n" +
                 "\t\tnaam = \"Appel\";\n" +
                 "\t}\n" +
-                "\t\n" +
-                "\tpublic String getNaam()\n" +
-                "\t{\n" +
+                "\n" +
+                "\tpublic String getNaam() {\n" +
                 "\t\treturn naam;\n" +
                 "\t}\n" +
                 "}\n";
@@ -106,6 +110,58 @@ public class PullUpFieldSolverTest {
         FileUtil.setFileContent(appelFile, appel);
         files.add(appelFile);
 
+
+        return files;
+    }
+
+    private File getExpectedSuperclass() throws IOException {
+        File file = new File("");
+
+        String content = "package nl.random.test;\n" +
+                "\n" +
+                "public class Fruit {\n" +
+                "\n" +
+                "\tprotected String naam;\n" +
+                "\n" +
+                "\tpublic String getNaam() {\n" +
+                "\t\treturn naam;\n" +
+                "\t}\n" +
+                "}\n";
+        FileUtil.setFileContent(file, content);
+
+        return file;
+    }
+
+    private List<File> getExpectedSubclasses() throws IOException {
+        List<File> files = new ArrayList<File>();
+
+        String appel = "package nl.random.test;\n" +
+                "\n" +
+                "public class Appel extends Fruit {\n" +
+                "\n" +
+                "\tpublic Appel() {\n" +
+                "\t\tnaam = \"Appel\";\n" +
+                "\t}\n" +
+                "\n" +
+                "}\n";
+
+        String banaan = "package nl.random.test;\n" +
+                "\n" +
+                "public class Banaan extends Fruit {\n" +
+                "\n" +
+                "\tpublic Banaan() {\n" +
+                "\t\tnaam = \"Banaan\";\n" +
+                "\t}\n" +
+                "\n" +
+                "}\n";
+
+        File appelFile = new File("");
+        FileUtil.setFileContent(appelFile, appel);
+        files.add(appelFile);
+
+        File banaanFile = new File("");
+        FileUtil.setFileContent(banaanFile, banaan);
+        files.add(banaanFile);
 
         return files;
     }

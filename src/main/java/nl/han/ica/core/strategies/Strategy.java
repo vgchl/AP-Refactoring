@@ -7,5 +7,7 @@ package nl.han.ica.core.strategies;
 public interface Strategy {
 
     public abstract String getName();
+    
+    public abstract String getDescription();
 
 }

@@ -43,11 +43,25 @@ public class StrategyTest {
         String result = instance.getName();
         assertEquals(expResult, result);
     }
+    
+    @Test
+    public void testGetDescription() {
+        System.out.println("getDescription");
+        Strategy instance = new StrategyImpl();
+        String expResult = "";
+        String result = instance.getDescription();
+        assertEquals(expResult, result);
+    }
 
     public class StrategyImpl implements Strategy {
 
         @Override
         public String getName() {
+            return "";
+        }
+
+        @Override
+        public String getDescription() {
             return "";
         }
     }

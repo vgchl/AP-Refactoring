@@ -10,9 +10,8 @@ package nl.han.ica.core.strategies;
  */
 public class ReplaceMagicNumber implements Strategy {
 
-    private static final String RULE_NAME_AVOID_USING_LITERAL = "AvoidLiteralsInIfCondition";
     private static final String STRATEGY_NAME = "Replace Magic Number with Symbolic Constant";
-    public static final String STRATEGY_DESCRIPTION = "Avoid using Literals in Conditional Statements";
+    private static final String STRATEGY_DESCRIPTION = "Avoid using Literals in Conditional Statements";
 
     public ReplaceMagicNumber() {        
     }
@@ -20,6 +19,11 @@ public class ReplaceMagicNumber implements Strategy {
     @Override
     public String getName() {
         return STRATEGY_NAME;
+    }
+
+    @Override
+    public String getDescription() {
+        return STRATEGY_DESCRIPTION;
     }
     
 }

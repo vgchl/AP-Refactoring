@@ -1,6 +1,7 @@
 package nl.han.ica.core.issues.criteria;
 
 import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
+import nl.han.ica.core.strategies.PullUpField;
 import nl.han.ica.core.strategies.Strategy;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -34,27 +35,28 @@ public class PullUpFieldCriteria extends Criteria {
         Type superclass = node.getSuperclassType();
 
         if (superclass != null) {
-            ASTNode parent = node.getParent();
+            /* Get the compilationunit / node from the type declaration */
+            ASTNode subClass = node.getParent();
 
             if (subclassesPerSuperClass.containsKey(superclass)) {
-                subclassesPerSuperClass.get(superclass).add(parent);
+                subclassesPerSuperClass.get(superclass).add(subClass);
             } else {
                 ArrayList<ASTNode> subclasses = new ArrayList<ASTNode>();
-                subclasses.add(parent);
+                subclasses.add(subClass);
                 subclassesPerSuperClass.put(superclass, subclasses);
             }
         }
 
         filterTwoOrMoreSubclasses();
 
-        return false;
+        return super.visit(node);
     }
 
     /**
      * Filter the subclassesPerSuperClass field for values that have more than one element.
      * We need at least two classes to see if there are duplicate fields.
      * This method calls checkForDuplicateFields for every list that contains more than one element.
-     * If the classes have duplicate fields, a new Issue is created.
+     * If this list of classes contains duplicate fields, it is added to violatedNodes.
      */
     private void filterTwoOrMoreSubclasses() {
 
@@ -62,8 +64,10 @@ public class PullUpFieldCriteria extends Criteria {
             if (listOfSubclasses.size() > 1) {
 
                 List<ASTNode> classesWithDuplicateFields = getClassesWithDuplicateFields(listOfSubclasses);
+
                 if (!classesWithDuplicateFields.isEmpty()) {
-                    // TODO: create an issue with the list of subclasses and the superclass.
+                    // TODO: we cannot use the violatedNodes for this
+                    // TODO: we need a structure to hold the superclass + the subclasses that have duplicate fields?
                 }
             }
         }
@@ -80,18 +84,36 @@ public class PullUpFieldCriteria extends Criteria {
         FieldDeclarationVisitor visitor = new FieldDeclarationVisitor();
         List<ASTNode> classesWithDuplicateFields = new ArrayList<ASTNode>();
 
+        List<FieldDeclaration> allFieldDeclarations = new ArrayList<FieldDeclaration>();
+
         for (ASTNode node : listOfSubclasses) {
+
             node.accept(visitor);
-            List<FieldDeclaration> fieldDeclarations = visitor.getFieldDeclarations();
-
-
+            allFieldDeclarations.addAll(visitor.getFieldDeclarations());
         }
+
+        for (FieldDeclaration fieldDeclaration : allFieldDeclarations) {
+            // TODO: if duplicate: add parent (compilationunit) to the list of classes
+            // TODO: remember to add the classes of both occurences of the duplicate field.
+        }
+        // TODO: check allFieldDeclarations for duplicates.
+        // TODO: if a duplicate is found, add the class that the declaration is in to the return list.
 
         return classesWithDuplicateFields;
     }
 
     @Override
     public Strategy getStrategy() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return new PullUpField();  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void before() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void after() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

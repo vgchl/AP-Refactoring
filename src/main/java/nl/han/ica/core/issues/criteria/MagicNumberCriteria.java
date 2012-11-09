@@ -40,6 +40,16 @@ public class MagicNumberCriteria extends Criteria {
     public Strategy getStrategy() {
         return strategy;
     }
+
+    @Override
+    public void before() {
+        violatedNodes.clear();
+    }
+
+    @Override
+    public void after() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
     
 }
