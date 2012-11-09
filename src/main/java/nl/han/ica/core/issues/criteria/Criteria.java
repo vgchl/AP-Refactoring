@@ -23,6 +23,7 @@ public abstract class Criteria extends ASTVisitor {
         return violatedNodes;
     }
     
+    
     public abstract Strategy getStrategy();
     
     public abstract void before();

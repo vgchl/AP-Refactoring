@@ -43,7 +43,7 @@ public class MagicNumberCriteria extends Criteria {
 
     @Override
     public void before() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        violatedNodes.clear();
     }
 
     @Override
