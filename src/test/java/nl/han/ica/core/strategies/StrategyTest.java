@@ -50,5 +50,10 @@ public class StrategyTest {
         public String getName() {
             return "";
         }
+
+        @Override
+        public String getDescription() {
+            return "";
+        }
     }
 }

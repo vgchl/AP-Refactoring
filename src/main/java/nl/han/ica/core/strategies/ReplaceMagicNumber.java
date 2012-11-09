@@ -21,5 +21,10 @@ public class ReplaceMagicNumber implements Strategy {
     public String getName() {
         return STRATEGY_NAME;
     }
+
+    @Override
+    public String getDescription() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }
