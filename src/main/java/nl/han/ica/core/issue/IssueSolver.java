@@ -2,11 +2,9 @@ package nl.han.ica.core.issue;
 
 import nl.han.ica.core.Parameter;
 import nl.han.ica.core.Solution;
-import nl.han.ica.core.SourceFile;
 import org.apache.log4j.Logger;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class IssueSolver {
@@ -15,6 +13,7 @@ public abstract class IssueSolver {
     protected Map<String, Parameter> defaultParameters;
 
     public IssueSolver() {
+        defaultParameters = new HashMap<>();
         logger = Logger.getLogger(getClass().getName());
     }
 
@@ -36,16 +35,12 @@ public abstract class IssueSolver {
         if (solution.getIssueSolver() != this) {
             throw new IllegalArgumentException("Cannot apply solution. The solution was made by a different solver.");
         }
-
         // TODO: Apply solution
-    }
-
-    protected CompilationUnit compilationUnitForASTNode(ASTNode node) {
-        return (CompilationUnit) node.getRoot();
-    }
-
-    protected SourceFile sourceFileForCompilationUnit(CompilationUnit compilationUnit) {
-        return (SourceFile) compilationUnit.getProperty(SourceFile.SOURCE_FILE_PROPERTY);
+//        try {
+//            FileUtil.setFileContent(file, solution.getAfter());
+//        } catch (IOException e) {
+//            logger.fatal("Could not apply solution: error during file write.");
+//        }
     }
 
     private void mergeDefaultParameters(final Map<String, Parameter> parameters) {

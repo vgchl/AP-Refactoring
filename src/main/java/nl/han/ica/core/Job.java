@@ -1,7 +1,7 @@
 package nl.han.ica.core;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableSet;
+import javafx.collections.ObservableList;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetectionService;
 import nl.han.ica.core.issue.IssueSolverLocator;
@@ -23,7 +23,7 @@ public class Job {
     private Parser parser;
     private IssueDetectionService issueDetectionService;
     private IssueSolvingService issueSolvingService;
-    private ObservableSet<Issue> issues;
+    private ObservableList<Issue> issues;
     private Logger logger;
 
     /**
@@ -33,7 +33,7 @@ public class Job {
         logger = Logger.getLogger(getClass().getName());
 
         sourceFiles = new HashSet<>();
-        issues = FXCollections.observableSet();
+        issues = FXCollections.observableArrayList();
         parser = new Parser();
 
         issueDetectionService = new IssueDetectionService();
@@ -90,8 +90,19 @@ public class Job {
      *
      * @return The job's issues.
      */
-    public ObservableSet<Issue> getIssues() {
+    public ObservableList<Issue> getIssues() {
         return issues;
     }
 
+    public Set<SourceFile> getSourceFiles() {
+        return sourceFiles;
+    }
+
+    public IssueDetectionService getIssueDetectionService() {
+        return issueDetectionService;
+    }
+
+    public IssueSolvingService getIssueSolvingService() {
+        return issueSolvingService;
+    }
 }

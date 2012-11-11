@@ -50,9 +50,8 @@ public class IssueResolveController extends BaseController {
     private void updateView() {
         logger.info("Updating issue view");
 
-        issueTitle.setText(issue.getStrategy().getName());
-        //issueDescription.setText(issue.getRuleViolation().getRule().getDescription().replaceAll("\n", " ").replaceAll("  ", ""));
-        issueDescription.setText(issue.getDescription());
+        issueTitle.setText(issue.getDetector().getTitle());
+        issueDescription.setText(issue.getDetector().getDescription());
         final Map<String, Parameter> parameters = new HashMap<>();
         changeController.addParameterChangeListener(new ParameterChangeListener() {
             @Override
@@ -73,7 +72,7 @@ public class IssueResolveController extends BaseController {
      */
     @FXML
     protected void applySolution() {
-        job.applySolution(issue, solution);
+        job.applySolution(solution);
     }
 
     /**

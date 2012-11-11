@@ -16,13 +16,17 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import nl.han.ica.core.Job;
+import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.issue.IssueDetector;
+import nl.han.ica.core.issue.IssueSolver;
+import nl.han.ica.core.issue.detector.MagicNumberDetector;
+import nl.han.ica.core.issue.solver.MagicNumberSolver;
 import nl.han.ica.core.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -56,7 +60,15 @@ public class IssueDetectorIndexController extends BaseController {
     public IssueDetectorIndexController(Scene scene, Job job) {
         this.scene = scene;
         this.job = job;
-        strategyList = new ArrayList<>();
+        initializeIssueDetectors();
+    }
+
+    private void initializeIssueDetectors() {
+        issueDetectors = new HashSet<>();
+        issueDetectors.add(new MagicNumberDetector());
+
+        Set<IssueSolver> solvers = job.getIssueSolvingService().getIssueSolverLocator().getSolvers();
+        solvers.add(new MagicNumberSolver());
     }
 
     @Override
@@ -88,9 +100,11 @@ public class IssueDetectorIndexController extends BaseController {
 
         List<File> files = fileChooser.showOpenMultipleDialog(null);
         if (null != files) {
-            job.setFiles(files);
+            for (File file : files) {
+                job.getSourceFiles().add(new SourceFile(file));
+            }
         } else {
-            job.getFiles().clear();
+            job.getSourceFiles().clear();
         }
 
         onSourceFilesSelected();
@@ -108,12 +122,13 @@ public class IssueDetectorIndexController extends BaseController {
 
         File directory = directoryChooser.showDialog(null);
         if (null != directory) {
-            job.setFiles(FileUtil.listFilesRecursively(directory, ".java"));
+            List<File> files = FileUtil.listFilesRecursively(directory, ".java");
+            for (File file : files) {
+                job.getSourceFiles().add(new SourceFile(file));
+            }
+        } else {
+            job.getSourceFiles().clear();
         }
-        else {
-            job.getFiles().clear();
-        }
-
         onSourceFilesSelected();
     }
 
@@ -143,14 +158,14 @@ public class IssueDetectorIndexController extends BaseController {
         boolean success = false;
         if (db.hasFiles()) {
             success = true;
-            job.getFiles().clear();
+            job.getSourceFiles().clear();
             for (File file : db.getFiles()) {
                 if (file.isDirectory()) {
                     for (File directoryFile : FileUtil.listFilesRecursively(file, ".java")) {
-                        job.addFile(directoryFile);
+                        job.getSourceFiles().add(new SourceFile(directoryFile));
                     }
                 } else if (file.getName().endsWith(".java")) {
-                    job.addFile(file);
+                    job.getSourceFiles().add(new SourceFile(file));
                 }
             }
             onSourceFilesSelected();
@@ -168,21 +183,24 @@ public class IssueDetectorIndexController extends BaseController {
     public void analyze(ActionEvent event) {
         ObservableList<Node> checkboxes = strategyOptions.getChildren();
 
-        for (int i = 0; i < checkboxes.size(); i++) {
-            CheckBox c = (CheckBox) checkboxes.get(i);
-            if( c.isSelected() ) {
-                Strategy strategy = strategyList.get(i);
-                job.getStrategies().add(strategy);
-            }
-        }
+        // TODO: Make checkboxes work again
+//        for (int i = 0; i < checkboxes.size(); i++) {
+//            CheckBox c = (CheckBox) checkboxes.get(i);
+//            if (c.isSelected()) {
+//                IssueDetector issueDetector = issueDetectors.get(i);
+//                job.getStrategies().add(strategy);
+//            }
+//        }
+
+        job.getIssueDetectionService().getDetectors().addAll(issueDetectors);
 
         IssueIndexController issueIndexController = new IssueIndexController(job);
         scene.setRoot(issueIndexController.getView());
     }
 
     private void onSourceFilesSelected() {
-        if (job.getFiles().size() > 0) {
-            selectedFilePath.setText(formatFileList(job.getFiles()));
+        if (job.getSourceFiles().size() > 0) {
+            selectedFilePath.setText(formatFileSet(job.getSourceFiles()));
             selectedFilePath.setVisible(true);
             selectedFile.setVisible(true);
             analyzeButton.setDisable(false);
@@ -193,20 +211,18 @@ public class IssueDetectorIndexController extends BaseController {
         }
     }
 
-    private String formatFileList(List<File> files) {
+    private String formatFileSet(Set<SourceFile> sourceFiles) {
         StringBuilder fileList = new StringBuilder();
-        for (File file : files) {
-            fileList.append(file.getName()).append("\n");
+        for (SourceFile sourceFile : sourceFiles) {
+            fileList.append(sourceFile.getFile().getName()).append("\n");
         }
         return fileList.toString();
     }
 
     private void initializeStrategyCheckboxList() {
-        strategyList.add(new ReplaceMagicNumber());
-
-        for (Strategy strategy : strategyList) {
+        for (IssueDetector issueDetector : issueDetectors) {
             CheckBox checkBox = new CheckBox();
-            checkBox.setText(strategy.getName());
+            checkBox.setText(issueDetector.getTitle());
             checkBox.setSelected(true);
             strategyOptions.getChildren().add(checkBox);
         }

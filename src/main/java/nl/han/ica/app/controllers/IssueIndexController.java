@@ -114,7 +114,7 @@ public class IssueIndexController extends BaseController {
         protected void updateItem(Issue issue, boolean empty) {
             super.updateItem(issue, empty);
             if (null != issue) {
-                setText(issue.getStrategy().getName());
+                setText(issue.getDetector().getTitle());
             }
         }
 

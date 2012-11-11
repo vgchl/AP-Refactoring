@@ -2,6 +2,7 @@ package nl.han.ica.core.issue;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,6 +15,7 @@ public class Issue {
 
     public Issue(IssueDetector detector) {
         this.detector = detector;
+        nodes = new ArrayList<>();
     }
 
     public IssueDetector getDetector() {

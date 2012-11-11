@@ -1,6 +1,6 @@
 package nl.han.ica.core;
 
-import nl.han.ica.core.strategies.solvers.StrategySolver;
+import nl.han.ica.core.issue.IssueSolver;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -18,7 +18,7 @@ public class SolutionTest {
     private Solution solution = null;
 
     @Mock
-    private StrategySolver strategySolver;
+    private IssueSolver issueSolver;
 
     private String beforeState = "before";
     private String afterState = "after";
@@ -26,13 +26,12 @@ public class SolutionTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        solution = new Solution(strategySolver);
+        solution = new Solution(null, issueSolver, null);
     }
 
     @Test
-    public void testSetAndGetStrategySolver() throws Exception {
-        solution.setStrategySolver(strategySolver);
-        assertSame(strategySolver, solution.getStrategySolver());
+    public void testSetIssueSolver() throws Exception {
+        assertSame(issueSolver, solution.getIssueSolver());
     }
 
     @Test

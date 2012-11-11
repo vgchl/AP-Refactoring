@@ -18,7 +18,10 @@ public class SourceFile {
 
     private File file;        
     private CompilationUnit compilationUnit;
-    
+
+    public SourceFile(File file) {
+        this.file = file;
+    }
 
     public File getFile() {
         return file;
