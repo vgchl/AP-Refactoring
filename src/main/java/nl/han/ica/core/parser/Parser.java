@@ -55,6 +55,7 @@ public class Parser {
         int i = 0;
         for (SourceFile file : files) {
             filePaths[i] = file.getFile().getParentFile().getPath();
+            i++;
         }
         return filePaths;
     }
