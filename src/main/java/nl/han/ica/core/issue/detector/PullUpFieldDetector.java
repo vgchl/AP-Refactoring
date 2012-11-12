@@ -4,6 +4,7 @@ import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
 import nl.han.ica.core.issue.detector.visitor.ClassWithTwoSubclassesVisitor;
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -16,7 +17,10 @@ import java.util.*;
  */
 public class PullUpFieldDetector extends IssueDetector {
 
-    private static final String STRATEGY_NAME = "Pull up duplicate fields.";
+    private final Logger log = Logger.getLogger(getClass().getName());
+    ;
+
+    private static final String STRATEGY_NAME = "Pull up duplicate Fields";
     private static final String STRATEGY_DESCRIPTION = "Avoid duplicating fields when it can be placed in the superclass.";
 
     private ClassWithTwoSubclassesVisitor visitor;
@@ -25,6 +29,7 @@ public class PullUpFieldDetector extends IssueDetector {
 
     public PullUpFieldDetector() {
         visitor = new ClassWithTwoSubclassesVisitor();
+        log.info("Test");
     }
 
     /**
@@ -58,8 +63,10 @@ public class PullUpFieldDetector extends IssueDetector {
     public Set<Issue> detectIssues() {
 
         visitor.clear();
+        issues.clear();
         for (CompilationUnit unit : compilationUnits) {
             unit.accept(visitor);
+
         }
 
         Map<Type, List<ASTNode>> subclassesPerSuperclass = visitor.getSubclassesPerSuperClass();

@@ -1,5 +1,6 @@
 package nl.han.ica.core.issue.detector.visitor;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Type;
@@ -16,6 +17,8 @@ import java.util.*;
  */
 public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
 
+    private final Logger log = Logger.getLogger(getClass().getName());
+
     private Map<Type, List<ASTNode>> subclassesPerSuperClass;
 
     public ClassWithTwoSubclassesVisitor() {
@@ -24,6 +27,8 @@ public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(TypeDeclaration type) {
+
+        log.debug("Calling visit on ");
 
         Type superclass = type.getSuperclassType();
 

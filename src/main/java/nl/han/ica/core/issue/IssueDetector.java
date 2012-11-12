@@ -44,6 +44,10 @@ public abstract class IssueDetector {
     }
 
     public void setCompilationUnits(Set<CompilationUnit> compilationUnits) {
+        if (compilationUnits == null || compilationUnits.isEmpty())
+        {
+                         throw new IllegalArgumentException("List must contain at least one compilationunit.");
+        }
         this.compilationUnits = compilationUnits;
     }
     

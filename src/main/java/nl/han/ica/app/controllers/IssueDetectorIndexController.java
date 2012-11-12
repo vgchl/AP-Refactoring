@@ -20,6 +20,7 @@ import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.issue.IssueDetector;
 import nl.han.ica.core.issue.IssueSolver;
 import nl.han.ica.core.issue.detector.MagicNumberDetector;
+import nl.han.ica.core.issue.detector.PullUpFieldDetector;
 import nl.han.ica.core.issue.solver.MagicNumberSolver;
 import nl.han.ica.core.util.FileUtil;
 
@@ -66,6 +67,7 @@ public class IssueDetectorIndexController extends BaseController {
     private void initializeIssueDetectors() {
         issueDetectors = new HashSet<>();
         issueDetectors.add(new MagicNumberDetector());
+        issueDetectors.add(new PullUpFieldDetector());
 
         Set<IssueSolver> solvers = job.getIssueSolvingService().getIssueSolverLocator().getSolvers();
         solvers.add(new MagicNumberSolver());
@@ -192,6 +194,7 @@ public class IssueDetectorIndexController extends BaseController {
 //            }
 //        }
 
+        logger.debug("adding issuedetectors: " + issueDetectors.toString());
         job.getIssueDetectionService().getDetectors().addAll(issueDetectors);
 
         IssueIndexController issueIndexController = new IssueIndexController(job);
