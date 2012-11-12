@@ -3,15 +3,13 @@ package nl.han.ica.core.issue.detector;
 import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
+import nl.han.ica.core.issue.detector.visitor.ClassWithTwoSubclassesVisitor;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -21,53 +19,12 @@ public class PullUpFieldDetector extends IssueDetector {
     private static final String STRATEGY_NAME = "Pull up duplicate fields.";
     private static final String STRATEGY_DESCRIPTION = "Avoid duplicating fields when it can be placed in the superclass.";
 
+    private ClassWithTwoSubclassesVisitor visitor;
 
-    // Key value map for finding classes that have two or more subclasses
-    // key = superclass, value = list of subclasses
-    // return values that have two elements or more and check them for duplicate fields
-    // create an issue if they contain duplicate fields
+    private Set<Issue> issues;
 
-    private Map<Type, List<ASTNode>> subclassesPerSuperClass;
-
-    public void visit(TypeDeclaration node) {
-
-        Type superclass = node.getSuperclassType();
-
-        if (superclass != null) {
-            /* Get the compilationunit / node from the type declaration */
-            ASTNode subClass = node.getParent();
-
-            if (subclassesPerSuperClass.containsKey(superclass)) {
-                subclassesPerSuperClass.get(superclass).add(subClass);
-            } else {
-                ArrayList<ASTNode> subclasses = new ArrayList<ASTNode>();
-                subclasses.add(subClass);
-                subclassesPerSuperClass.put(superclass, subclasses);
-            }
-        }
-
-        filterTwoOrMoreSubclasses();
-    }
-
-    /**
-     * Filter the subclassesPerSuperClass field for values that have more than one element.
-     * We need at least two classes to see if there are duplicate fields.
-     * This method calls checkForDuplicateFields for every list that contains more than one element.
-     * If this list of classes contains duplicate fields, it is added to violatedNodes.
-     */
-    private void filterTwoOrMoreSubclasses() {
-
-        for (List<ASTNode> listOfSubclasses : subclassesPerSuperClass.values()) {
-            if (listOfSubclasses.size() > 1) {
-
-                List<ASTNode> classesWithDuplicateFields = getClassesWithDuplicateFields(listOfSubclasses);
-
-                if (!classesWithDuplicateFields.isEmpty()) {
-                    // TODO: we cannot use the violatedNodes for this
-                    // TODO: we need a structure to hold the superclass + the subclasses that have duplicate fields?
-                }
-            }
-        }
+    public PullUpFieldDetector() {
+        visitor = new ClassWithTwoSubclassesVisitor();
     }
 
     /**
@@ -76,7 +33,7 @@ public class PullUpFieldDetector extends IssueDetector {
      * @param listOfSubclasses
      * @return
      */
-    private List<ASTNode> getClassesWithDuplicateFields(List<ASTNode> listOfSubclasses) {
+    private boolean hasDuplicateFields(List<ASTNode> listOfSubclasses) {
 
         FieldDeclarationVisitor visitor = new FieldDeclarationVisitor();
         List<ASTNode> classesWithDuplicateFields = new ArrayList<ASTNode>();
@@ -88,20 +45,39 @@ public class PullUpFieldDetector extends IssueDetector {
             node.accept(visitor);
             allFieldDeclarations.addAll(visitor.getFieldDeclarations());
         }
+        Set<FieldDeclaration> fieldDeclarationSet = new HashSet<>();
 
         for (FieldDeclaration fieldDeclaration : allFieldDeclarations) {
-            // TODO: if duplicate: add parent (compilationunit) to the list of classes
-            // TODO: remember to add the classes of both occurences of the duplicate field.
+            fieldDeclarationSet.add(fieldDeclaration);
         }
-        // TODO: check allFieldDeclarations for duplicates.
-        // TODO: if a duplicate is found, add the class that the declaration is in to the return list.
 
-        return classesWithDuplicateFields;
+        return fieldDeclarationSet.size() < allFieldDeclarations.size();
     }
 
     @Override
     public Set<Issue> detectIssues() {
-        return null;  //TODO
+
+        visitor.clear();
+        for (CompilationUnit unit : compilationUnits) {
+            unit.accept(visitor);
+        }
+
+        Map<Type, List<ASTNode>> subclassesPerSuperclass = visitor.getSubclassesPerSuperClass();
+
+        for (Type type : subclassesPerSuperclass.keySet()) {
+            List<ASTNode> listOfSubclasses = subclassesPerSuperclass.get(type);
+
+            if (hasDuplicateFields(listOfSubclasses)) {
+                Issue issue = new Issue(this);
+                listOfSubclasses.add(0, type);
+                // TODO: remove the classes from the list that do not have duplicate fields
+                issue.setNodes(listOfSubclasses);
+
+                issues.add(issue);
+            }
+        }
+
+        return issues;
     }
 
     @Override

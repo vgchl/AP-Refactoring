@@ -54,6 +54,7 @@ public class PullUpFieldDetectorTest {
         Parser parser = new Parser();
 
         compilationUnits = parser.parse(sourceFiles);
+        detector.setCompilationUnits(compilationUnits);
     }
 
     @Test
@@ -63,8 +64,7 @@ public class PullUpFieldDetectorTest {
     }
 
     @Test
-    public void testDetectIssues()
-    {
+    public void testDetectIssues() {
         assertEquals(1, detector.detectIssues().size());
     }
 
