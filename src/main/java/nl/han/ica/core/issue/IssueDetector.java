@@ -1,15 +1,17 @@
 package nl.han.ica.core.issue;
 
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 
 
-public abstract class IssueDetector extends ASTVisitor {
+public abstract class IssueDetector {
 
-    private Set<Issue> issues;
+    protected Set<Issue> issues;
+    protected Set<CompilationUnit> compilationUnits;
 
     public IssueDetector() {
         issues = new HashSet<>();
@@ -23,7 +25,7 @@ public abstract class IssueDetector extends ASTVisitor {
         return issues;
     }
 
-    protected Issue createIssue() {
+    private Issue createIssue() {
         Issue issue = new Issue(this);
         issues.add(issue);
         return issue;
@@ -34,6 +36,18 @@ public abstract class IssueDetector extends ASTVisitor {
         issue.getNodes().add(node);
         return issue;
     }
+    
+    protected void createIssues(List<ASTNode> nodes){
+        for(ASTNode node : nodes){
+            issues.add(createIssue(node));
+        }
+    }
+
+    public void setCompilationUnits(Set<CompilationUnit> compilationUnits) {
+        this.compilationUnits = compilationUnits;
+    }
+    
+    public abstract Set<Issue> detectIssues();
 
     public abstract String getTitle();
 
