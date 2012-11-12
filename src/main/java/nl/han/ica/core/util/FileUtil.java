@@ -40,8 +40,8 @@ public class FileUtil {
             throw new IllegalArgumentException("Directory must not be null");
         }
 
-        List<File> files = new ArrayList();
-        Queue<File> directories = new LinkedList();
+        List<File> files = new ArrayList<>();
+        Queue<File> directories = new LinkedList<>();
         directories.add(directory);
         while (!directories.isEmpty()) {
             for (File file : directories.poll().listFiles()) {
@@ -102,10 +102,10 @@ public class FileUtil {
     }
 
     public static String[] getFolderPaths(List<File> files){
-        String[] filePaths = new String[files.size()];
+        String[] folderPaths = new String[files.size()];
         for(int i=0; i<files.size(); i++){
-            filePaths[i] = files.get(i).getParentFile().getPath();
+            folderPaths[i] = files.get(i).getParentFile().getPath();
         }
-        return filePaths;
+        return folderPaths;
     }
 }
