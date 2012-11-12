@@ -91,4 +91,21 @@ public class FileUtil {
         fileOutputStream.write(content.getBytes());
         fileOutputStream.close();
     }
+
+
+    public static String[] getFilePaths(List<File> files){
+        String[] filePaths = new String[files.size()];
+        for(int i=0; i<files.size(); i++){
+            filePaths[i] = files.get(i).getPath();
+        }
+        return filePaths;
+    }
+
+    public static String[] getFolderPaths(List<File> files){
+        String[] filePaths = new String[files.size()];
+        for(int i=0; i<files.size(); i++){
+            filePaths[i] = files.get(i).getParentFile().getPath();
+        }
+        return filePaths;
+    }
 }

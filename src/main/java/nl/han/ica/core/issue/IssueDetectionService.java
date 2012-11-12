@@ -16,11 +16,8 @@ public class IssueDetectionService {
     public Set<Issue> detectIssues(Set<CompilationUnit> compilationUnits) {
         Set<Issue> issues = new HashSet<>();
         for (IssueDetector detector : detectors) {
-            detector.reset();
-            for (CompilationUnit compilationUnit : compilationUnits) {
-                compilationUnit.accept(detector);
-            }
-            issues.addAll(detector.getIssues());
+            detector.setCompilationUnits(compilationUnits);
+            issues.addAll(detector.detectIssues());
         }
         System.out.println("RETURN ISSUES");
         return issues;
