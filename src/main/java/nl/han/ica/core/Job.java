@@ -10,9 +10,7 @@ import nl.han.ica.core.parser.Parser;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Lists the files and the rules to check them for.
@@ -42,9 +40,15 @@ public class Job {
     }
 
     public void process() {
+        logger.debug("Processing...");
         Set<CompilationUnit> compilationUnits = parser.parse(sourceFiles);
         issues.clear();
-        issues.addAll(issueDetectionService.detectIssues(compilationUnits));
+        issues.addAll(new ArrayList<>(issueDetectionService.detectIssues(compilationUnits)));
+        logger.debug("Done processing.");
+    }
+
+    public Solution solve(Issue issue) {
+        return issueSolvingService.solveIssue(issue);
     }
 
     /**

@@ -24,6 +24,9 @@ public abstract class IssueSolver {
         if (!canSolve(issue)) {
             throw new IllegalArgumentException("Cannot solve issue. This solver does not know how to solve that kind of issue.");
         }
+        if (null == parameters) {
+            parameters = new HashMap<>();
+        }
         mergeDefaultParameters(parameters);
         return internalSolve(issue, parameters);
     }

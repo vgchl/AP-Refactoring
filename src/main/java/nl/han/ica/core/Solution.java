@@ -3,6 +3,8 @@ package nl.han.ica.core;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueSolver;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class Solution {
@@ -10,8 +12,7 @@ public class Solution {
     private Issue issue;
     private IssueSolver issueSolver;
     private Map<String, Parameter> parameters;
-    private String before;
-    private String after;
+    private List<Delta> deltas;
 
     /**
      * Creates a solution with a strategy solver and additional parameters.
@@ -23,6 +24,7 @@ public class Solution {
         this.issue = issue;
         this.issueSolver = issueSolver;
         this.parameters = parameters;
+        deltas = new ArrayList<>();
     }
 
     public IssueSolver getIssueSolver() {
@@ -33,40 +35,12 @@ public class Solution {
         return issue;
     }
 
-    /**
-     * Get the before solution state.
-     *
-     * @return A string that contains the before-solution-applied state
-     */
-    public String getBefore() {
-        return before;
+    public List<Delta> getDeltas() {
+        return deltas;
     }
 
-    /**
-     * Sets the before state of a file as String.
-     *
-     * @param before The contents of the file before an solution is applied.
-     */
-    public void setBefore(String before) {
-        this.before = before;
-    }
-
-    /**
-     * Get the after solution state.
-     *
-     * @return A string that contains the after-solution-applied state
-     */
-    public String getAfter() {
-        return after;
-    }
-
-    /**
-     * Sets the after state of a file as String.
-     *
-     * @param after The contents of the file after an solution is applied.
-     */
-    public void setAfter(String after) {
-        this.after = after;
+    public void setDeltas(List<Delta> deltas) {
+        this.deltas = deltas;
     }
 
     /**
@@ -77,4 +51,9 @@ public class Solution {
         return parameters;
     }
 
+    public Delta createDelta(SourceFile sourceFile) {
+        Delta delta = new Delta(sourceFile);
+        deltas.add(delta);
+        return delta;
+    }
 }

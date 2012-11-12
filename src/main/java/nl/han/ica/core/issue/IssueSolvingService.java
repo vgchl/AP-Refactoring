@@ -13,6 +13,10 @@ public class IssueSolvingService {
         this.issueSolverLocator = issueSolverLocator;
     }
 
+    public Solution solveIssue(Issue issue) {
+        return solveIssue(issue, null);
+    }
+
     public Solution solveIssue(Issue issue, Map<String, Parameter> parameters) {
         IssueSolver solver = issueSolverLocator.solverForIssue(issue);
         if (null == solver) {

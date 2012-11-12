@@ -32,7 +32,7 @@ public class Parser {
         this.sourceFiles = sourceFiles;
 
         astParser.setEnvironment(directoryPaths(sourceFiles), null, null, false);
-        astParser.setUnitName("test");
+        astParser.setUnitName("test"); // TODO: Check what this does (and whether it can be useful);
 
         String[] bindings = new String[0];
         ASTRequestor astRequestor = new ASTRequestor(sourceFiles);

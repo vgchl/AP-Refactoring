@@ -22,8 +22,6 @@ public class ASTRequestor extends FileASTRequestor {
         super.acceptAST(sourceFilePath, ast);
         compilationUnits.add(ast);
         for (SourceFile sourceFile : sourceFiles) {
-            String a = sourceFile.getFile().getAbsolutePath();
-            String b = sourceFilePath;
             if (sourceFile.getFile().getAbsolutePath().equals(sourceFilePath)) {
                 sourceFile.setCompilationUnit(ast);
                 ast.setProperty(SourceFile.SOURCE_FILE_PROPERTY, sourceFile);

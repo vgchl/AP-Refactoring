@@ -1,5 +1,6 @@
 package nl.han.ica.core.issue.solver;
 
+import nl.han.ica.core.Delta;
 import nl.han.ica.core.Parameter;
 import nl.han.ica.core.Solution;
 import nl.han.ica.core.SourceFile;
@@ -122,14 +123,19 @@ public class MagicNumberSolver extends IssueSolver {
             } catch (IOException e) {
                 logger.fatal("Could not read the source file.", e);
             }
-            solution.setBefore(document.get());
+
+            Delta delta = solution.createDelta(sourceFile);
+            delta.setBefore(document.get());
+
             TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
             try {
                 textEdit.apply(document);
             } catch (MalformedTreeException | BadLocationException e) {
                 logger.fatal("Could not rewrite the AST tree.", e);
             }
-            solution.setAfter(document.get());
+
+            delta.setAfter(document.get());
+
             return solution;
         }
 

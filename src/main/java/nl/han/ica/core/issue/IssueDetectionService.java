@@ -22,6 +22,7 @@ public class IssueDetectionService {
             }
             issues.addAll(detector.getIssues());
         }
+        System.out.println("RETURN ISSUES");
         return issues;
     }
 

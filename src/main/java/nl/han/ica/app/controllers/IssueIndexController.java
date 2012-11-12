@@ -3,14 +3,20 @@ package nl.han.ica.app.controllers;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
-import nl.han.ica.core.issue.Issue;
+import nl.han.ica.app.models.JobProcessingService;
 import nl.han.ica.core.Job;
+import nl.han.ica.core.issue.Issue;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,7 +29,7 @@ import java.util.ResourceBundle;
 public class IssueIndexController extends BaseController {
 
     private Job job;
-    private IssueResolveController issueResolveController;
+    private IssueSolveController issueResolveController;
 
     @FXML
     protected ListView<Issue> issues;
@@ -39,7 +45,30 @@ public class IssueIndexController extends BaseController {
      */
     public IssueIndexController(Job job) {
         this.job = job;
-        job.process();
+    }
+
+    private void showProgressPopup(JobProcessingService service) {
+        ProgressController progressController = new ProgressController(service);
+
+        final Stage progressStage = new Stage();
+        progressStage.initModality(Modality.APPLICATION_MODAL);
+        progressStage.setTitle("Finding issues...");
+
+        Scene progressScene = new Scene(progressController.getView());
+        progressStage.setScene(progressScene);
+
+        service.setOnRunning(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent workerStateEvent) {
+                progressStage.show();
+            }
+        });
+        service.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent workerStateEvent) {
+                progressStage.hide();
+            }
+        });
     }
 
     @Override
@@ -47,13 +76,17 @@ public class IssueIndexController extends BaseController {
         super.initialize(url, resourceBundle);
         initializeResolvePane();
         initializeIssueList();
+
+        JobProcessingService jobProcessingService = new JobProcessingService(job);
+        showProgressPopup(jobProcessingService);
+        jobProcessingService.start();
     }
 
     /**
      * Initializes the resolve pane.
      */
     private void initializeResolvePane() {
-        issueResolveController = new IssueResolveController(job);
+        issueResolveController = new IssueSolveController(job);
         resolvePane = issueResolveController.getView();
         resolvePane.setVisible(false);
         contentPane.getChildren().add(resolvePane);
@@ -75,8 +108,8 @@ public class IssueIndexController extends BaseController {
             public void changed(ObservableValue<? extends Issue> observable, Issue oldIssue, Issue newIssue) {
                 if (null != newIssue) {
                     logger.info("Setting issue to detail view: " + newIssue);
-                    issueResolveController.setIssue(newIssue);
                     resolvePane.setVisible(true);
+                    issueResolveController.setIssue(newIssue);
                 } else {
                     resolvePane.setVisible(false);
                 }
@@ -86,8 +119,8 @@ public class IssueIndexController extends BaseController {
             @Override
             public void onChanged(Change<? extends Issue> change) {
                 if (job.getIssues().size() > 0) {
-                    logger.info("Selecting first issue in issue list");
-                    issues.getSelectionModel().select(0);
+//                    logger.info("Selecting first issue in issue list");
+//                    issues.getSelectionModel().select(0);
                 }
             }
         });

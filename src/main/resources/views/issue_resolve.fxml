@@ -32,7 +32,7 @@
         <Pane prefHeight="200.0" prefWidth="200.0" styleClass="gray-linnen" />
         <ScrollPane id="issue-changes-container" fitToWidth="true" hbarPolicy="NEVER" pannable="true" style="">
           <content>
-            <VBox id="" fx:id="issueChangesContainer" alignment="CENTER" fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" snapToPixel="true" spacing="5.0">
+            <VBox id="" fx:id="deltasContainer" alignment="CENTER" fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" snapToPixel="true" spacing="5.0">
               <padding>
                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
               </padding>
