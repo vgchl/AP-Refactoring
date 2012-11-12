@@ -19,7 +19,9 @@ import nl.han.ica.core.Job;
 import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.issue.IssueDetector;
 import nl.han.ica.core.issue.IssueSolver;
+import nl.han.ica.core.issue.detector.HideMethodDetector;
 import nl.han.ica.core.issue.detector.MagicNumberDetector;
+import nl.han.ica.core.issue.solver.HideMethodSolver;
 import nl.han.ica.core.issue.solver.MagicNumberSolver;
 import nl.han.ica.core.util.FileUtil;
 
@@ -66,9 +68,11 @@ public class IssueDetectorIndexController extends BaseController {
     private void initializeIssueDetectors() {
         issueDetectors = new HashSet<>();
         issueDetectors.add(new MagicNumberDetector());
+        issueDetectors.add(new HideMethodDetector());
 
         Set<IssueSolver> solvers = job.getIssueSolvingService().getIssueSolverLocator().getSolvers();
         solvers.add(new MagicNumberSolver());
+        solvers.add(new HideMethodSolver());
     }
 
     @Override

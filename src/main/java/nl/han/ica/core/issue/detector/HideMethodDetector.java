@@ -2,6 +2,8 @@ package nl.han.ica.core.issue.detector;
 
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
+import nl.han.ica.core.issue.detector.visitor.MethodDeclarationVisitor;
+import nl.han.ica.core.issue.detector.visitor.MethodInvocationVisitor;
 import org.eclipse.jdt.core.dom.*;
 
 import java.util.*;
@@ -15,56 +17,35 @@ public class HideMethodDetector extends IssueDetector {
     private static final String STRATEGY_NAME = "Hide Method";
     public static final String STRATEGY_DESCRIPTION = "Hide method when it is not used by any other class.";
 
-    private List<MethodDeclaration> methodDeclarationList = new ArrayList<>();
-
-    private Map<IMethodBinding, List<MethodInvocation>> methodUsages;
+    private List<MethodDeclaration> methodDeclarationList;
+    private Map<IMethodBinding, List<MethodInvocation>> methodUsageList;
 
     public HideMethodDetector() {
-        methodUsages = new WeakHashMap<>();
+        methodUsageList = new WeakHashMap<>();
     }
 
     @Override
     public Set<Issue> detectIssues() {
-        return null;
+
+        for (CompilationUnit compilationUnit : compilationUnits) {
+            MethodDeclarationVisitor methodDeclarationVisitor = new MethodDeclarationVisitor();
+            compilationUnit.accept(methodDeclarationVisitor);
+            methodDeclarationList = methodDeclarationVisitor.getMethodDeclarations();
+
+            MethodInvocationVisitor methodInvocationVisitor = new MethodInvocationVisitor();
+            compilationUnit.accept(methodInvocationVisitor);
+            methodUsageList = methodInvocationVisitor.getMethodInvocations();
+        }
+
+        return issues;
     }
-
-//    @Override
-//    public boolean visit(MethodDeclaration node) {
-//        node.resolveBinding().getMethodDeclaration();
-//        return super.visit(node);
-//    }
-
-//    @Override
-//    public boolean visit(MethodInvocation node) {
-//        node.resolveMethodBinding().getMethodDeclaration().getName();
-//        if (invocationsForMethods.get(activeMethod) == null) {
-//            invocationsForMethods.put(activeMethod, new ArrayList<MethodInvocation>());
-//        }
-//        invocationsForMethods.get(activeMethod).add(node);
-//        return super.visit(node);
-//    }
-//
-//    @Override
-//    public boolean visit(MethodInvocation methodInvocation) {
-//        try {
-//            IMethodBinding methodBinding = methodInvocation.resolveMethodBinding();
-//
-//            if (!methodUsages.containsKey(methodBinding)) {
-//                methodUsages.put(methodBinding, new ArrayList<MethodInvocation>());
-//            }
-//            methodUsages.get(methodBinding).add(methodInvocation);
-//        } catch (NullPointerException e) {
-//
-//        }
-//        return super.visit(methodInvocation);
-//    }
 
     /**
      * Finds all violated nodes and places them in the violatedNodes list.
      */
     private void findViolatedNodes() {
 
-        for (Map.Entry<IMethodBinding, List<MethodInvocation>> entry : methodUsages.entrySet()) {
+        for (Map.Entry<IMethodBinding, List<MethodInvocation>> entry : methodUsageList.entrySet()) {
             System.out.println("Method: " + entry.getKey().getName());
             for (MethodInvocation methodInvocation : entry.getValue()) {
                 System.out.println("\tInvocation: " + methodInvocation.getName());
@@ -72,7 +53,7 @@ public class HideMethodDetector extends IssueDetector {
         }
 
         outerloop:
-        for (Map.Entry<IMethodBinding, List<MethodInvocation>> entry : methodUsages.entrySet()) {
+        for (Map.Entry<IMethodBinding, List<MethodInvocation>> entry : methodUsageList.entrySet()) {
 
             IMethodBinding methodDeclaration = entry.getKey();
             List<MethodInvocation> methodInvocationList = entry.getValue();
@@ -114,16 +95,6 @@ public class HideMethodDetector extends IssueDetector {
         }
         return getTypeDeclarationForNode(parentNode);
     }
-//
-//    @Override
-//    public void before() {
-//        // Do nothing
-//    }
-//
-//    @Override
-//    public void after() {
-//        findViolatedNodes();
-//    }
 
     @Override
     public String getTitle() {
