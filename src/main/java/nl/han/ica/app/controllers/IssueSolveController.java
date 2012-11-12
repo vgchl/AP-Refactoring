@@ -61,6 +61,7 @@ public class IssueSolveController extends BaseController {
         issueDescription.setText(issue.getDetector().getDescription());
 
         issueSolvingService.setIssue(issue);
+        issueSolvingService.setParameters(null);
         issueSolvingService.restart();
     }
 

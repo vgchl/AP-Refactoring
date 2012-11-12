@@ -20,6 +20,7 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,10 +29,6 @@ import java.util.Map;
 public class MagicNumberSolver extends IssueSolver {
 
     private static final String PARAMETER_CONSTANT_NAME = "Constant name";
-
-    public MagicNumberSolver() {
-        initializeDefaultParameters();
-    }
 
     @Override
     public boolean canSolve(Issue issue) {
@@ -44,7 +41,9 @@ public class MagicNumberSolver extends IssueSolver {
         return solutionBuilder.build();
     }
 
-    private void initializeDefaultParameters() {
+    @Override
+    protected Map<String, Parameter> defaultParameters() {
+        Map<String, Parameter> parameters = new HashMap<>();
         Parameter constantNameParameter = new Parameter(PARAMETER_CONSTANT_NAME, "CONSTANT_NAME");
         constantNameParameter.getConstraints().add(new Parameter.Constraint() {
             @Override
@@ -52,7 +51,8 @@ public class MagicNumberSolver extends IssueSolver {
                 return ((String) value).matches("^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$");
             }
         });
-        defaultParameters.put(PARAMETER_CONSTANT_NAME, constantNameParameter);
+        parameters.put(PARAMETER_CONSTANT_NAME, constantNameParameter);
+        return parameters;
     }
 
     protected class SolutionBuilder {

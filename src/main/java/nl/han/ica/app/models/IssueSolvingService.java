@@ -43,7 +43,7 @@ public class IssueSolvingService extends Service<Solution> {
         return new Task<Solution>() {
             @Override
             protected Solution call() throws Exception {
-                Solution solution = jobProperty.get().solve(issueProperty.get());
+                Solution solution = jobProperty.get().solve(issueProperty.get(), parametersProperty.get());
                 parametersProperty.set(solution.getParameters());
                 return solution;
             }
@@ -74,7 +74,7 @@ public class IssueSolvingService extends Service<Solution> {
     }
 
     /**
-     * Returns the parametersthat will be used in solving the issue.
+     * Returns the parameters that will be used in solving the issue.
      *
      * @return Issue solving parameters
      */
