@@ -1,8 +1,7 @@
-package nl.han.ica.core.issues.criteria;
+package nl.han.ica.core.issue.detector;
 
 import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
-import nl.han.ica.core.strategies.PullUpField;
-import nl.han.ica.core.strategies.Strategy;
+import nl.han.ica.core.issue.IssueDetector;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.Type;
@@ -13,13 +12,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Niek
- * Date: 9-11-12
- * Time: 12:15
- * To change this template use File | Settings | File Templates.
+ *
  */
-public class PullUpFieldCriteria extends Criteria {
+public class PullUpFieldDetector extends IssueDetector {
+
+    private static final String STRATEGY_NAME = "Pull up duplicate fields.";
+    private static final String STRATEGY_DESCRIPTION = "Avoid duplicating fields when it can be placed in the superclass.";
 
 
     // Key value map for finding classes that have two or more subclasses
@@ -103,17 +101,12 @@ public class PullUpFieldCriteria extends Criteria {
     }
 
     @Override
-    public Strategy getStrategy() {
-        return new PullUpField();  //To change body of implemented methods use File | Settings | File Templates.
+    public String getTitle() {
+        return STRATEGY_NAME;
     }
 
     @Override
-    public void before() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void after() {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public String getDescription() {
+        return STRATEGY_DESCRIPTION;
     }
 }

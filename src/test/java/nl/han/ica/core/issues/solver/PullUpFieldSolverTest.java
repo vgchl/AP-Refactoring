@@ -1,6 +1,7 @@
-package nl.han.ica.core.strategies.solvers;
+package nl.han.ica.core.issues.solver;
 
-import nl.han.ica.core.SourceHolder;
+import nl.han.ica.core.SourceFile;
+import nl.han.ica.core.issue.solver.PullUpFieldSolver;
 import nl.han.ica.core.util.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,22 +23,20 @@ import static org.junit.Assert.fail;
 public class PullUpFieldSolverTest {
     private PullUpFieldSolver solver;
 
-    private SourceHolder superClass;
+    private SourceFile superClass;
 
-    private List<SourceHolder> subclasses;
+    private List<SourceFile> subclasses;
 
     @Before
     public void setUP() throws Exception {
 
-        superClass = new SourceHolder();
-        superClass.setFile(getSuperClassFile());
+        superClass = new SourceFile(getSuperClassFile());
 
-        subclasses = new ArrayList<SourceHolder>();
+        subclasses = new ArrayList<SourceFile>();
         List<File> subclassFiles = getSubclassFiles();
 
         for (File file : subclassFiles) {
-            SourceHolder holder = new SourceHolder();
-            holder.setFile(file);
+            SourceFile holder = new SourceFile(file);
             subclasses.add(holder);
             // TODO: add compilation unit
         }

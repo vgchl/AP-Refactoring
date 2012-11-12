@@ -1,7 +1,11 @@
-package nl.han.ica.core.strategies.solvers;
+package nl.han.ica.core.issue.solver;
 
 import nl.han.ica.core.Parameter;
-import nl.han.ica.core.SourceHolder;
+import nl.han.ica.core.Solution;
+import nl.han.ica.core.SourceFile;
+import nl.han.ica.core.issue.Issue;
+import nl.han.ica.core.issue.IssueSolver;
+import nl.han.ica.core.issue.detector.PullUpFieldDetector;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
@@ -11,54 +15,25 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Niek
- * Date: 7-11-12
- * Time: 10:47
- * To change this template use File | Settings | File Templates.
+ *
  */
-public class PullUpFieldSolver extends StrategySolver {
+public class PullUpFieldSolver extends IssueSolver {
 
     private static final String FIELD_NAME = "Field name";
 
-    private List<SourceHolder> subclasses;
+    private List<SourceFile> subclasses;
 
-    // TODO: which parameter? Issue?
-    public PullUpFieldSolver(SourceHolder superclass, List<SourceHolder> subclasses, Map<String, Parameter> parameters) {
+    public PullUpFieldSolver(SourceFile superclass, List<SourceFile> subclasses, Map<String, Parameter> parameters) {
         // TODO get node for superclass field declarations, from Issue
         // TODO get nodes from subclasses field declarations, from Issue
 
-        setSourceHolder(superclass);
         this.subclasses = subclasses;
-
-        if (parameters == null) {
-            this.parameters = initializeDefaultParameters();
-        } else {
-            this.parameters = parameters;
-        }
     }
 
-    public PullUpFieldSolver(SourceHolder superclass, List<SourceHolder> subclasses) {
+    public PullUpFieldSolver(SourceFile superclass, List<SourceFile> subclasses) {
         this(superclass, subclasses, null);
     }
 
-
-
-    private Map<String, Parameter> initializeDefaultParameters() {
-        Map<String, Parameter> defaultParameters = new HashMap<String, Parameter>();
-        Parameter constantName = new Parameter(FIELD_NAME, "newFieldFromSubclass");
-
-        constantName.getConstraints().add(new Parameter.Constraint() {
-            @Override
-            public boolean isValid(Object value) {
-                return ((String) value).matches("^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$");
-            }
-        });
-
-        return defaultParameters;
-    }
-
-    @Override
     public void rewriteAST() {
         // TODO check if default name is in the class
         // TODO remove fieldDeclarations from subclasses
@@ -95,9 +70,6 @@ public class PullUpFieldSolver extends StrategySolver {
 
         FieldDeclaration newField = createNewFieldDeclaration(ast, fieldValue);
         listRewrite.insertLast(newField, null);
-
-        /* TODO: Rewrites the document only, make sure document is superclass file?*/
-        applyChanges(rewrite);
     }
 
     /**
@@ -110,7 +82,7 @@ public class PullUpFieldSolver extends StrategySolver {
     private FieldDeclaration createNewFieldDeclaration(AST ast, String fieldValue) {
 
         VariableDeclarationFragment variableDeclarationFragment = ast.newVariableDeclarationFragment();
-        variableDeclarationFragment.setName(ast.newSimpleName((String) parameters.get(FIELD_NAME).getValue()));
+        variableDeclarationFragment.setName(ast.newSimpleName((String) defaultParameters.get(FIELD_NAME).getValue())); // parameters.get(FIELD_NAME).getValue()));
 
         // TODO: choose correct literal type from the thing that we're moving : use Enum in TypeDeclaration?
         variableDeclarationFragment.setInitializer(ast.newNumberLiteral());
@@ -123,5 +95,17 @@ public class PullUpFieldSolver extends StrategySolver {
         fieldDeclaration.modifiers().addAll(ast.newModifiers(Modifier.PRIVATE));
 
         return fieldDeclaration;
+    }
+
+    @Override
+    public boolean canSolve(Issue issue) {
+        return issue.getDetector() instanceof PullUpFieldDetector;
+    }
+
+    @Override
+    protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters) {
+
+
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }
