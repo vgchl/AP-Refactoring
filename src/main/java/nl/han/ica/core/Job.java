@@ -26,7 +26,7 @@ public class Job {
     private Parser parser;
     private IssueDetectionService issueDetectionService;
     private IssueSolvingService issueSolvingService;
-    private ObservableList<Issue> issues;
+        private ObservableList<Issue> issues;
     private Logger logger;
 
     /**
