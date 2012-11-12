@@ -1,14 +1,23 @@
 package nl.han.ica.core.issues.detector;
 
+import nl.han.ica.core.SourceFile;
+import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.detector.PullUpFieldDetector;
+import nl.han.ica.core.parser.Parser;
 import nl.han.ica.core.util.FileUtil;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,10 +30,10 @@ public class PullUpFieldDetectorTest {
 
     private PullUpFieldDetector detector;
 
-    private CompilationUnit superClass;
+    private Set<CompilationUnit> compilationUnits;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
 
         // build some example files
         // make compilationunits from them
@@ -33,9 +42,31 @@ public class PullUpFieldDetectorTest {
 
         detector = new PullUpFieldDetector();
 
+        Set<SourceFile> sourceFiles = new HashSet<SourceFile>();
+        SourceFile superClassSourceFile = new SourceFile(getSuperClassFile());
+        sourceFiles.add(superClassSourceFile);
 
+        for (File file : getSubclassFiles()) {
+            SourceFile sourceFile = new SourceFile(file);
+            sourceFiles.add(sourceFile);
+        }
+
+        Parser parser = new Parser();
+
+        compilationUnits = parser.parse(sourceFiles);
     }
 
+    @Test
+    public void testDetectIssuesNotNull() {
+        Set<Issue> issues = detector.detectIssues();
+        assertNotNull(issues);
+    }
+
+    @Test
+    public void testDetectIssues()
+    {
+        assertEquals(1, detector.detectIssues().size());
+    }
 
     private File getSuperClassFile() throws IOException {
         File file = new File("");

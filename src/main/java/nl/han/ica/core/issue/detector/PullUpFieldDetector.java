@@ -1,6 +1,7 @@
 package nl.han.ica.core.issue.detector;
 
 import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
+import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -10,6 +11,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -27,8 +29,7 @@ public class PullUpFieldDetector extends IssueDetector {
 
     private Map<Type, List<ASTNode>> subclassesPerSuperClass;
 
-    @Override
-    public boolean visit(TypeDeclaration node) {
+    public void visit(TypeDeclaration node) {
 
         Type superclass = node.getSuperclassType();
 
@@ -46,8 +47,6 @@ public class PullUpFieldDetector extends IssueDetector {
         }
 
         filterTwoOrMoreSubclasses();
-
-        return super.visit(node);
     }
 
     /**
@@ -98,6 +97,11 @@ public class PullUpFieldDetector extends IssueDetector {
         // TODO: if a duplicate is found, add the class that the declaration is in to the return list.
 
         return classesWithDuplicateFields;
+    }
+
+    @Override
+    public Set<Issue> detectIssues() {
+        return null;  //TODO
     }
 
     @Override
