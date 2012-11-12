@@ -1,10 +1,8 @@
 package nl.han.ica.core.util;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
+import nl.han.ica.core.SourceFile;
 
 /**
  * Contains helpers for common operations involving files and directories.
@@ -40,8 +38,8 @@ public class FileUtil {
             throw new IllegalArgumentException("Directory must not be null");
         }
 
-        List<File> files = new ArrayList<>();
-        Queue<File> directories = new LinkedList<>();
+        List<File> files = new ArrayList();
+        Queue<File> directories = new LinkedList();
         directories.add(directory);
         while (!directories.isEmpty()) {
             for (File file : directories.poll().listFiles()) {
@@ -93,19 +91,23 @@ public class FileUtil {
     }
 
 
-    public static String[] getFilePaths(List<File> files){
+    public static String[] filePaths(Set<SourceFile> files) {
         String[] filePaths = new String[files.size()];
-        for(int i=0; i<files.size(); i++){
-            filePaths[i] = files.get(i).getPath();
+        int i = 0;
+        for (SourceFile file : files) {
+            filePaths[i] = file.getFile().getPath();
+            i++;
         }
         return filePaths;
     }
 
-    public static String[] getFolderPaths(List<File> files){
-        String[] folderPaths = new String[files.size()];
-        for(int i=0; i<files.size(); i++){
-            folderPaths[i] = files.get(i).getParentFile().getPath();
+    public static String[] directoryPaths(Set<SourceFile> files) {
+        String[] filePaths = new String[files.size()];
+        int i = 0;
+        for (SourceFile file : files) {
+            filePaths[i] = file.getFile().getParentFile().getPath();
+            i++;
         }
-        return folderPaths;
+        return filePaths;
     }
 }
