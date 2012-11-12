@@ -1,7 +1,3 @@
-///*
-// * To change this template, choose Tools | Templates
-// * and open the template in the editor.
-// */
 package nl.han.ica.core.issues;
 //
 //import java.util.List;

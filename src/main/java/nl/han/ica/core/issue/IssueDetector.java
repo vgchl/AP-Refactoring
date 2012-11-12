@@ -36,6 +36,7 @@ public abstract class IssueDetector extends ASTVisitor {
     }
 
     public abstract String getTitle();
+
     public abstract String getDescription();
 
 }

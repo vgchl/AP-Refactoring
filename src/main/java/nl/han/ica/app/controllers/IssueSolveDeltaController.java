@@ -13,7 +13,6 @@ import nl.han.ica.app.models.parameter.ParameterControlFactory;
 import nl.han.ica.app.models.parameter.ParameterEvent;
 import nl.han.ica.core.Delta;
 import nl.han.ica.core.Parameter;
-import nl.han.ica.core.Solution;
 
 import javax.swing.event.EventListenerList;
 import java.io.IOException;
@@ -22,7 +21,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * Handles the presentation of a solution to an issue.
+ * Handles the presentation of a single delta from a solution to an issue.
  */
 public class IssueSolveDeltaController extends BaseController {
 
@@ -40,6 +39,12 @@ public class IssueSolveDeltaController extends BaseController {
     @FXML
     protected GridPane parametersContainer;
 
+    /**
+     * Instantiate a new IssueSolveDeltaController.
+     *
+     * @param delta      The delta this controller handles.
+     * @param parameters The parameters used in the creation of the delta's solution.
+     */
     public IssueSolveDeltaController(Delta delta, Map<String, Parameter> parameters) {
         this.delta = delta;
         this.parameters = parameters;
@@ -67,8 +72,8 @@ public class IssueSolveDeltaController extends BaseController {
             Label label = new Label(parameter.getTitle());
             label.setLabelFor(control);
 
-                row = (int) Math.floor(i / 2);
-                col = (i % 2 == 0) ? 0 : 2;
+            row = (int) Math.floor(i / 2);
+            col = (i % 2 == 0) ? 0 : 2;
 
             parametersContainer.add(label, col, row);
             parametersContainer.add(control, col + 1, row);
@@ -76,14 +81,29 @@ public class IssueSolveDeltaController extends BaseController {
         }
     }
 
+    /**
+     * Add a listener for the parameter changed event.
+     *
+     * @param listener Parameter change listener
+     */
     public void addParameterChangeListener(ParameterChangeListener listener) {
         parameterChangeListeners.add(ParameterChangeListener.class, listener);
     }
 
+    /**
+     * Remove a listener for the parameter changed event.
+     *
+     * @param listener Parameter change listener
+     */
     public void removeParameterChangeListener(ParameterChangeListener listener) {
         parameterChangeListeners.remove(ParameterChangeListener.class, listener);
     }
 
+    /**
+     * Trigger the parameter change event and notify all listeners.
+     *
+     * @param event The causing ParameterEvent
+     */
     protected void triggerParameterChange(ParameterEvent event) {
         ParameterChangeListener[] listeners = parameterChangeListeners.getListeners(ParameterChangeListener.class);
         for (ParameterChangeListener listener : listeners) {
@@ -93,15 +113,15 @@ public class IssueSolveDeltaController extends BaseController {
 
     private void initializeEditors() {
         editorBefore = new CodeEditor(editorBeforeView);
-        editorAfter = new CodeEditor(editorAfterView);
         editorBefore.setValue(delta.getBefore().toString());
+        editorAfter = new CodeEditor(editorAfterView);
         editorAfter.setValue(delta.getAfter().toString());
     }
 
     @Override
     public Parent getView() {
         try {
-            return buildView("/views/issue_resolve_change.fxml");
+            return buildView("/views/issue_solve_delta.fxml");
         } catch (IOException e) {
             logger.fatal("Could not build the view from the FXML document.", e);
             return null;

@@ -16,6 +16,10 @@ import nl.han.ica.core.issue.Issue;
 
 import java.io.IOException;
 
+/**
+ * Handles the solving of a single issue. Displays the issue's details and solution, and provides the controls to apply
+ * or ignore that solution.
+ */
 public class IssueSolveController extends BaseController {
 
     private Job job;
@@ -98,7 +102,7 @@ public class IssueSolveController extends BaseController {
     @Override
     public Pane getView() {
         try {
-            return (Pane) buildView("/views/issue_resolve.fxml");
+            return (Pane) buildView("/views/issue_solve.fxml");
         } catch (IOException e) {
             logger.fatal("Could not build the view from the FXML document.", e);
             return null;

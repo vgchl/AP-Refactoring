@@ -15,6 +15,7 @@ public class ParameterControlFactory {
 
     /**
      * Create a control for a parameter.
+     *
      * @param parameter The parameter to base the control on.
      * @return Control capable of displaying the parameter value.
      */
@@ -24,7 +25,8 @@ public class ParameterControlFactory {
 
     /**
      * Create a control for a parameter, and add a change event handler.
-     * @param parameter The parameter to base the control on.
+     *
+     * @param parameter    The parameter to base the control on.
      * @param eventHandler Event handler that handles changes to the parameter value.
      * @return Control capable of displaying the parameter value.
      */

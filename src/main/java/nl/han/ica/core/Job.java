@@ -10,10 +10,15 @@ import nl.han.ica.core.parser.Parser;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Lists the files and the rules to check them for.
+ *
+ * @author Teun van Vegchel
  */
 public class Job {
 
@@ -39,6 +44,9 @@ public class Job {
         issueSolvingService = new IssueSolvingService(locator);
     }
 
+    /**
+     * Process the job. Parses the {@link SourceFile}s and lets the {@link IssueDetectionService} find all the issues.
+     */
     public void process() {
         logger.debug("Processing...");
         Set<CompilationUnit> compilationUnits = parser.parse(sourceFiles);
@@ -47,15 +55,22 @@ public class Job {
         logger.debug("Done processing.");
     }
 
+    /**
+     * Solve an issue. Uses the {@link IssueSolvingService} to find a suitable solver.
+     *
+     * @param issue The issue to solve.
+     * @return The solution that solves the issue.
+     */
     public Solution solve(Issue issue) {
         return issueSolvingService.solveIssue(issue);
     }
 
     /**
-     * Create a solution for an issue.
+     * Solve an issue. Uses the {@link IssueSolvingService} to find a suitable solver.
      *
-     * @param issue The issue to solveIssue.
-     * @return The created solution.
+     * @param issue      The issue to solve.
+     * @param parameters The parameters to use while solving the issue.
+     * @return The solution that solves the issue.
      */
     public Solution solve(Issue issue, Map<String, Parameter> parameters) {
         return issueSolvingService.solveIssue(issue, parameters);
@@ -98,16 +113,31 @@ public class Job {
         return issues;
     }
 
+    /**
+     * Get the {@link SourceFile}s the job will process.
+     *
+     * @return The SourceFiles to process.
+     */
     public Set<SourceFile> getSourceFiles() {
         return sourceFiles;
     }
 
+    /**
+     * Returns the {@link IssueDetectionService} this job uses to detect issues in the source files.
+     *
+     * @return The job's IssueDetectionService instance.
+     */
     public IssueDetectionService getIssueDetectionService() {
         return issueDetectionService;
     }
 
+    /**
+     * Returns the {@link IssueSolvingService} this job uses to solve the detected issues.
+     *
+     * @return The job's IssueSolvingService instance.
+     */
     public IssueSolvingService getIssueSolvingService() {
         return issueSolvingService;
     }
-    
+
 }
