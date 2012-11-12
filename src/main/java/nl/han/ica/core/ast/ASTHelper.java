@@ -8,13 +8,12 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 /**
- *
  * @author Corne
  */
 public class ASTHelper {
     public static TypeDeclaration getTypeDeclarationForNode(ASTNode node) {
         ASTNode parentNode = node.getParent();
-        if(parentNode instanceof TypeDeclaration) {
+        if (parentNode instanceof TypeDeclaration) {
             return (TypeDeclaration) parentNode;
         }
         return getTypeDeclarationForNode(parentNode);

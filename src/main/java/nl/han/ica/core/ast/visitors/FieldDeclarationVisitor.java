@@ -38,10 +38,6 @@ public class FieldDeclarationVisitor extends ASTVisitor {
         return node;
     }
 
-    public List<FieldDeclaration> getFieldDeclarations() {
-        return fieldDeclarations;
-    }
-
 
     public List<FieldDeclaration> getFieldDeclarationWithValue(String value) {
         List<FieldDeclaration> equalFieldDeclarations = new ArrayList<>();

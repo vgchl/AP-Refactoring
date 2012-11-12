@@ -82,7 +82,7 @@ public class FileUtil {
     /**
      * Sets the contents of a file from a String.
      *
-     * @param file The file to write to.
+     * @param file    The file to write to.
      * @param content The contents to set.
      * @throws IOException When the file could not be found or written to.
      */

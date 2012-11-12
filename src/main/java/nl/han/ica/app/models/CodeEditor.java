@@ -9,6 +9,10 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Wrapper around a WebView containing a JavaScript code editor plugin. Provides easy means of communication between the
+ * Java and the JavaScript environments.
+ */
 public class CodeEditor {
 
     private WebView webView;
@@ -40,8 +44,8 @@ public class CodeEditor {
     /**
      * Highlights the given line number in the Code Editor.
      *
-     * @param lineNr The line number to highlight.
-     * @param textClassname The classname.
+     * @param lineNr              The line number to highlight.
+     * @param textClassname       The classname.
      * @param backgroundClassName The background classname.
      */
     public void highlightLine(int lineNr, String textClassname, String backgroundClassName) {
@@ -65,15 +69,15 @@ public class CodeEditor {
     /**
      * Highlights a part of a line or a block, for example one word or a few lines.
      *
-     * @param lineBegin The line to start highlight.
+     * @param lineBegin   The line to start highlight.
      * @param columnBegin The column to start highlighting.
-     * @param lineEnd The line where the highlighting ends.
-     * @param columnEnd The column where the highlighting stops.
-     * @param className The current class name.
+     * @param lineEnd     The line where the highlighting ends.
+     * @param columnEnd   The column where the highlighting stops.
+     * @param className   The current class name.
      */
     public void highlightText(int lineBegin, int columnBegin, int lineEnd, int columnEnd, String className) {
-        Position start = new Position(lineBegin-1, columnBegin-1);
-        Position end = new Position(lineEnd-1, columnEnd);
+        Position start = new Position(lineBegin - 1, columnBegin - 1);
+        Position end = new Position(lineEnd - 1, columnEnd);
         StringBuilder script = new StringBuilder("editor.markText(");
         script.append(start.toScript());
         script.append(", ");
@@ -84,6 +88,9 @@ public class CodeEditor {
         execute(script.toString());
     }
 
+    /**
+     * Initialize the webview that contains the browser environment for the CodeEditor.
+     */
     protected void initializeWebView() {
         webView.getEngine().load(getClass().getResource("/editor/editor.html").toExternalForm());
         webView.getEngine().getLoadWorker().stateProperty().addListener(
@@ -99,7 +106,12 @@ public class CodeEditor {
                 });
     }
 
-    private void execute(final String script) {
+    /**
+     * Execute a JavaScript script in the CodeEditor's browser environment.
+     *
+     * @param script The script to run
+     */
+    protected void execute(final String script) {
         if (webView.getEngine().getLoadWorker().getState() == Worker.State.SUCCEEDED) {
             webView.getEngine().executeScript(script);
         } else {
@@ -114,11 +126,22 @@ public class CodeEditor {
         private int line;
         private int column;
 
+        /**
+         * Instantiate a new Position.
+         *
+         * @param line   The line number
+         * @param column The column number
+         */
         public Position(int line, int column) {
             this.line = line;
             this.column = column;
         }
 
+        /**
+         * Outputs the position in JavaScript formatting that can be used by the CodeEditor.
+         *
+         * @return JavaScript representation of this position.
+         */
         public String toScript() {
             StringBuilder script = new StringBuilder("{ ");
             script.append("line: ").append(line);
@@ -128,4 +151,5 @@ public class CodeEditor {
             return script.toString();
         }
     }
+
 }
