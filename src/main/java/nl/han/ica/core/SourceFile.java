@@ -4,24 +4,24 @@
  */
 package nl.han.ica.core;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nl.han.ica.core.util.FileUtil;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
-/**
- *
- * @author Corne
- */
-public class SourceHolder {
-    
+import java.io.File;
+import java.io.IOException;
+
+public class SourceFile {
+
+    public static final String SOURCE_FILE_PROPERTY = "nl.han.ica.core.source_file.source_file_property";
+
     private File file;        
     private CompilationUnit compilationUnit;
-    
+
+    public SourceFile(File file) {
+        this.file = file;
+    }
 
     public File getFile() {
         return file;
@@ -33,11 +33,14 @@ public class SourceHolder {
 
     public void setCompilationUnit(CompilationUnit compilationUnit) {
         this.compilationUnit = compilationUnit;
+        this.compilationUnit.setProperty(SOURCE_FILE_PROPERTY, this);
     }
 
     public CompilationUnit getCompilationUnit() {
         return compilationUnit;
     } 
     
-    
+    public IDocument toDocument() throws IOException {
+        return new Document(FileUtil.getFileContent(file));
+    }
 }

@@ -1,6 +1,6 @@
 package nl.han.ica.core.strategies.solvers;
 
-import nl.han.ica.core.strategies.solvers.ReplacePublicFieldSolver;
+import nl.han.ica.core.issue.solver.ReplacePublicFieldSolver;
 import org.junit.Before;
 import org.junit.Test;
 
