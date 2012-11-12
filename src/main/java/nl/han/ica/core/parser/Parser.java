@@ -8,6 +8,7 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import java.util.Set;
+import nl.han.ica.core.util.FileUtil;
 
 public class Parser {
 
@@ -31,33 +32,13 @@ public class Parser {
     public Set<CompilationUnit> parse(Set<SourceFile> sourceFiles) {
         this.sourceFiles = sourceFiles;
 
-        astParser.setEnvironment(directoryPaths(sourceFiles), null, null, false);
+        astParser.setEnvironment(FileUtil.directoryPaths(sourceFiles), null, null, false);
         astParser.setUnitName("test"); // TODO: Check what this does (and whether it can be useful);
 
         String[] bindings = new String[0];
         ASTRequestor astRequestor = new ASTRequestor(sourceFiles);
-        astParser.createASTs(filePaths(sourceFiles), null, bindings, astRequestor, null);
+        astParser.createASTs(FileUtil.filePaths(sourceFiles), null, bindings, astRequestor, null);
         return astRequestor.getCompilationUnits();
-    }
-
-    private String[] filePaths(Set<SourceFile> files) {
-        String[] filePaths = new String[files.size()];
-        int i = 0;
-        for (SourceFile file : files) {
-            filePaths[i] = file.getFile().getPath();
-            i++;
-        }
-        return filePaths;
-    }
-
-    private String[] directoryPaths(Set<SourceFile> files) {
-        String[] filePaths = new String[files.size()];
-        int i = 0;
-        for (SourceFile file : files) {
-            filePaths[i] = file.getFile().getParentFile().getPath();
-            i++;
-        }
-        return filePaths;
     }
 
 }
