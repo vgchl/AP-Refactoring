@@ -4,12 +4,14 @@
  */
 package nl.han.ica.core.issue.detector;
 
+import java.util.Set;
+import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.NumberLiteral;
+import nl.han.ica.core.issue.detector.visitor.MagicNumberVisitor;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 
 public class MagicNumberDetector extends IssueDetector {
-
+    
     @Override
     public String getTitle() {
         return "Magic Number";
@@ -21,11 +23,12 @@ public class MagicNumberDetector extends IssueDetector {
     }
 
     @Override
-    public boolean visit(NumberLiteral node) {
-        if (node.getParent().getNodeType() != ASTNode.VARIABLE_DECLARATION_FRAGMENT) {
-            getIssues().add(createIssue(node));
+    public Set<Issue> detectIssues() {
+        for (CompilationUnit compilationUnit : compilationUnits) {
+            MagicNumberVisitor magicNumberVisitor = new MagicNumberVisitor();
+            compilationUnit.accept(magicNumberVisitor);
+            createIssues(magicNumberVisitor.getMagicNumbers());
         }
-        return super.visit(node);
+        return issues;
     }
-
 }
