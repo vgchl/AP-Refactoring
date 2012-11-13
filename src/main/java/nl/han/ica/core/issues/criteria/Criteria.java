@@ -24,4 +24,8 @@ public abstract class Criteria extends ASTVisitor {
     }
     
     public abstract Strategy getStrategy();
+    
+    public abstract void before();
+    
+    public abstract void after();
 }

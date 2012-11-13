@@ -4,27 +4,32 @@
  */
 package nl.han.ica.core.strategies;
 
-import net.sourceforge.pmd.RuleSet;
-import static org.junit.Assert.assertEquals;
-
 import org.junit.*;
+import static org.junit.Assert.*;
 
 /**
  *
  * @author Corne
  */
 public class StrategyTest {
+    
+    public StrategyTest() {
+    }
 
-    private Strategy instance = null;
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
 
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
+    
     @Before
     public void setUp() {
-        instance = new StrategyImpl();
     }
     
     @After
     public void tearDown() {
-        instance = null;
     }
 
     /**
@@ -32,25 +37,22 @@ public class StrategyTest {
      */
     @Test
     public void testGetName() {
+        System.out.println("getName");
+        Strategy instance = new StrategyImpl();
         String expResult = "";
         String result = instance.getName();
         assertEquals(expResult, result);
     }
 
-    /**
-     * Test of getRuleSet method, of class Strategy.
-     */
-    @Test
-    public void testGetRuleSet() {
-        RuleSet expResult = null;
-        RuleSet result = instance.getRuleSet();
-        assertEquals(expResult, result);
-    }
-
-    public class StrategyImpl extends Strategy {
+    public class StrategyImpl implements Strategy {
 
         @Override
         public String getName() {
+            return "";
+        }
+
+        @Override
+        public String getDescription() {
             return "";
         }
     }

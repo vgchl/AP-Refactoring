@@ -24,8 +24,6 @@ public class FieldDeclarationVisitor extends ASTVisitor {
     @Override
     public boolean visit(FieldDeclaration node) {
         fieldDeclarations.add(node);
-        VariableDeclaration variableDeclaration = (VariableDeclaration) node.fragments().get(0);
-        System.out.println("Testing Fielddeclarations" + node.getType().toString() + variableDeclaration.getInitializer().toString());
 
         return super.visit(node);
     }
@@ -49,7 +47,6 @@ public class FieldDeclarationVisitor extends ASTVisitor {
         for(FieldDeclaration fieldDeclaration : fieldDeclarations){
             VariableDeclaration variableDeclaration = (VariableDeclaration) fieldDeclaration.fragments().get(0);
             if(variableDeclaration.getInitializer().toString().equals(value)){
-                System.out.println("Testing Fielddeclarations" + variableDeclaration.getInitializer().toString());
                 equalFieldDeclarations.add(fieldDeclaration);
             }
         }
