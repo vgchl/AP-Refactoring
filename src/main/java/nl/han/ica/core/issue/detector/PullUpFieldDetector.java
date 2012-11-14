@@ -9,10 +9,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -48,14 +45,13 @@ public class PullUpFieldDetector extends IssueDetector {
             node.accept(visitor);
             allFieldDeclarations.addAll(visitor.getFieldDeclarations());
         }
+        Set<FieldDeclaration> fieldDeclarationSet = new HashSet<>();
 
         for (FieldDeclaration fieldDeclaration : allFieldDeclarations) {
-            // TODO: if duplicate: add parent (compilationunit) to the list of classes
-            // TODO: remember to add the classes of both occurences of the duplicate field.
+            fieldDeclarationSet.add(fieldDeclaration);
         }
-        // TODO: check allFieldDeclarations for duplicates.
-        // TODO: if a duplicate is found, add the class that the declaration is in to the return list.
-        return false;
+
+        return fieldDeclarationSet.size() < allFieldDeclarations.size();
     }
 
     @Override
