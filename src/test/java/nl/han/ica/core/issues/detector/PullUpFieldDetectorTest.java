@@ -34,14 +34,11 @@ public class PullUpFieldDetectorTest {
 
     private Set<CompilationUnit> compilationUnits;
 
-    private TemporaryFolder folder;
-
     @Before
     public void setUp() throws IOException {
 
         System.out.println("setUp");
         detector = new PullUpFieldDetector();
-        folder = new TemporaryFolder();
 
         Set<SourceFile> sourceFiles = new HashSet<SourceFile>();
         System.out.println("creating superclass SourceFile");
@@ -81,7 +78,7 @@ public class PullUpFieldDetectorTest {
     }
 
     private File getSuperClassFile() throws IOException {
-        File file = folder.newFile("Fruit.java");
+        File file = new File("Fruit.java");
 
         String content = "package nl.random.test;\n" +
                 "\n" +
@@ -128,11 +125,11 @@ public class PullUpFieldDetectorTest {
                 "\t}\n" +
                 "}\n";
 
-        File banaanFile = folder.newFile("Banaan.java");
+        File banaanFile = new File("Banaan.java");
         FileUtil.setFileContent(banaanFile, banaan);
         files.add(banaanFile);
 
-        File appelFile = folder.newFile("Appel.java");
+        File appelFile = new File("Appel.java");
         FileUtil.setFileContent(appelFile, appel);
         files.add(appelFile);
 
