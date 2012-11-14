@@ -3,13 +3,6 @@ package nl.han.ica.core;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +14,7 @@ public class ParameterTest {
     private Parameter.Constraint constraint;
 
     private Parameter parameter;
-    private List<Parameter.Constraint> constraints = new ArrayList<Parameter.Constraint>();
+    private List<Parameter.Constraint> constraints = new ArrayList<>();
 
     @Before
     public void setUp() {
@@ -48,6 +41,19 @@ public class ParameterTest {
     public void testSetValue() {
         parameter.setValue("2");
         Assert.assertEquals("2", parameter.getValue());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetWrongValue() {
+        constraint = new Parameter.Constraint() {
+            @Override
+            public boolean isValid(Object value) {
+                return ((String) value).matches("^[A-Z][A-Z]*(_[A-Z]+)*$");
+            }
+        };
+        constraints.add(constraint);
+        parameter.setConstraints(constraints);
+        parameter.setValue("Illegal argument");
     }
 
     @Test
