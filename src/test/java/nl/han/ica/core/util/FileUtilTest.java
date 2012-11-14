@@ -64,13 +64,13 @@ public class FileUtilTest {
 
     @Test
     public void testGetFileContent() throws IOException {
-        FileUtil.setFileContent(file, "CONTENT\n");
+        FileUtil.setFileContent(file, "CONTENT");
         Assert.assertEquals("CONTENT\n", FileUtil.getFileContent(file));
     }
 
     @Test
     public void testSetFileContent() throws IOException {
-        FileUtil.setFileContent(file, "EXTRA\n");
+        FileUtil.setFileContent(file, "EXTRA");
         Assert.assertEquals("EXTRA\n", FileUtil.getFileContent(file));
     }
 
