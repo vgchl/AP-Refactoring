@@ -1,20 +1,17 @@
 package nl.han.ica.core.issues.detector;
 
-import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.detector.PullUpFieldDetector;
-import nl.han.ica.core.parser.Parser;
-import nl.han.ica.core.util.FileUtil;
-import org.eclipse.core.internal.resources.Folder;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -40,27 +37,46 @@ public class PullUpFieldDetectorTest {
         System.out.println("setUp");
         detector = new PullUpFieldDetector();
 
-        Set<SourceFile> sourceFiles = new HashSet<SourceFile>();
-        System.out.println("creating superclass SourceFile");
-        SourceFile superClassSourceFile = new SourceFile(getSuperClassFile());
+        StringBuffer buffer = new StringBuffer("");
 
-        sourceFiles.add(superClassSourceFile);
+        buffer.append(getSuperClassFile());
+        buffer.append(getAppelFile());
+        buffer.append(getBanaanFile());
 
-        System.out.println("creating subclass SourceFiles");
-        for (File file : getSubclassFiles()) {
-            SourceFile sourceFile = new SourceFile(file);
-            sourceFiles.add(sourceFile);
-        }
-        System.out.println("creating parser");
-        Parser parser = new Parser();
+        ASTParser parser = createParser();
 
-        System.out.println("parsing sourceFiles to compilationunits");
-        compilationUnits = parser.parse(sourceFiles);
+        System.out.println("setSource for superclass file");
+        parser.setSource(buffer.toString().toCharArray());
+        CompilationUnit superclass = (CompilationUnit) parser.createAST(null);
+        System.out.println(superclass.toString());
+        compilationUnits.add(superclass);
 
-        System.out.println("setting compilationunits in detector");
+//        ASTParser parser2 = createParser();
+//        System.out.println("setSource for appel file");
+//        parser2.setSource(getAppelFile().toCharArray());
+//        CompilationUnit appelCu = (CompilationUnit) parser2.createAST(null);
+//        System.out.println(appelCu.toString());
+//        compilationUnits.add(appelCu);
+//
+//        ASTParser parser3 = createParser();
+//        System.out.println("setSource for banaanfile");
+//        parser3.setSource(getBanaanFile().toCharArray());
+//        CompilationUnit banaanCu = (CompilationUnit) parser3.createAST(null);
+//        System.out.println(banaanCu.toString());
+//        compilationUnits.add(banaanCu);
+
+
+        System.out.println("setting compilationunits in detector. size: " + compilationUnits.size());
         detector.setCompilationUnits(compilationUnits);
 
         System.out.println("done");
+    }
+
+    private ASTParser createParser() {
+        System.out.println("creating parser");
+        ASTParser parser = ASTParser.newParser(AST.JLS3);
+        parser.setCompilerOptions(JavaCore.getOptions());
+        return parser;
     }
 
     @Test
@@ -77,8 +93,7 @@ public class PullUpFieldDetectorTest {
         assertEquals(1, detector.detectIssues().size());
     }
 
-    private File getSuperClassFile() throws IOException {
-        File file = new File("Fruit.java");
+    private String getSuperClassFile() {
 
         String content = "package nl.random.test;\n" +
                 "\n" +
@@ -87,12 +102,10 @@ public class PullUpFieldDetectorTest {
                 "}\n";
 
 
-        FileUtil.setFileContent(file, content);
-
-        return file;
+        return content;
     }
 
-    private List<File> getSubclassFiles() throws IOException {
+    private String getBanaanFile() {
         List<File> files = new ArrayList<File>();
 
         String banaan = "package nl.random.test;\n" +
@@ -109,7 +122,10 @@ public class PullUpFieldDetectorTest {
                 "\t\treturn naam;\n" +
                 "\t}\n" +
                 "}\n";
+        return banaan;
+    }
 
+    private String getAppelFile() {
         String appel = "package nl.random.test;\n" +
                 "\n" +
                 "public class Appel extends Fruit {\n" +
@@ -125,15 +141,6 @@ public class PullUpFieldDetectorTest {
                 "\t}\n" +
                 "}\n";
 
-        File banaanFile = new File("Banaan.java");
-        FileUtil.setFileContent(banaanFile, banaan);
-        files.add(banaanFile);
-
-        File appelFile = new File("Appel.java");
-        FileUtil.setFileContent(appelFile, appel);
-        files.add(appelFile);
-
-
-        return files;
+        return appel;
     }
 }

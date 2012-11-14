@@ -18,14 +18,11 @@ import java.util.*;
 public class PullUpFieldDetector extends IssueDetector {
 
     private final Logger log = Logger.getLogger(getClass().getName());
-    ;
 
     private static final String STRATEGY_NAME = "Pull up duplicate Fields";
     private static final String STRATEGY_DESCRIPTION = "Avoid duplicating fields when it can be placed in the superclass.";
 
     private ClassWithTwoSubclassesVisitor visitor;
-
-    private Set<Issue> issues;
 
     public PullUpFieldDetector() {
         visitor = new ClassWithTwoSubclassesVisitor();
