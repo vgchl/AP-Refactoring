@@ -10,10 +10,8 @@ import java.util.Map;
 public abstract class IssueSolver {
 
     private Logger logger;
-    protected Map<String, Parameter> defaultParameters;
 
     public IssueSolver() {
-        defaultParameters = new HashMap<>();
         logger = Logger.getLogger(getClass().getName());
     }
 
@@ -46,8 +44,12 @@ public abstract class IssueSolver {
 //        }
     }
 
+    protected Map<String, Parameter> defaultParameters() {
+        return new HashMap<>();
+    }
+
     private void mergeDefaultParameters(final Map<String, Parameter> parameters) {
-        for (Map.Entry<String, Parameter> entry : defaultParameters.entrySet()) {
+        for (Map.Entry<String, Parameter> entry : defaultParameters().entrySet()) {
             if (!parameters.containsKey(entry.getKey())) {
                 parameters.put(entry.getKey(), entry.getValue());
             }

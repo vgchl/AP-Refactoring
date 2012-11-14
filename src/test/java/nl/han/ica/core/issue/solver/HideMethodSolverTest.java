@@ -31,6 +31,7 @@ public class HideMethodSolverTest {
 //    @Test
 //    public void testRewriteAST() throws Exception {
 //        Issue issue = new Issue(new HideMethodDetector());
+//        issue.getNodes().add(methodDeclaration);
 //        assertFalse(Modifier.isPrivate(methodDeclaration.getModifiers()));
 //        assertTrue(Modifier.isPublic(methodDeclaration.getModifiers()));
 //        hideMethodSolver.internalSolve(issue, null);
