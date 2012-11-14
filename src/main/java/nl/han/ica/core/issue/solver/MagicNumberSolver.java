@@ -97,7 +97,6 @@ public class MagicNumberSolver extends IssueSolver {
             AST ast = literalClass.getAST();
 
             ListRewrite listRewrite = rewrite.getListRewrite(literalClass, TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
-
             VariableDeclarationFragment variable = ast.newVariableDeclarationFragment();
             variable.setName(ast.newSimpleName(name));
             variable.setInitializer(ast.newNumberLiteral(value));
