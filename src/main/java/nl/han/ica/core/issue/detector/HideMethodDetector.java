@@ -1,9 +1,10 @@
 package nl.han.ica.core.issue.detector;
 
+import nl.han.ica.core.ast.ASTHelper;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
 import nl.han.ica.core.issue.detector.visitor.MethodDeclarationVisitor;
-import nl.han.ica.core.issue.detector.visitor.MethodInvocationVisitor;
+import nl.han.ica.core.ast.visitors.MethodInvocationVisitor;
 import org.eclipse.jdt.core.dom.*;
 
 import java.util.*;
@@ -18,10 +19,10 @@ public class HideMethodDetector extends IssueDetector {
     public static final String STRATEGY_DESCRIPTION = "Hide method when it is not used by any other class.";
 
     private List<MethodDeclaration> methodDeclarationList;
-    private Map<IMethodBinding, List<MethodInvocation>> methodUsageList;
+    private List<MethodInvocation> methodInvocationList;
 
     public HideMethodDetector() {
-        methodUsageList = new WeakHashMap<>();
+
     }
 
     @Override
@@ -34,8 +35,10 @@ public class HideMethodDetector extends IssueDetector {
 
             MethodInvocationVisitor methodInvocationVisitor = new MethodInvocationVisitor();
             compilationUnit.accept(methodInvocationVisitor);
-            methodUsageList = methodInvocationVisitor.getMethodInvocations();
+            methodInvocationList = methodInvocationVisitor.getMethodInvocations();
         }
+
+        findViolatedNodesAndCreateIssues();
 
         return issues;
     }
@@ -43,57 +46,34 @@ public class HideMethodDetector extends IssueDetector {
     /**
      * Finds all violated nodes and places them in the violatedNodes list.
      */
-    private void findViolatedNodes() {
-
-        for (Map.Entry<IMethodBinding, List<MethodInvocation>> entry : methodUsageList.entrySet()) {
-            System.out.println("Method: " + entry.getKey().getName());
-            for (MethodInvocation methodInvocation : entry.getValue()) {
-                System.out.println("\tInvocation: " + methodInvocation.getName());
-            }
-        }
+    private void findViolatedNodesAndCreateIssues() {
 
         outerloop:
-        for (Map.Entry<IMethodBinding, List<MethodInvocation>> entry : methodUsageList.entrySet()) {
+        for (MethodDeclaration methodDeclaration  : methodDeclarationList) {
 
-            IMethodBinding methodDeclaration = entry.getKey();
-            List<MethodInvocation> methodInvocationList = entry.getValue();
+            int modifiers = methodDeclaration.getModifiers();
 
-            System.out.println("Declaration: " + methodDeclaration.getName());
-
-            for (MethodInvocation methodInvocation  : methodInvocationList) {
-                //TypeDeclaration typeDeclarationForMethodClass = getTypeDeclarationForNode(methodDeclaration);
-                //String methodClass = typeDeclarationForMethodClass.getName().toString();
-
-                TypeDeclaration typeDeclarationForInvocationClass = getTypeDeclarationForNode(methodInvocation);
-                String invocationClass = typeDeclarationForInvocationClass.getName().toString();
-
-                System.out.println("  MC: " + methodInvocation + " - IC " + invocationClass);
-
-                int modifiers = methodDeclaration.getModifiers();
-                IMethodBinding methodDeclarationBinding = methodDeclaration.getMethodDeclaration();
-                IMethodBinding methodInvocationBinding = methodInvocation.resolveMethodBinding().getMethodDeclaration();
-                System.out.println("xx");
-                if(methodDeclaration.getMethodDeclaration().equals(methodInvocation.resolveMethodBinding().getMethodDeclaration()) && Modifier.isPublic(modifiers)) {
-                    System.out.println("Found private: " + methodDeclaration.getName());
+            for (MethodInvocation methodInvocation : methodInvocationList) {
+                System.out.println(methodDeclaration);
+                System.out.println(methodInvocation);
+                System.out.println("MD B: " + methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding()));
+                System.out.println("Modif: " + !Modifier.isPrivate(modifiers));
+                System.out.println("ASTH: " + (ASTHelper.getTypeDeclarationForNode(methodDeclaration) != ASTHelper.getTypeDeclarationForNode(methodInvocation)));
+                System.out.println("------------");
+                if(methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding())
+                        && !Modifier.isPrivate(modifiers)
+                        && ASTHelper.getTypeDeclarationForNode(methodDeclaration) != ASTHelper.getTypeDeclarationForNode(methodInvocation)) {
+                    System.out.println(ASTHelper.getTypeDeclarationForNode(methodDeclaration));
+                    System.out.println(ASTHelper.getTypeDeclarationForNode(methodInvocation));
                     continue outerloop;
                 }
             }
 
-            System.out.println("Could be private.");
-            if(!Modifier.isPrivate(methodDeclaration.getModifiers())) {
-                System.out.println("SHOULD BE PRIVATE!");
-                //violatedNodes.add(methodDeclaration);
+            if(!Modifier.isPrivate(modifiers)) {
+                System.out.println("----> Found method that could be hidden: " + methodDeclaration);
+                createIssue(methodDeclaration);
             }
         }
-    }
-
-    // Throw exception when node is null.
-    private TypeDeclaration getTypeDeclarationForNode(ASTNode node) {
-        ASTNode parentNode = node.getParent();
-        if(parentNode instanceof TypeDeclaration) {
-            return (TypeDeclaration) parentNode;
-        }
-        return getTypeDeclarationForNode(parentNode);
     }
 
     @Override
