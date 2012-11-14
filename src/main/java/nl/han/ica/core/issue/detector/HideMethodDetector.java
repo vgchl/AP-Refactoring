@@ -22,7 +22,8 @@ public class HideMethodDetector extends IssueDetector {
     private List<MethodInvocation> methodInvocationList;
 
     public HideMethodDetector() {
-
+        methodDeclarationList = new ArrayList<>();
+        methodInvocationList = new ArrayList<>();
     }
 
     @Override
@@ -31,11 +32,11 @@ public class HideMethodDetector extends IssueDetector {
         for (CompilationUnit compilationUnit : compilationUnits) {
             MethodDeclarationVisitor methodDeclarationVisitor = new MethodDeclarationVisitor();
             compilationUnit.accept(methodDeclarationVisitor);
-            methodDeclarationList = methodDeclarationVisitor.getMethodDeclarations();
+            methodDeclarationList.addAll(methodDeclarationVisitor.getMethodDeclarations());
 
             MethodInvocationVisitor methodInvocationVisitor = new MethodInvocationVisitor();
             compilationUnit.accept(methodInvocationVisitor);
-            methodInvocationList = methodInvocationVisitor.getMethodInvocations();
+            methodInvocationList.addAll(methodInvocationVisitor.getMethodInvocations());
         }
 
         findViolatedNodesAndCreateIssues();
@@ -54,22 +55,22 @@ public class HideMethodDetector extends IssueDetector {
             int modifiers = methodDeclaration.getModifiers();
 
             for (MethodInvocation methodInvocation : methodInvocationList) {
-                System.out.println(methodDeclaration);
-                System.out.println(methodInvocation);
-                System.out.println("MD B: " + methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding()));
-                System.out.println("Modif: " + !Modifier.isPrivate(modifiers));
-                System.out.println("ASTH: " + (ASTHelper.getTypeDeclarationForNode(methodDeclaration) != ASTHelper.getTypeDeclarationForNode(methodInvocation)));
-                System.out.println("------------");
+//                System.out.println(methodDeclaration);
+//                System.out.println(methodInvocation);
+//                System.out.println("MD B: " + methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding()));
+//                System.out.println("Modif: " + !Modifier.isPrivate(modifiers));
+//                System.out.println("ASTH: " + (ASTHelper.getTypeDeclarationForNode(methodDeclaration) != ASTHelper.getTypeDeclarationForNode(methodInvocation)));
+//                System.out.println("------------");
                 if(methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding())
                         && !Modifier.isPrivate(modifiers)
                         && ASTHelper.getTypeDeclarationForNode(methodDeclaration) != ASTHelper.getTypeDeclarationForNode(methodInvocation)) {
-                    System.out.println(ASTHelper.getTypeDeclarationForNode(methodDeclaration));
-                    System.out.println(ASTHelper.getTypeDeclarationForNode(methodInvocation));
+//                    System.out.println(ASTHelper.getTypeDeclarationForNode(methodDeclaration));
+//                    System.out.println(ASTHelper.getTypeDeclarationForNode(methodInvocation));
                     continue outerloop;
                 }
             }
 
-            if(!Modifier.isPrivate(modifiers)) {
+            if(!Modifier.isPrivate(modifiers) && !methodDeclaration.isConstructor()) {
                 System.out.println("----> Found method that could be hidden: " + methodDeclaration);
                 createIssue(methodDeclaration);
             }

@@ -52,27 +52,28 @@ public class HideMethodSolver extends IssueSolver {
         Delta delta = solution.createDelta(sourceFile);
         delta.setBefore(document.get());
 
-        if(node instanceof MethodDeclaration){
-            MethodDeclaration methodDeclaration = (MethodDeclaration) node;
+        ASTRewrite rewrite = ASTRewrite.create(node.getAST());
+        MethodDeclaration newMethodDeclaration = (MethodDeclaration) ASTNode.copySubtree(node.getAST(), node);
 
-            int modifiers = methodDeclaration.getModifiers();
+        if(node instanceof MethodDeclaration){
+            int modifiers = newMethodDeclaration.getModifiers();
 
             if(Modifier.isPublic(modifiers) || Modifier.isProtected(modifiers)){
-                methodDeclaration.modifiers().remove(0);
+                newMethodDeclaration.modifiers().remove(0);
             }
-            System.out.println(methodDeclaration.getModifiers());
-            methodDeclaration.modifiers().addAll(0, methodDeclaration.getAST().newModifiers(Modifier.PRIVATE));
+            newMethodDeclaration.modifiers().addAll(0, newMethodDeclaration.getAST().newModifiers(Modifier.PRIVATE));
         }
 
-        ASTRewrite rewrite = ASTRewrite.create(node.getAST());
+        rewrite.replace(node, newMethodDeclaration, null);
         TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
+
         try {
             textEdit.apply(document);
         } catch (MalformedTreeException | BadLocationException e) {
             // Log
         }
 
-        delta.setAfter(document.get());
+        delta.setAfter("AFTER" + document.get());
 
         return solution;
     }

@@ -20,23 +20,24 @@ public class HideMethodSolverTest {
     private MethodDeclaration methodDeclaration = null;
     private AST ast;
 
-//    @Before
-//    public void setUp() throws Exception {
-//        hideMethodSolver = new HideMethodSolver();
-//        ast = AST.newAST(AST.JLS3);
-//        methodDeclaration = ast.newMethodDeclaration();
-//        methodDeclaration.modifiers().addAll(ast.newModifiers(Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL));
-//    }
-//
-//    @Test
-//    public void testRewriteAST() throws Exception {
-//        Issue issue = new Issue(new HideMethodDetector());
-//        assertFalse(Modifier.isPrivate(methodDeclaration.getModifiers()));
-//        assertTrue(Modifier.isPublic(methodDeclaration.getModifiers()));
-//        hideMethodSolver.internalSolve(issue, null);
-//        assertFalse(Modifier.isPublic(methodDeclaration.getModifiers()));
-//        assertTrue(Modifier.isPrivate(methodDeclaration.getModifiers()));
-//    }
+    @Before
+    public void setUp() throws Exception {
+        hideMethodSolver = new HideMethodSolver();
+        ast = AST.newAST(AST.JLS3);
+        methodDeclaration = ast.newMethodDeclaration();
+        methodDeclaration.modifiers().addAll(ast.newModifiers(Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL));
+    }
+
+    @Test
+    public void testRewriteAST() throws Exception {
+        Issue issue = new Issue(new HideMethodDetector());
+        issue.getNodes().add(methodDeclaration);
+        assertFalse(Modifier.isPrivate(methodDeclaration.getModifiers()));
+        assertTrue(Modifier.isPublic(methodDeclaration.getModifiers()));
+        hideMethodSolver.internalSolve(issue, null);
+        assertFalse(Modifier.isPublic(methodDeclaration.getModifiers()));
+        assertTrue(Modifier.isPrivate(methodDeclaration.getModifiers()));
+    }
 
     @Test
     public void testGetDefaultParameters() throws Exception {
