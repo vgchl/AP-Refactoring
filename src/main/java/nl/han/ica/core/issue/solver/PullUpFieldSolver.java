@@ -82,7 +82,7 @@ public class PullUpFieldSolver extends IssueSolver {
     private FieldDeclaration createNewFieldDeclaration(AST ast, String fieldValue) {
 
         VariableDeclarationFragment variableDeclarationFragment = ast.newVariableDeclarationFragment();
-        variableDeclarationFragment.setName(ast.newSimpleName((String) defaultParameters.get(FIELD_NAME).getValue())); // parameters.get(FIELD_NAME).getValue()));
+        //variableDeclarationFragment.setName(ast.newSimpleName((String) defaultParameters.get(FIELD_NAME).getValue())); // parameters.get(FIELD_NAME).getValue()));
 
         // TODO: choose correct literal type from the thing that we're moving : use Enum in TypeDeclaration?
         variableDeclarationFragment.setInitializer(ast.newNumberLiteral());
