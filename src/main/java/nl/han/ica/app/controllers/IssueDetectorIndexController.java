@@ -1,9 +1,9 @@
 package nl.han.ica.app.controllers;
 
-import javafx.collections.ObservableList;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -19,15 +19,15 @@ import nl.han.ica.core.Job;
 import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.issue.IssueDetector;
 import nl.han.ica.core.issue.IssueSolver;
+import nl.han.ica.core.issue.detector.HideMethodDetector;
 import nl.han.ica.core.issue.detector.MagicNumberDetector;
-import nl.han.ica.core.issue.detector.PullUpFieldDetector;
+import nl.han.ica.core.issue.solver.HideMethodSolver;
 import nl.han.ica.core.issue.solver.MagicNumberSolver;
 import nl.han.ica.core.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -41,7 +41,6 @@ public class IssueDetectorIndexController extends BaseController {
 
     private Job job;
     private Scene scene;
-    private Set<IssueDetector> issueDetectors;
 
     @FXML
     protected VBox strategyOptions;
@@ -65,12 +64,13 @@ public class IssueDetectorIndexController extends BaseController {
     }
 
     private void initializeIssueDetectors() {
-        issueDetectors = new HashSet<>();
+        Set<IssueDetector> issueDetectors = job.getIssueDetectionService().getDetectors();
         issueDetectors.add(new MagicNumberDetector());
-        issueDetectors.add(new PullUpFieldDetector());
+        issueDetectors.add(new HideMethodDetector());
 
         Set<IssueSolver> solvers = job.getIssueSolvingService().getIssueSolverLocator().getSolvers();
         solvers.add(new MagicNumberSolver());
+        solvers.add(new HideMethodSolver());
     }
 
     @Override
@@ -183,20 +183,6 @@ public class IssueDetectorIndexController extends BaseController {
      */
     @FXML
     public void analyze(ActionEvent event) {
-        ObservableList<Node> checkboxes = strategyOptions.getChildren();
-
-        // TODO: Make checkboxes work again
-//        for (int i = 0; i < checkboxes.size(); i++) {
-//            CheckBox c = (CheckBox) checkboxes.get(i);
-//            if (c.isSelected()) {
-//                IssueDetector issueDetector = issueDetectors.get(i);
-//                job.getStrategies().add(strategy);
-//            }
-//        }
-
-        logger.debug("adding issuedetectors: " + issueDetectors.toString());
-        job.getIssueDetectionService().getDetectors().addAll(issueDetectors);
-
         IssueIndexController issueIndexController = new IssueIndexController(job);
         scene.setRoot(issueIndexController.getView());
     }
@@ -206,12 +192,15 @@ public class IssueDetectorIndexController extends BaseController {
             selectedFilePath.setText(formatFileSet(job.getSourceFiles()));
             selectedFilePath.setVisible(true);
             selectedFile.setVisible(true);
-            analyzeButton.setDisable(false);
         } else {
             selectedFilePath.setVisible(false);
             selectedFile.setVisible(false);
-            analyzeButton.setDisable(true);
         }
+        updateCanAnalyze();
+    }
+
+    private void updateCanAnalyze() {
+        analyzeButton.setDisable(!job.canProcess());
     }
 
     private String formatFileSet(Set<SourceFile> sourceFiles) {
@@ -223,9 +212,20 @@ public class IssueDetectorIndexController extends BaseController {
     }
 
     private void initializeStrategyCheckboxList() {
-        for (IssueDetector issueDetector : issueDetectors) {
-            CheckBox checkBox = new CheckBox();
+        for (final IssueDetector issueDetector : job.getIssueDetectionService().getDetectors()) {
+            final CheckBox checkBox = new CheckBox();
             checkBox.setText(issueDetector.getTitle());
+            checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldSelected, Boolean newSelected) {
+                    if (newSelected) {
+                        job.getIssueDetectionService().getDetectors().add(issueDetector);
+                    } else {
+                        job.getIssueDetectionService().getDetectors().remove(issueDetector);
+                    }
+                    updateCanAnalyze();
+                }
+            });
             checkBox.setSelected(true);
             strategyOptions.getChildren().add(checkBox);
         }

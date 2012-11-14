@@ -1,3 +1,5 @@
+package issueclasses;
+
 public class UnusedCodeTester {
 
     public static String string1 = "Si!";
@@ -9,6 +11,11 @@ public class UnusedCodeTester {
     public static void main(String[] args) {
         System.out.println(string1);
         used(100);
+        used(200);
+        used(300);
+
+        OtherClass otherClass = new OtherClass();
+        otherClass.method1("xx");
     }
 
     private String unused(String a, String b, String c) {
