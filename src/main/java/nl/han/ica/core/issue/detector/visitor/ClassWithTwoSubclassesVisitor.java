@@ -27,10 +27,15 @@ public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
 
         Type superclass = type.getSuperclassType();
 
+        if (superclass != null ){
+            logger.debug(superclass.resolveBinding());
+        }
+
         if (superclass != null) {
             ASTNode subClass = type.getParent();
             if (subclassesPerSuperClass.containsKey(superclass.toString())) {
                 subclassesPerSuperClass.get(superclass.toString()).add(subClass);
+
             } else {
                 ArrayList<ASTNode> subclasses = new ArrayList<ASTNode>();
                 subclasses.add(subClass);
