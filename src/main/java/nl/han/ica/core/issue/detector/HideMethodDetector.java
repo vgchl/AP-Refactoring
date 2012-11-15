@@ -20,10 +20,12 @@ public class HideMethodDetector extends IssueDetector {
 
     private List<MethodDeclaration> methodDeclarationList;
     private List<MethodInvocation> methodInvocationList;
+    private Map<MethodDeclaration, List<MethodInvocation>> methodUsages;
 
     public HideMethodDetector() {
         methodDeclarationList = new ArrayList<>();
         methodInvocationList = new ArrayList<>();
+        methodUsages = new WeakHashMap<>();
     }
 
     @Override
@@ -39,6 +41,7 @@ public class HideMethodDetector extends IssueDetector {
             methodInvocationList.addAll(methodInvocationVisitor.getMethodInvocations());
         }
 
+        buildHashMapWithMethodDeclarationsAndInvocations();
         findViolatedNodesAndCreateIssues();
 
         return issues;
@@ -50,28 +53,21 @@ public class HideMethodDetector extends IssueDetector {
     private void findViolatedNodesAndCreateIssues() {
 
         outerloop:
-        for (MethodDeclaration methodDeclaration  : methodDeclarationList) {
-
+        for (Map.Entry<MethodDeclaration, List<MethodInvocation>> entry : methodUsages.entrySet()) {
+            MethodDeclaration methodDeclaration = entry.getKey();
             int modifiers = methodDeclaration.getModifiers();
 
-            for (MethodInvocation methodInvocation : methodInvocationList) {
-//                System.out.println(methodDeclaration);
-//                System.out.println(methodInvocation);
-//                System.out.println("MD B: " + methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding()));
-//                System.out.println("Modif: " + !Modifier.isPrivate(modifiers));
-//                System.out.println("ASTH: " + (ASTHelper.getTypeDeclarationForNode(methodDeclaration) != ASTHelper.getTypeDeclarationForNode(methodInvocation)));
-//                System.out.println("------------");
+            for (MethodInvocation methodInvocation : entry.getValue()) {
                 if(methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding())
                         && !Modifier.isPrivate(modifiers)
                         && ASTHelper.getTypeDeclarationForNode(methodDeclaration) != ASTHelper.getTypeDeclarationForNode(methodInvocation)) {
-//                    System.out.println(ASTHelper.getTypeDeclarationForNode(methodDeclaration));
-//                    System.out.println(ASTHelper.getTypeDeclarationForNode(methodInvocation));
                     continue outerloop;
                 }
             }
 
-            if(!Modifier.isPrivate(modifiers) && !methodDeclaration.isConstructor()) {
-                System.out.println("----> Found method that could be hidden: " + methodDeclaration);
+            if(!Modifier.isPrivate(modifiers) && !methodDeclaration.isConstructor()
+                    && !hasOverrideAnnotation(methodDeclaration)
+                    && !isMainMethod(methodDeclaration)) {
                 createIssue(methodDeclaration);
             }
         }
@@ -85,5 +81,42 @@ public class HideMethodDetector extends IssueDetector {
     @Override
     public String getDescription() {
         return STRATEGY_DESCRIPTION;
+    }
+
+    // Exclude main method
+    private void buildHashMapWithMethodDeclarationsAndInvocations() {
+        for (MethodDeclaration methodDeclaration  : methodDeclarationList) {
+
+            if (!methodUsages.containsKey(methodDeclaration)) {
+                methodUsages.put(methodDeclaration, new ArrayList<MethodInvocation>());
+            }
+
+            for (MethodInvocation methodInvocation : methodInvocationList) {
+                if(methodDeclaration.resolveBinding() != null && methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding())) {
+                    methodUsages.get(methodDeclaration).add(methodInvocation);
+                }
+            }
+
+            // Remove already sorted MethodInvocations from the list.
+            for(MethodInvocation methodInvocation : methodUsages.get(methodDeclaration)) {
+                methodInvocationList.remove(methodInvocation);
+            }
+        }
+    }
+
+    private boolean hasOverrideAnnotation(MethodDeclaration methodDeclaration) {
+        if(methodDeclaration.resolveBinding() != null) {
+            IAnnotationBinding[] annotationBindingList = methodDeclaration.resolveBinding().getAnnotations();
+            for (IAnnotationBinding binding : annotationBindingList) {
+                if(binding.toString().indexOf("Override") != -1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isMainMethod(MethodDeclaration methodDeclaration) {
+        return (methodDeclaration.getName().toString().equals("main"));
     }
 }
