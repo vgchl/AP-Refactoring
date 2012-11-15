@@ -95,7 +95,7 @@ public class IssueDetectorIndexController extends BaseController {
      * @param event The event that is passed by the view.
      */
     @FXML
-    public void selectSourceFiles(ActionEvent event) {
+    private void selectSourceFiles(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(FILES_SELECTION_TITLE);
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Java Files", "*.java"));
@@ -118,7 +118,7 @@ public class IssueDetectorIndexController extends BaseController {
      * @param event The event that is passed by the view.
      */
     @FXML
-    public void selectSourceDirectory(ActionEvent event) {
+    private void selectSourceDirectory(ActionEvent event) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle(FILES_SELECTION_TITLE);
 
@@ -131,6 +131,7 @@ public class IssueDetectorIndexController extends BaseController {
         } else {
             job.getSourceFiles().clear();
         }
+        System.out.println("xx");
         onSourceFilesSelected();
     }
 

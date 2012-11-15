@@ -21,9 +21,17 @@ public class MethodInvocationVisitor extends ASTVisitor {
         methodInvocations = new ArrayList<>();
     }
 
+    /**
+     * Adds all OWN methodInvocations to the methodInvocation list.
+     *
+     * @param methodInvocation
+     * @return
+     */
     @Override
     public boolean visit(MethodInvocation methodInvocation) {
-        methodInvocations.add(methodInvocation);
+        if(methodInvocation.resolveMethodBinding() != null && methodInvocation.resolveMethodBinding().getDeclaringClass().isFromSource()) {
+            methodInvocations.add(methodInvocation);
+        }
         return super.visit(methodInvocation);
     }
 
