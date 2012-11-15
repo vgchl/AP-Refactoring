@@ -64,16 +64,16 @@ public class FileUtil {
      */
     public static String getFileContent(File file) throws IOException {
         String lineSeparator = System.getProperty("line.separator");
-        InputStreamReader fileReader = new InputStreamReader(new FileInputStream(file.getAbsoluteFile()), "UTF8");
-        BufferedReader reader = new BufferedReader(fileReader);
-        String nextLine;
-        StringBuffer buffer = new StringBuffer();
-        while ((nextLine = reader.readLine()) != null) {
-            buffer.append(nextLine);
-            buffer.append(lineSeparator);
+        StringBuffer buffer;
+        try (InputStreamReader fileReader = new InputStreamReader(new FileInputStream(file.getAbsoluteFile()), "UTF8");
+                BufferedReader reader = new BufferedReader(fileReader)) {
+            String nextLine;
+            buffer = new StringBuffer();
+            while ((nextLine = reader.readLine()) != null) {
+                buffer.append(nextLine);
+                buffer.append(lineSeparator);
+            }
         }
-        reader.close();
-        fileReader.close();
         return buffer.toString();
     }
 

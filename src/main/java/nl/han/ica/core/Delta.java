@@ -1,5 +1,7 @@
 package nl.han.ica.core;
 
+import java.io.File;
+
 /**
  * Represents the changes in a SourceFile.
  *
@@ -55,5 +57,16 @@ public class Delta {
     public String getAfter() {
         return after;
     }
+
+    /**
+     * Get the file from this delta
+     * 
+     * @return the file
+     */
+    public File getFile(){
+        return sourceFile.getFile();
+    }
+    
+    
 
 }

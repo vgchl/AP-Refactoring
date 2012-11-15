@@ -4,11 +4,15 @@
  */
 package nl.han.ica.core.issue.detector;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
-import nl.han.ica.core.issue.detector.visitor.MagicNumberVisitor;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.NumberLiteral;
 
 public class MagicNumberDetector extends IssueDetector {
     
@@ -30,5 +34,23 @@ public class MagicNumberDetector extends IssueDetector {
             createIssues(magicNumberVisitor.getMagicNumbers());
         }
         return issues;
+    }
+    
+    
+    private class MagicNumberVisitor extends ASTVisitor {    
+        private List<ASTNode> magicNumbers = new ArrayList<>();
+
+        @Override
+        public boolean visit(NumberLiteral node) {
+            if (node.getParent().getNodeType() != ASTNode.VARIABLE_DECLARATION_FRAGMENT) {
+                magicNumbers.add(node);
+            }
+            return super.visit(node);
+        }
+
+        public List<ASTNode> getMagicNumbers() {
+            return magicNumbers;
+        }
+
     }
 }
