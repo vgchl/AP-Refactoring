@@ -1,11 +1,15 @@
 package nl.han.ica.core.issue;
 
+import java.io.IOException;
 import nl.han.ica.core.Parameter;
 import nl.han.ica.core.Solution;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import nl.han.ica.core.Delta;
+import nl.han.ica.core.util.FileUtil;
 
 public abstract class IssueSolver {
 
@@ -36,12 +40,14 @@ public abstract class IssueSolver {
         if (solution.getIssueSolver() != this) {
             throw new IllegalArgumentException("Cannot apply solution. The solution was made by a different solver.");
         }
-        // TODO: Apply solution
-//        try {
-//            FileUtil.setFileContent(file, solution.getAfter());
-//        } catch (IOException e) {
-//            logger.fatal("Could not apply solution: error during file write.");
-//        }
+        
+        for(Delta delta : solution.getDeltas()){
+            try {
+                FileUtil.setFileContent(delta.getFile(), delta.getAfter());
+            } catch (IOException ex) {
+                logger.fatal("Could not apply solution: error during file write. \n" + ex);
+            }
+        }
     }
 
     protected Map<String, Parameter> defaultParameters() {

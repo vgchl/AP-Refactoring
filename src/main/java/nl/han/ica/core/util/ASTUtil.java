@@ -3,6 +3,7 @@ package nl.han.ica.core.util;
 import nl.han.ica.core.SourceFile;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 /**
  * User: Teun
@@ -19,6 +20,14 @@ public class ASTUtil {
         return (SourceFile) compilationUnit.getProperty(SourceFile.SOURCE_FILE_PROPERTY);
     }
 
+    public static TypeDeclaration getTypeDeclarationForNode(ASTNode node) {
+        ASTNode parentNode = node.getParent();
+        if (parentNode instanceof TypeDeclaration) {
+            return (TypeDeclaration) parentNode;
+        }
+        return getTypeDeclarationForNode(parentNode);
+    }
+    
     public static <T extends ASTNode> T parent(final Class<T> klass, final ASTNode node) {
         ASTNode parent = node;
         do {

@@ -1,6 +1,5 @@
 package nl.han.ica.core.issue.detector;
 
-import nl.han.ica.core.ast.ASTHelper;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
 import nl.han.ica.core.ast.visitors.MethodDeclarationVisitor;
@@ -8,6 +7,8 @@ import nl.han.ica.core.ast.visitors.MethodInvocationVisitor;
 import org.eclipse.jdt.core.dom.*;
 
 import java.util.*;
+import nl.han.ica.core.util.ASTUtil;
+import nl.han.ica.core.util.FileUtil;
 
 /**
  * @author: Wouter Konecny
@@ -60,7 +61,8 @@ public class HideMethodDetector extends IssueDetector {
             for (MethodInvocation methodInvocation : entry.getValue()) {
                 if(methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding())
                         && !Modifier.isPrivate(modifiers)
-                        && ASTHelper.getTypeDeclarationForNode(methodDeclaration) != ASTHelper.getTypeDeclarationForNode(methodInvocation)) {
+                        && ASTUtil.getTypeDeclarationForNode(methodDeclaration) != ASTUtil.getTypeDeclarationForNode(methodInvocation)) {
+
                     continue outerloop;
                 }
             }
