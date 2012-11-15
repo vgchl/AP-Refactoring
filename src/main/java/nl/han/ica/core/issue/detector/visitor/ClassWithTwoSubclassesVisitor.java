@@ -9,17 +9,14 @@ import org.apache.log4j.Logger;
 import java.util.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Niek
- * Date: 12-11-12
- * Time: 14:30
- * To change this template use File | Settings | File Templates.
+ *
  */
 public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
 
+    public static final int MINIMAL_NR_OF_SUBCLASSES = 2;
     private Map<String, List<ASTNode>> subclassesPerSuperClass;
 
-    private Logger logger = Logger.getLogger(getClass().getName());
+    private final Logger logger = Logger.getLogger(getClass().getName());
 
     public ClassWithTwoSubclassesVisitor() {
         subclassesPerSuperClass = new HashMap<String, List<ASTNode>>();
@@ -43,14 +40,14 @@ public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
         return super.visit(type);
     }
 
-    public void filterTwoOrMoreSubclasses() {
+    private void filterTwoOrMoreSubclasses() {
 
         Set<String> types = subclassesPerSuperClass.keySet();
         Set<String> keysToRemove = new HashSet<String>();
 
 
         for (String type : types) {
-            if (subclassesPerSuperClass.get(type).size() < 2) {
+            if (subclassesPerSuperClass.get(type).size() < MINIMAL_NR_OF_SUBCLASSES) {
                 keysToRemove.add(type);
             }
         }
@@ -60,7 +57,7 @@ public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
     }
 
     public Map<String, List<ASTNode>> getSubclassesPerSuperClass() {
-        logger.debug("GETMap Test!! "+subclassesPerSuperClass.toString());
+        filterTwoOrMoreSubclasses();
         return subclassesPerSuperClass;
     }
 

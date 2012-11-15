@@ -17,7 +17,7 @@ import java.util.*;
  */
 public class PullUpFieldDetector extends IssueDetector {
 
-    private static final String STRATEGY_NAME = "Pull up duplicate fields.";
+    private static final String STRATEGY_NAME = "Pull up Duplicate Fields.";
     private static final String STRATEGY_DESCRIPTION = "Avoid duplicating fields when it can be placed in the superclass.";
 
     private Logger logger = Logger.getLogger(getClass().getName());
@@ -26,7 +26,6 @@ public class PullUpFieldDetector extends IssueDetector {
 
     public PullUpFieldDetector() {
         visitor = new ClassWithTwoSubclassesVisitor();
-        logger.debug("Test");
     }
 
     /**
@@ -38,7 +37,6 @@ public class PullUpFieldDetector extends IssueDetector {
     private boolean hasDuplicateFields(List<ASTNode> listOfSubclasses) {
 
         FieldDeclarationVisitor visitor = new FieldDeclarationVisitor();
-        List<ASTNode> classesWithDuplicateFields = new ArrayList<ASTNode>();
 
         List<FieldDeclaration> allFieldDeclarations = new ArrayList<FieldDeclaration>();
 
@@ -53,8 +51,6 @@ public class PullUpFieldDetector extends IssueDetector {
             fieldDeclarationSet.add(fieldDeclaration.getType());
         }
 
-        logger.debug(fieldDeclarationSet.size());
-        logger.debug(allFieldDeclarations.size());
         return fieldDeclarationSet.size() < allFieldDeclarations.size();
     }
 
@@ -64,23 +60,18 @@ public class PullUpFieldDetector extends IssueDetector {
         visitor.clear();
         for (CompilationUnit unit : compilationUnits) {
             unit.accept(visitor);
-            logger.debug("comptest");
         }
-
-        //visitor.filterTwoOrMoreSubclasses();
 
         Map<String, List<ASTNode>> subclassesPerSuperclass = visitor.getSubclassesPerSuperClass();
 
-        logger.debug("Test map for content!! "+subclassesPerSuperclass.toString());
-
         for (String type : subclassesPerSuperclass.keySet()) {
             List<ASTNode> listOfSubclasses = subclassesPerSuperclass.get(type);
-            logger.debug("blup");
+
             if (hasDuplicateFields(listOfSubclasses)) {
-                logger.debug("blaat");
+                logger.debug("Duplicate fields found: creating an issue.");
                 Issue issue = new Issue(this);
-                //listOfSubclasses.add(0);
                 // TODO: remove the classes from the list that do not have duplicate fields
+
                 issue.setNodes(listOfSubclasses);
 
                 issues.add(issue);
