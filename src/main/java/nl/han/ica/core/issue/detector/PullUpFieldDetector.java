@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.Type;
 
 import java.util.*;
 
@@ -34,24 +33,36 @@ public class PullUpFieldDetector extends IssueDetector {
      * @param listOfSubclasses
      * @return
      */
-    private boolean hasDuplicateFields(List<ASTNode> listOfSubclasses) {
+    private Set<FieldDeclaration> getDuplicateFields(List<ASTNode> listOfSubclasses) {
 
         FieldDeclarationVisitor visitor = new FieldDeclarationVisitor();
 
         List<FieldDeclaration> allFieldDeclarations = new ArrayList<FieldDeclaration>();
+
+        Set<FieldDeclaration> returnValues = new HashSet<FieldDeclaration>();
 
         for (ASTNode node : listOfSubclasses) {
 
             node.accept(visitor);
             allFieldDeclarations.addAll(visitor.getFieldDeclarations());
         }
-        Set<Type> fieldDeclarationSet = new HashSet<>();
 
-        for (FieldDeclaration fieldDeclaration : allFieldDeclarations) {
-            fieldDeclarationSet.add(fieldDeclaration.getType());
+        for (int i = 0; i < allFieldDeclarations.size(); i++) {
+
+            FieldDeclaration field = allFieldDeclarations.get(i);
+
+            for (int j = i; j < allFieldDeclarations.size(); j++) {
+
+                FieldDeclaration anotherField = allFieldDeclarations.get(j);
+                if (field.getType().toString().equals(anotherField.getType().toString())) {
+                    returnValues.add(field);
+                    returnValues.add(anotherField);
+                }
+            }
         }
 
-        return fieldDeclarationSet.size() < allFieldDeclarations.size();
+
+        return returnValues;
     }
 
     @Override
@@ -67,12 +78,14 @@ public class PullUpFieldDetector extends IssueDetector {
         for (String type : subclassesPerSuperclass.keySet()) {
             List<ASTNode> listOfSubclasses = subclassesPerSuperclass.get(type);
 
-            if (hasDuplicateFields(listOfSubclasses)) {
+            Set<FieldDeclaration> duplicateFields = getDuplicateFields(listOfSubclasses);
+            logger.debug("Duplicate fields found: " + duplicateFields.size());
+
+            if (duplicateFields.size() > 0) {
                 logger.debug("Duplicate fields found: creating an issue.");
                 Issue issue = new Issue(this);
-                // TODO: remove the classes from the list that do not have duplicate fields
 
-                issue.setNodes(listOfSubclasses);
+                issue.setNodes(new ArrayList<ASTNode>(duplicateFields));
 
                 issues.add(issue);
             }

@@ -40,7 +40,7 @@ public class PullUpFieldSolverTest {
             subclasses.add(holder);
             // TODO: add compilation unit
         }
-        solver = new PullUpFieldSolver(superClass, subclasses);
+        solver = new PullUpFieldSolver();
     }
 
     @Test
