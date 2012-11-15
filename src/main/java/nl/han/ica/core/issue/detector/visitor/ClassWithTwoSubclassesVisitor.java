@@ -1,69 +1,66 @@
 package nl.han.ica.core.issue.detector.visitor;
 
-import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
 /**
- *
+ * Created with IntelliJ IDEA.
+ * User: Niek
+ * Date: 12-11-12
+ * Time: 14:30
+ * To change this template use File | Settings | File Templates.
  */
 public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
 
-    private final Logger log = Logger.getLogger(getClass().getName());
+    private Map<String, List<ASTNode>> subclassesPerSuperClass;
 
-    private Map<Type, List<ASTNode>> subclassesPerSuperClass;
+    private Logger logger = Logger.getLogger(getClass().getName());
 
     public ClassWithTwoSubclassesVisitor() {
-        subclassesPerSuperClass = new HashMap<Type, List<ASTNode>>();
+        subclassesPerSuperClass = new HashMap<String, List<ASTNode>>();
     }
 
     @Override
     public boolean visit(TypeDeclaration type) {
 
-        log.debug("Calling visit on " + type.getName());
-
         Type superclass = type.getSuperclassType();
 
         if (superclass != null) {
             ASTNode subClass = type.getParent();
-
-            if (subclassesPerSuperClass.containsKey(superclass)) {
-                subclassesPerSuperClass.get(superclass).add(subClass);
+            if (subclassesPerSuperClass.containsKey(superclass.toString())) {
+                subclassesPerSuperClass.get(superclass.toString()).add(subClass);
             } else {
                 ArrayList<ASTNode> subclasses = new ArrayList<ASTNode>();
                 subclasses.add(subClass);
-                subclassesPerSuperClass.put(superclass, subclasses);
+                subclassesPerSuperClass.put(superclass.toString(), subclasses);
             }
         }
-
         return super.visit(type);
     }
 
-    private void filterTwoOrMoreSubclasses() {
+    public void filterTwoOrMoreSubclasses() {
 
-        Set<Type> types = subclassesPerSuperClass.keySet();
-        Set<Type> keysToRemove = new HashSet<Type>();
+        Set<String> types = subclassesPerSuperClass.keySet();
+        Set<String> keysToRemove = new HashSet<String>();
 
-        for (Type type : types) {
+
+        for (String type : types) {
             if (subclassesPerSuperClass.get(type).size() < 2) {
                 keysToRemove.add(type);
             }
-            else
-            {
-                log.debug("Found a class with two or more subclasses.");
-            }
         }
-        for (Type type : keysToRemove) {
+        for (String type : keysToRemove) {
             subclassesPerSuperClass.remove(type);
         }
     }
 
-    public Map<Type, List<ASTNode>> getSubclassesPerSuperClass() {
-        filterTwoOrMoreSubclasses();
+    public Map<String, List<ASTNode>> getSubclassesPerSuperClass() {
+        logger.debug("GETMap Test!! "+subclassesPerSuperClass.toString());
         return subclassesPerSuperClass;
     }
 

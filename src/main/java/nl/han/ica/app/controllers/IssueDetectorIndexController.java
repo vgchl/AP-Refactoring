@@ -24,6 +24,7 @@ import nl.han.ica.core.issue.detector.MagicNumberDetector;
 import nl.han.ica.core.issue.detector.PullUpFieldDetector;
 import nl.han.ica.core.issue.solver.HideMethodSolver;
 import nl.han.ica.core.issue.solver.MagicNumberSolver;
+import nl.han.ica.core.issue.solver.PullUpFieldSolver;
 import nl.han.ica.core.util.FileUtil;
 
 import java.io.File;
@@ -67,12 +68,13 @@ public class IssueDetectorIndexController extends BaseController {
     private void initializeIssueDetectors() {
         Set<IssueDetector> issueDetectors = job.getIssueDetectionService().getDetectors();
         issueDetectors.add(new MagicNumberDetector());
-        issueDetectors.add(new HideMethodDetector());
+        //issueDetectors.add(new HideMethodDetector());
         issueDetectors.add(new PullUpFieldDetector());
 
         Set<IssueSolver> solvers = job.getIssueSolvingService().getIssueSolverLocator().getSolvers();
         solvers.add(new MagicNumberSolver());
-        solvers.add(new HideMethodSolver());
+        //solvers.add(new HideMethodSolver());
+        solvers.add(new PullUpFieldSolver());
     }
 
     @Override
