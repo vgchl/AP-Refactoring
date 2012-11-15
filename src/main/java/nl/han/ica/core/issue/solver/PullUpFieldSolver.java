@@ -7,6 +7,7 @@ import nl.han.ica.core.issue.IssueSolver;
 import nl.han.ica.core.issue.detector.PullUpFieldDetector;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import java.util.List;
 import java.util.Map;
@@ -44,14 +45,12 @@ public class PullUpFieldSolver extends IssueSolver {
 
     private ASTNode getSuperClass(List<ASTNode> duplicateFields) {
 
-        ASTNode classWithDuplicateField = duplicateFields.get(0).getParent();
+        TypeDeclaration classWithDuplicateField = (TypeDeclaration) duplicateFields.get(0).getParent();
 
         /* Get parent to get the class. Getparent on class to get superclass.*/
         // TODO: get superclass type
-        ASTNode superclass = classWithDuplicateField;
 
-        log.debug(superclass.toString());
-
+        log.debug(classWithDuplicateField.getSuperclassType().getParent().toString());
 
         return null;
     }
