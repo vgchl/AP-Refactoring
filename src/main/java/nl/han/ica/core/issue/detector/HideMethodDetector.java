@@ -65,7 +65,7 @@ public class HideMethodDetector extends IssueDetector {
                 }
             }
 
-            if(!Modifier.isPrivate(modifiers) && !methodDeclaration.isConstructor()
+            if(!Modifier.isPrivate(modifiers) && !methodDeclaration.isConstructor() && !Modifier.isStatic(modifiers)
                     && !hasOverrideAnnotation(methodDeclaration)
                     && !isMainMethod(methodDeclaration)) {
                 createIssue(methodDeclaration);
@@ -83,7 +83,6 @@ public class HideMethodDetector extends IssueDetector {
         return STRATEGY_DESCRIPTION;
     }
 
-    // Exclude main method
     private void buildHashMapWithMethodDeclarationsAndInvocations() {
         for (MethodDeclaration methodDeclaration  : methodDeclarationList) {
 
