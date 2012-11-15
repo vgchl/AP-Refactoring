@@ -23,15 +23,14 @@ public class PullUpFieldSolver extends IssueSolver {
 
     private List<SourceFile> subclasses;
 
-    public PullUpFieldSolver(SourceFile superclass, List<SourceFile> subclasses, Map<String, Parameter> parameters) {
+    public PullUpFieldSolver() {
         // TODO get node for superclass field declarations, from Issue
         // TODO get nodes from subclasses field declarations, from Issue
 
-        this.subclasses = subclasses;
     }
 
     public PullUpFieldSolver(SourceFile superclass, List<SourceFile> subclasses) {
-        this(superclass, subclasses, null);
+        //this(superclass, subclasses, null);
     }
 
     public void rewriteAST() {

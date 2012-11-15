@@ -4,6 +4,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
@@ -18,6 +19,8 @@ public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
 
     private Map<Type, List<ASTNode>> subclassesPerSuperClass;
 
+    private Logger logger = Logger.getLogger(getClass().getName());
+
     public ClassWithTwoSubclassesVisitor() {
         subclassesPerSuperClass = new HashMap<Type, List<ASTNode>>();
     }
@@ -29,7 +32,6 @@ public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
 
         if (superclass != null) {
             ASTNode subClass = type.getParent();
-
             if (subclassesPerSuperClass.containsKey(superclass)) {
                 subclassesPerSuperClass.get(superclass).add(subClass);
             } else {
@@ -39,15 +41,20 @@ public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
             }
         }
 
-        filterTwoOrMoreSubclasses();
+
+        logger.debug("Before filter" +subclassesPerSuperClass.toString());
+
+
+        logger.debug("After filter" + subclassesPerSuperClass.toString());
 
         return super.visit(type);
     }
 
-    private void filterTwoOrMoreSubclasses() {
+    public void filterTwoOrMoreSubclasses() {
 
         Set<Type> types = subclassesPerSuperClass.keySet();
         Set<Type> keysToRemove = new HashSet<Type>();
+
 
         for (Type type : types) {
             if (subclassesPerSuperClass.get(type).size() < 2) {
@@ -60,6 +67,7 @@ public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
     }
 
     public Map<Type, List<ASTNode>> getSubclassesPerSuperClass() {
+        logger.debug("GETMap Test!! "+subclassesPerSuperClass.toString());
         return subclassesPerSuperClass;
     }
 

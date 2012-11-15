@@ -4,6 +4,7 @@ import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
 import nl.han.ica.core.issue.detector.visitor.ClassWithTwoSubclassesVisitor;
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -19,12 +20,13 @@ public class PullUpFieldDetector extends IssueDetector {
     private static final String STRATEGY_NAME = "Pull up duplicate fields.";
     private static final String STRATEGY_DESCRIPTION = "Avoid duplicating fields when it can be placed in the superclass.";
 
-    private ClassWithTwoSubclassesVisitor visitor;
+    private Logger logger = Logger.getLogger(getClass().getName());
 
-    private Set<Issue> issues;
+    private ClassWithTwoSubclassesVisitor visitor;
 
     public PullUpFieldDetector() {
         visitor = new ClassWithTwoSubclassesVisitor();
+        logger.debug("Test");
     }
 
     /**
@@ -60,14 +62,20 @@ public class PullUpFieldDetector extends IssueDetector {
         visitor.clear();
         for (CompilationUnit unit : compilationUnits) {
             unit.accept(visitor);
+            logger.debug("comptest");
         }
+
+        //visitor.filterTwoOrMoreSubclasses();
 
         Map<Type, List<ASTNode>> subclassesPerSuperclass = visitor.getSubclassesPerSuperClass();
 
+        logger.debug("Test map for content!! "+subclassesPerSuperclass.toString());
+
         for (Type type : subclassesPerSuperclass.keySet()) {
             List<ASTNode> listOfSubclasses = subclassesPerSuperclass.get(type);
-
+            logger.debug("blup");
             if (hasDuplicateFields(listOfSubclasses)) {
+                logger.debug("blaat");
                 Issue issue = new Issue(this);
                 listOfSubclasses.add(0, type);
                 // TODO: remove the classes from the list that do not have duplicate fields
@@ -76,6 +84,8 @@ public class PullUpFieldDetector extends IssueDetector {
                 issues.add(issue);
             }
         }
+
+        logger.debug(issues.toString());
 
         return issues;
     }
