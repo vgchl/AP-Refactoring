@@ -9,11 +9,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import java.util.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Niek
- * Date: 12-11-12
- * Time: 14:30
- * To change this template use File | Settings | File Templates.
+ *
  */
 public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
 
@@ -28,7 +24,7 @@ public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
     @Override
     public boolean visit(TypeDeclaration type) {
 
-        log.debug("Calling visit on ");
+        log.debug("Calling visit on " + type.getName());
 
         Type superclass = type.getSuperclassType();
 
@@ -44,8 +40,6 @@ public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
             }
         }
 
-        filterTwoOrMoreSubclasses();
-
         return super.visit(type);
     }
 
@@ -58,6 +52,10 @@ public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
             if (subclassesPerSuperClass.get(type).size() < 2) {
                 keysToRemove.add(type);
             }
+            else
+            {
+                log.debug("Found a class with two or more subclasses.");
+            }
         }
         for (Type type : keysToRemove) {
             subclassesPerSuperClass.remove(type);
@@ -65,6 +63,7 @@ public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
     }
 
     public Map<Type, List<ASTNode>> getSubclassesPerSuperClass() {
+        filterTwoOrMoreSubclasses();
         return subclassesPerSuperClass;
     }
 

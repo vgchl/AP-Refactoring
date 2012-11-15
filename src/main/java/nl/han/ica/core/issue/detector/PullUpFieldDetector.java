@@ -10,7 +10,10 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -37,37 +40,48 @@ public class PullUpFieldDetector extends IssueDetector {
      */
     private boolean hasDuplicateFields(List<ASTNode> listOfSubclasses) {
 
+        log.debug("Checking for duplicates in list of " + listOfSubclasses.size());
+        boolean duplicatesPresent = false;
         FieldDeclarationVisitor visitor = new FieldDeclarationVisitor();
-        List<ASTNode> classesWithDuplicateFields = new ArrayList<ASTNode>();
 
         List<FieldDeclaration> allFieldDeclarations = new ArrayList<FieldDeclaration>();
 
         for (ASTNode node : listOfSubclasses) {
 
             node.accept(visitor);
-            allFieldDeclarations.addAll(visitor.getFieldDeclarations());
-        }
-        Set<FieldDeclaration> fieldDeclarationSet = new HashSet<>();
+            List<FieldDeclaration> fieldDeclarations = visitor.getFieldDeclarations();
 
-        for (FieldDeclaration fieldDeclaration : allFieldDeclarations) {
-            fieldDeclarationSet.add(fieldDeclaration);
+            for (FieldDeclaration field : fieldDeclarations) {
+
+                if (allFieldDeclarations.contains(field)) {
+                    duplicatesPresent = true;
+                    log.debug("Field is already present.");
+                } else {
+                    allFieldDeclarations.add(field);
+                    log.debug("Adding new field.");
+                }
+            }
         }
 
-        return fieldDeclarationSet.size() < allFieldDeclarations.size();
+        return duplicatesPresent;
     }
 
     @Override
     public Set<Issue> detectIssues() {
 
+        /* Clear everything */
         visitor.clear();
         issues.clear();
+
+        /* Find classes that have two subclasses or more. */
         for (CompilationUnit unit : compilationUnits) {
             unit.accept(visitor);
-
         }
 
+        /* Get a map of superclass keys and a list of subclasses as value. */
         Map<Type, List<ASTNode>> subclassesPerSuperclass = visitor.getSubclassesPerSuperClass();
 
+        /* For every key, check if the value has two subclasses or more. If so, create an issue. */
         for (Type type : subclassesPerSuperclass.keySet()) {
             List<ASTNode> listOfSubclasses = subclassesPerSuperclass.get(type);
 
