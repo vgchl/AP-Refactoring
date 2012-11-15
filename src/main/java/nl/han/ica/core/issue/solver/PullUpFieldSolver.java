@@ -103,6 +103,8 @@ public class PullUpFieldSolver extends IssueSolver {
 
     @Override
     protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters) {
+        List<ASTNode> subClasses = issue.getNodes();
+
 
 
         return null;  //To change body of implemented methods use File | Settings | File Templates.
