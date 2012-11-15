@@ -3,7 +3,7 @@ package nl.han.ica.core.issue.detector;
 import nl.han.ica.core.ast.ASTHelper;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
-import nl.han.ica.core.issue.detector.visitor.MethodDeclarationVisitor;
+import nl.han.ica.core.ast.visitors.MethodDeclarationVisitor;
 import nl.han.ica.core.ast.visitors.MethodInvocationVisitor;
 import org.eclipse.jdt.core.dom.*;
 

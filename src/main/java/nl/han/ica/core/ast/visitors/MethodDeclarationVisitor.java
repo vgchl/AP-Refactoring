@@ -1,4 +1,4 @@
-package nl.han.ica.core.issue.detector.visitor;
+package nl.han.ica.core.ast.visitors;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
