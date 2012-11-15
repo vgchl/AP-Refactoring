@@ -47,12 +47,14 @@ public class PullUpFieldDetector extends IssueDetector {
             node.accept(visitor);
             allFieldDeclarations.addAll(visitor.getFieldDeclarations());
         }
-        Set<FieldDeclaration> fieldDeclarationSet = new HashSet<>();
+        Set<Type> fieldDeclarationSet = new HashSet<>();
 
         for (FieldDeclaration fieldDeclaration : allFieldDeclarations) {
-            fieldDeclarationSet.add(fieldDeclaration);
+            fieldDeclarationSet.add(fieldDeclaration.getType());
         }
 
+        logger.debug(fieldDeclarationSet.size());
+        logger.debug(allFieldDeclarations.size());
         return fieldDeclarationSet.size() < allFieldDeclarations.size();
     }
 
@@ -67,17 +69,17 @@ public class PullUpFieldDetector extends IssueDetector {
 
         //visitor.filterTwoOrMoreSubclasses();
 
-        Map<Type, List<ASTNode>> subclassesPerSuperclass = visitor.getSubclassesPerSuperClass();
+        Map<String, List<ASTNode>> subclassesPerSuperclass = visitor.getSubclassesPerSuperClass();
 
         logger.debug("Test map for content!! "+subclassesPerSuperclass.toString());
 
-        for (Type type : subclassesPerSuperclass.keySet()) {
+        for (String type : subclassesPerSuperclass.keySet()) {
             List<ASTNode> listOfSubclasses = subclassesPerSuperclass.get(type);
             logger.debug("blup");
             if (hasDuplicateFields(listOfSubclasses)) {
                 logger.debug("blaat");
                 Issue issue = new Issue(this);
-                listOfSubclasses.add(0, type);
+                //listOfSubclasses.add(0);
                 // TODO: remove the classes from the list that do not have duplicate fields
                 issue.setNodes(listOfSubclasses);
 

@@ -17,12 +17,12 @@ import java.util.*;
  */
 public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
 
-    private Map<Type, List<ASTNode>> subclassesPerSuperClass;
+    private Map<String, List<ASTNode>> subclassesPerSuperClass;
 
     private Logger logger = Logger.getLogger(getClass().getName());
 
     public ClassWithTwoSubclassesVisitor() {
-        subclassesPerSuperClass = new HashMap<Type, List<ASTNode>>();
+        subclassesPerSuperClass = new HashMap<String, List<ASTNode>>();
     }
 
     @Override
@@ -32,41 +32,34 @@ public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
 
         if (superclass != null) {
             ASTNode subClass = type.getParent();
-            if (subclassesPerSuperClass.containsKey(superclass)) {
-                subclassesPerSuperClass.get(superclass).add(subClass);
+            if (subclassesPerSuperClass.containsKey(superclass.toString())) {
+                subclassesPerSuperClass.get(superclass.toString()).add(subClass);
             } else {
                 ArrayList<ASTNode> subclasses = new ArrayList<ASTNode>();
                 subclasses.add(subClass);
-                subclassesPerSuperClass.put(superclass, subclasses);
+                subclassesPerSuperClass.put(superclass.toString(), subclasses);
             }
         }
-
-
-        logger.debug("Before filter" +subclassesPerSuperClass.toString());
-
-
-        logger.debug("After filter" + subclassesPerSuperClass.toString());
-
         return super.visit(type);
     }
 
     public void filterTwoOrMoreSubclasses() {
 
-        Set<Type> types = subclassesPerSuperClass.keySet();
-        Set<Type> keysToRemove = new HashSet<Type>();
+        Set<String> types = subclassesPerSuperClass.keySet();
+        Set<String> keysToRemove = new HashSet<String>();
 
 
-        for (Type type : types) {
+        for (String type : types) {
             if (subclassesPerSuperClass.get(type).size() < 2) {
                 keysToRemove.add(type);
             }
         }
-        for (Type type : keysToRemove) {
+        for (String type : keysToRemove) {
             subclassesPerSuperClass.remove(type);
         }
     }
 
-    public Map<Type, List<ASTNode>> getSubclassesPerSuperClass() {
+    public Map<String, List<ASTNode>> getSubclassesPerSuperClass() {
         logger.debug("GETMap Test!! "+subclassesPerSuperClass.toString());
         return subclassesPerSuperClass;
     }

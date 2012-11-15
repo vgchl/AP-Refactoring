@@ -113,9 +113,9 @@ public class IssueSolveDeltaController extends BaseController {
 
     private void initializeEditors() {
         editorBefore = new CodeEditor(editorBeforeView);
-        editorBefore.setValue(delta.getBefore().toString());
+        editorBefore.setValue(delta.getBefore());
         editorAfter = new CodeEditor(editorAfterView);
-        editorAfter.setValue(delta.getAfter().toString());
+        editorAfter.setValue(delta.getAfter());
     }
 
     @Override
