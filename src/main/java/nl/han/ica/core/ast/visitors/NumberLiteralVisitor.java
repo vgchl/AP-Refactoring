@@ -12,10 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Corne
  */
-public class NumberLiteralVisitor extends ASTVisitor  {
+public class NumberLiteralVisitor extends ASTVisitor {
 
     private CompilationUnit compilationUnit;
     private List<NumberLiteral> numberLiterals;
@@ -34,16 +33,17 @@ public class NumberLiteralVisitor extends ASTVisitor  {
 
     /**
      * Get the number literal that violated the rules
-     * @param beginLine beginline of the ruleviolation
+     *
+     * @param beginLine   beginline of the ruleviolation
      * @param beginColumn begincolumn of the ruleviolation
      * @return numberliteral that starts on same beginline and begincolumn
      */
     public NumberLiteral getLiteralViolation(int beginLine, int beginColumn) {
         NumberLiteral literalViolation = null;
 
-        for(NumberLiteral numberLiteral : numberLiterals){
-            if(compilationUnit.getColumnNumber(numberLiteral.getStartPosition()) == beginColumn-1 &&
-                    compilationUnit.getLineNumber(numberLiteral.getStartPosition()) == beginLine){
+        for (NumberLiteral numberLiteral : numberLiterals) {
+            if (compilationUnit.getColumnNumber(numberLiteral.getStartPosition()) == beginColumn - 1 &&
+                    compilationUnit.getLineNumber(numberLiteral.getStartPosition()) == beginLine) {
                 literalViolation = numberLiteral;
             }
         }

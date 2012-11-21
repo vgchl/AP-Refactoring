@@ -1,96 +1,92 @@
 package nl.han.ica.core;
 
-import nl.han.ica.core.strategies.solvers.StrategySolver;
+import nl.han.ica.core.issue.Issue;
+import nl.han.ica.core.issue.IssueSolver;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents the set of changes that form the solution to an {@link Issue}.
+ *
+ * @author Teun van Vegchel
+ */
 public class Solution {
 
-    private StrategySolver strategySolver;
+    private Issue issue;
+    private IssueSolver issueSolver;
     private Map<String, Parameter> parameters;
-    private String before;
-    private String after;
-
-    /**
-     * Creates a solution with a strategy solver.
-     *
-     * @param strategySolver The strategy solver to use to apply this solution.
-     */
-    public Solution(StrategySolver strategySolver) {
-        this.strategySolver = strategySolver;
-    }
+    private List<Delta> deltas;
 
     /**
      * Creates a solution with a strategy solver and additional parameters.
      *
-     * @param strategySolver The strategy solver to use.
-     * @param parameters The parameters that the solver needs to apply the refactoring.
+     * @param issueSolver The IssueSolver that created this solution.
+     * @param parameters  The parameters that the solver needs to apply the refactoring.
      */
-    public Solution(StrategySolver strategySolver, Map<String, Parameter> parameters) {
-        this(strategySolver);
+    public Solution(Issue issue, IssueSolver issueSolver, Map<String, Parameter> parameters) {
+        this.issue = issue;
+        this.issueSolver = issueSolver;
         this.parameters = parameters;
+        deltas = new ArrayList<>();
     }
 
     /**
-     * Gets the strategy solver.
+     * Returns the {@link IssueSolver} that created this solution.
      *
-     * @return The current strategy solver.
+     * @return The creating {@link IssueSolver} of this solution.
      */
-    public StrategySolver getStrategySolver() {
-        return strategySolver;
+    public IssueSolver getIssueSolver() {
+        return issueSolver;
     }
 
     /**
-     * Set the strategy solver.
+     * Get the issue this solution solves.
      *
-     * @param strategySolver The strategy solver to set.
+     * @return The issue this solution solves.
      */
-    public void setStrategySolver(StrategySolver strategySolver) {
-        this.strategySolver = strategySolver;
+    public Issue getIssue() {
+        return issue;
     }
 
     /**
-     * Get the before solution state.
+     * Get the delta's that make up the solution.
      *
-     * @return A string that contains the before-solution-applied state
+     * @return The solution's deltas.
      */
-    public String getBefore() {
-        return before;
+    public List<Delta> getDeltas() {
+        return deltas;
     }
 
     /**
-     * Sets the before state of a file as String.
+     * Sets the delta's that make up the solution.
      *
-     * @param before The contents of the file before an solution is applied.
+     * @param deltas The solution's deltas.
      */
-    public void setBefore(String before) {
-        this.before = before;
-    }
-
-    /**
-     * Get the after solution state.
-     *
-     * @return A string that contains the after-solution-applied state
-     */
-    public String getAfter() {
-        return after;
-    }
-
-    /**
-     * Sets the after state of a file as String.
-     *
-     * @param after The contents of the file after an solution is applied.
-     */
-    public void setAfter(String after) {
-        this.after = after;
+    public void setDeltas(List<Delta> deltas) {
+        this.deltas = deltas;
     }
 
     /**
      * Returns the parameters that were used in the creation of this solution.
+     *
      * @return the parameters that were used in the creation of this solution.
      */
     public Map<String, Parameter> getParameters() {
         return parameters;
+    }
+
+    /**
+     * Convenience method that instantiates a new {@link Delta} and associates it with this solution.
+     *
+     * @param sourceFile The {@link SourceFile} the {@link Delta} applies to.
+     * @return The newly created {@link Delta}.
+     */
+    public Delta createDelta(SourceFile sourceFile) {
+        Delta delta = new Delta(sourceFile);
+        deltas.add(delta);
+        return delta;
     }
 
 }

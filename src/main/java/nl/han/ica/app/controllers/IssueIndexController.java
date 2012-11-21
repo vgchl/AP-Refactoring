@@ -2,15 +2,15 @@ package nl.han.ica.app.controllers;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
-import nl.han.ica.core.Issue;
+import nl.han.ica.app.models.JobProcessingService;
 import nl.han.ica.core.Job;
+import nl.han.ica.core.issue.Issue;
 
 import java.io.IOException;
 import java.net.URL;
@@ -18,12 +18,12 @@ import java.util.ResourceBundle;
 
 /**
  * Handles the list of detected issues in the main screen. Instructs the issue detail view to show the selected issue.
- * Reuses the detail view controller to increase performance.
  */
 public class IssueIndexController extends BaseController {
 
     private Job job;
-    private IssueResolveController issueResolveController;
+    private IssueSolveController issueResolveController;
+    private JobProcessingService jobProcessingService;
 
     @FXML
     protected ListView<Issue> issues;
@@ -39,7 +39,7 @@ public class IssueIndexController extends BaseController {
      */
     public IssueIndexController(Job job) {
         this.job = job;
-        job.process();
+        jobProcessingService = new JobProcessingService(job);
     }
 
     @Override
@@ -47,13 +47,15 @@ public class IssueIndexController extends BaseController {
         super.initialize(url, resourceBundle);
         initializeResolvePane();
         initializeIssueList();
+
+        jobProcessingService.start();
     }
 
     /**
      * Initializes the resolve pane.
      */
     private void initializeResolvePane() {
-        issueResolveController = new IssueResolveController(job);
+        issueResolveController = new IssueSolveController(job);
         resolvePane = issueResolveController.getView();
         resolvePane.setVisible(false);
         contentPane.getChildren().add(resolvePane);
@@ -75,19 +77,10 @@ public class IssueIndexController extends BaseController {
             public void changed(ObservableValue<? extends Issue> observable, Issue oldIssue, Issue newIssue) {
                 if (null != newIssue) {
                     logger.info("Setting issue to detail view: " + newIssue);
-                    issueResolveController.setIssue(newIssue);
                     resolvePane.setVisible(true);
+                    issueResolveController.setIssue(newIssue);
                 } else {
                     resolvePane.setVisible(false);
-                }
-            }
-        });
-        job.getIssues().addListener(new ListChangeListener<Issue>() {
-            @Override
-            public void onChanged(Change<? extends Issue> change) {
-                if (job.getIssues().size() > 0) {
-                    logger.info("Selecting first issue in issue list");
-                    issues.getSelectionModel().select(0);
                 }
             }
         });
@@ -114,7 +107,7 @@ public class IssueIndexController extends BaseController {
         protected void updateItem(Issue issue, boolean empty) {
             super.updateItem(issue, empty);
             if (null != issue) {
-                setText(issue.getStrategy().getName());
+                setText(issue.getDetector().getTitle());
             }
         }
 

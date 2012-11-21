@@ -2,32 +2,32 @@ package nl.han.ica.core;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import net.sourceforge.pmd.*;
-import nl.han.ica.core.strategies.Strategy;
-import nl.han.ica.core.strategies.solvers.StrategySolver;
-import nl.han.ica.core.strategies.solvers.StrategySolverFactory;
-import nl.han.ica.core.util.FileUtil;
+import nl.han.ica.core.issue.Issue;
+import nl.han.ica.core.issue.IssueDetectionService;
+import nl.han.ica.core.issue.IssueSolverLocator;
+import nl.han.ica.core.issue.IssueSolvingService;
+import nl.han.ica.core.parser.Parser;
 import org.apache.log4j.Logger;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Lists the files and the rules to check them for.
+ *
+ * @author Teun van Vegchel
  */
 public class Job {
 
-    private List<File> files;
-    private List<Strategy> strategies;
+    private Set<SourceFile> sourceFiles;
+    private Parser parser;
+    private IssueDetectionService issueDetectionService;
+    private IssueSolvingService issueSolvingService;
     private ObservableList<Issue> issues;
     private Logger logger;
-    private PMD pmd;
 
     /**
      * Instantiate a new job.
@@ -35,108 +35,64 @@ public class Job {
     public Job() {
         logger = Logger.getLogger(getClass().getName());
 
-        strategies = new ArrayList<>();
-        files = new ArrayList<>();
+        sourceFiles = new HashSet<>();
         issues = FXCollections.observableArrayList();
+        parser = new Parser();
 
-        pmd = new PMD();
-        pmd.setJavaVersion(SourceType.JAVA_17);
+        issueDetectionService = new IssueDetectionService();
+        IssueSolverLocator locator = new IssueSolverLocator();
+        issueSolvingService = new IssueSolvingService(locator);
     }
 
     /**
-     * Process the files in this job and check them against the selected rules. Results are stored in the job report.
+     * Process the job. Parses the {@link SourceFile}s and lets the {@link IssueDetectionService} find all the issues.
      */
     public void process() {
-        logger.info("Processing job…");
+        logger.debug("Processing...");
+        Set<CompilationUnit> compilationUnits = parser.parse(sourceFiles);
         issues.clear();
-        for (Strategy strategy : strategies) {
-            RuleContext ruleContext = new RuleContext();
-            for (File file : files) {
-                logger.info("Processing file: " + file.getAbsolutePath());
-                ruleContext.setSourceCodeFilename(file.getName());
-                ruleContext.setSourceCodeFile(file);
-                try {
-                    pmd.processFile(new FileInputStream(file), strategy.getRuleSet(), ruleContext);
-                } catch (PMDException e) {
-                    ruleContext.getReport().addError(new Report.ProcessingError(e.getMessage(), file.getName()));
-                    logger.info("Error while processing file: " + file.getPath(), e.getCause());
-                } catch (FileNotFoundException e) {
-                    ruleContext.getReport().addError(new Report.ProcessingError(e.getMessage(), file.getName()));
-                    logger.info("File not found: " + file.getPath(), e.getCause());
-                }
-                Iterator<IRuleViolation> iterator = ruleContext.getReport().getViolationTree().iterator();
-                while (iterator.hasNext()) {
-                    Issue issue = new Issue(strategy);
-                    issue.setRuleViolation(iterator.next());
-                    issue.setFile(file);
-                    issues.add(issue);
-                }
-                ruleContext.setReport(new Report());
-            }
-        }
-        logger.info("Job done processing.");
+        issues.addAll(new ArrayList<>(issueDetectionService.detectIssues(compilationUnits)));
+        logger.debug("Done processing.");
     }
 
     /**
-     * Create a solution for an issue.
+     * Solve an issue. Uses the {@link IssueSolvingService} to find a suitable solver.
+     *
      * @param issue The issue to solve.
-     * @return The created solution.
+     * @return The solution that solves the issue.
      */
     public Solution solve(Issue issue) {
-        return solve(issue, null);
+        return issueSolvingService.solveIssue(issue);
     }
 
     /**
-     * Create a solution for an issue, using given parameters.
-     * @param issue The issue to solve.
-     * @param parameters The parameters to use when creating the solution.
-     * @return The created solution.
+     * Solve an issue. Uses the {@link IssueSolvingService} to find a suitable solver.
+     *
+     * @param issue      The issue to solve.
+     * @param parameters The parameters to use while solving the issue.
+     * @return The solution that solves the issue.
      */
     public Solution solve(Issue issue, Map<String, Parameter> parameters) {
-        StrategySolver strategySolver = StrategySolverFactory.createStrategySolver(issue.getRuleViolation());
-        strategySolver.setRuleViolation(issue.getRuleViolation());
-        strategySolver.setParameters(parameters);
-
-        logger.info("Solving issue...");
-        logger.info("...with solver: " + strategySolver.getClass().getName());
-        logger.info("...with parameters: " + parameters.toString());
-
-        strategySolver.buildAST(issue.getFile());
-        strategySolver.rewriteAST();
-
-        Solution solution = new Solution(strategySolver, parameters); // TODO: Move to StrategySolver
-        try {
-            String contents = FileUtil.getFileContent(issue.getFile());
-            solution.setBefore(contents);
-        } catch (IOException e) {
-            logger.error("Could not open file.");
-        }
-        solution.setAfter(strategySolver.getDocument().get());
-        logger.info("Done solving issue.");
-        return solution;
+        return issueSolvingService.solveIssue(issue, parameters);
     }
 
     /**
      * Checks whether the conditions are right so the job can be processed.
+     *
      * @return Whether files and rules are present.
      */
     public boolean canProcess() {
-        return files.size() > 0 && strategies.size() > 0;
+        return sourceFiles.size() > 0 && issueDetectionService.getDetectors().size() > 0;
     }
 
     /**
      * Save a solution to file.
      *
-     * @param issue The issue to solve.
      * @param solution The solution to apply.
      */
-    public void applySolution(Issue issue, Solution solution) {
-        try {
-            FileUtil.setFileContent(issue.getFile(), solution.getAfter());
-            process();
-        } catch (IOException e) {
-            logger.fatal("Could not apply solution: error during file write.");
-        }
+    public void applySolution(Solution solution) {
+        issueSolvingService.applySolution(solution);
+        process();
     }
 
     /**
@@ -149,43 +105,39 @@ public class Job {
     }
 
     /**
-     * Returns the job's files.
-     * @return The job's files.
-     */
-    public List<File> getFiles() {
-        return files;
-    }
-
-    /**
-     * Sets the job's files.
-     * @param files The job's files.
-     */
-    public void setFiles(List<File> files) {
-        this.files = files;
-    }
-
-    /**
-     * Returns the job's strategies.
-     * @return The job's strategies.
-     */
-    public List<Strategy> getStrategies() {
-        return strategies;
-    }
-
-    /**
-     * Sets the job's strategies.
-     * @param strategies The job's strategies.
-     */
-    public void setStrategies(List<Strategy> strategies) {
-        this.strategies = strategies;
-    }
-
-    /**
      * Get the detected issues.
+     *
      * @return The job's issues.
      */
     public ObservableList<Issue> getIssues() {
         return issues;
+    }
+
+    /**
+     * Get the {@link SourceFile}s the job will process.
+     *
+     * @return The SourceFiles to process.
+     */
+    public Set<SourceFile> getSourceFiles() {
+        return sourceFiles;
+    }
+
+    /**
+     * Returns the {@link IssueDetectionService} this job uses to detect issues in the source files.
+     *
+     * @return The job's IssueDetectionService instance.
+     */
+    public IssueDetectionService getIssueDetectionService() {
+        return issueDetectionService;
+    }
+
+    /**
+     * Returns the {@link IssueSolvingService} this job uses to solve the detected issues.
+     *
+     * @return The job's IssueSolvingService instance.
+     */
+    public IssueSolvingService getIssueSolvingService() {
+        return issueSolvingService;
     }
 
 }
