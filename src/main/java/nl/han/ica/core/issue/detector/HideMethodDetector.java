@@ -67,9 +67,11 @@ public class HideMethodDetector extends IssueDetector {
                 }
             }
 
-            if(!Modifier.isPrivate(modifiers) && !methodDeclaration.isConstructor() && !Modifier.isStatic(modifiers)
+            if((!Modifier.isPrivate(modifiers) && !methodDeclaration.isConstructor() && !Modifier.isStatic(modifiers)
                     && !hasOverrideAnnotation(methodDeclaration)
-                    && !isMainMethod(methodDeclaration)) {
+                    && !isMainMethod(methodDeclaration))
+                    && !Modifier.isAbstract(ASTUtil.getTypeDeclarationForNode(methodDeclaration).getModifiers())
+                    && !ASTUtil.getTypeDeclarationForNode(methodDeclaration).isInterface()) {
                 createIssue(methodDeclaration);
             }
         }
