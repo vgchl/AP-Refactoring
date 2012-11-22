@@ -60,8 +60,7 @@ public class HideMethodDetector extends IssueDetector {
             for (MethodInvocation methodInvocation : entry.getValue()) {
                 if (methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding())
                         && !Modifier.isPrivate(modifiers)
-                        && ASTUtil.getTypeDeclarationForNode(methodDeclaration) != ASTUtil.getTypeDeclarationForNode(methodInvocation)) {
-
+                        && ASTUtil.parent(TypeDeclaration.class, methodDeclaration) != ASTUtil.parent(TypeDeclaration.class, methodInvocation)) {
                     continue outerloop;
                 }
             }
@@ -69,8 +68,8 @@ public class HideMethodDetector extends IssueDetector {
             if ((!Modifier.isPrivate(modifiers) && !methodDeclaration.isConstructor() && !Modifier.isStatic(modifiers)
                     && !hasOverrideAnnotation(methodDeclaration)
                     && !isMainMethod(methodDeclaration))
-                    && !Modifier.isAbstract(ASTUtil.getTypeDeclarationForNode(methodDeclaration).getModifiers())
-                    && !ASTUtil.getTypeDeclarationForNode(methodDeclaration).isInterface()) {
+                    && !Modifier.isAbstract(ASTUtil.parent(TypeDeclaration.class, methodDeclaration).getModifiers())
+                    && !ASTUtil.parent(TypeDeclaration.class, methodDeclaration).isInterface()) {
                 createIssue(methodDeclaration);
             }
         }
