@@ -80,14 +80,14 @@ public class MagicNumberSolver extends IssueSolver {
             String name = (String) parameters.get(PARAMETER_CONSTANT_NAME).getValue();
             String value = literal.getToken();
 
-            if (!existingConstantExists(name, value)) {
+            if (!existingConstantExists(name)) {
                 createConstant(name, value);
             }
             replaceMagicNumberWithConstant(name);
             return buildSolution();
         }
 
-        private boolean existingConstantExists(final String name, final String value) {
+        private boolean existingConstantExists(final String name) {
             FieldDeclarationVisitor visitor = new FieldDeclarationVisitor();
             literalClass.accept(visitor);
             return visitor.hasFieldName(name);
@@ -97,7 +97,6 @@ public class MagicNumberSolver extends IssueSolver {
             AST ast = literalClass.getAST();
 
             ListRewrite listRewrite = rewrite.getListRewrite(literalClass, TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
-
             VariableDeclarationFragment variable = ast.newVariableDeclarationFragment();
             variable.setName(ast.newSimpleName(name));
             variable.setInitializer(ast.newNumberLiteral(value));

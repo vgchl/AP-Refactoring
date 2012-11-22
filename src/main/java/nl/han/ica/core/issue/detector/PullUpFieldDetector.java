@@ -4,10 +4,10 @@ import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
 import nl.han.ica.core.issue.detector.visitor.ClassWithTwoSubclassesVisitor;
-import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.Type;
 
 import java.util.*;
 
@@ -16,12 +16,12 @@ import java.util.*;
  */
 public class PullUpFieldDetector extends IssueDetector {
 
-    private static final String STRATEGY_NAME = "Pull up Duplicate Fields.";
+    private static final String STRATEGY_NAME = "Pull up duplicate fields.";
     private static final String STRATEGY_DESCRIPTION = "Avoid duplicating fields when it can be placed in the superclass.";
 
-    private Logger logger = Logger.getLogger(getClass().getName());
-
     private ClassWithTwoSubclassesVisitor visitor;
+
+    private Set<Issue> issues;
 
     public PullUpFieldDetector() {
         visitor = new ClassWithTwoSubclassesVisitor();
@@ -33,36 +33,25 @@ public class PullUpFieldDetector extends IssueDetector {
      * @param listOfSubclasses
      * @return
      */
-    private Set<FieldDeclaration> getDuplicateFields(List<ASTNode> listOfSubclasses) {
+    private boolean hasDuplicateFields(List<ASTNode> listOfSubclasses) {
 
         FieldDeclarationVisitor visitor = new FieldDeclarationVisitor();
+        List<ASTNode> classesWithDuplicateFields = new ArrayList<ASTNode>();
 
         List<FieldDeclaration> allFieldDeclarations = new ArrayList<FieldDeclaration>();
-
-        Set<FieldDeclaration> returnValues = new HashSet<FieldDeclaration>();
 
         for (ASTNode node : listOfSubclasses) {
 
             node.accept(visitor);
             allFieldDeclarations.addAll(visitor.getFieldDeclarations());
         }
+        Set<FieldDeclaration> fieldDeclarationSet = new HashSet<>();
 
-        for (int i = 0; i < allFieldDeclarations.size(); i++) {
-
-            FieldDeclaration field = allFieldDeclarations.get(i);
-
-            for (int j = i; j < allFieldDeclarations.size(); j++) {
-
-                FieldDeclaration anotherField = allFieldDeclarations.get(j);
-                if (field.getType().toString().equals(anotherField.getType().toString())) {
-                    returnValues.add(field);
-                    returnValues.add(anotherField);
-                }
-            }
+        for (FieldDeclaration fieldDeclaration : allFieldDeclarations) {
+            fieldDeclarationSet.add(fieldDeclaration);
         }
 
-
-        return returnValues;
+        return fieldDeclarationSet.size() < allFieldDeclarations.size();
     }
 
     @Override
@@ -73,25 +62,20 @@ public class PullUpFieldDetector extends IssueDetector {
             unit.accept(visitor);
         }
 
-        Map<String, List<ASTNode>> subclassesPerSuperclass = visitor.getSubclassesPerSuperClass();
+        Map<Type, List<ASTNode>> subclassesPerSuperclass = visitor.getSubclassesPerSuperClass();
 
-        for (String type : subclassesPerSuperclass.keySet()) {
+        for (Type type : subclassesPerSuperclass.keySet()) {
             List<ASTNode> listOfSubclasses = subclassesPerSuperclass.get(type);
 
-            Set<FieldDeclaration> duplicateFields = getDuplicateFields(listOfSubclasses);
-            logger.debug("Duplicate fields found: " + duplicateFields.size());
-
-            if (duplicateFields.size() > 0) {
-                logger.debug("Duplicate fields found: creating an issue.");
+            if (hasDuplicateFields(listOfSubclasses)) {
                 Issue issue = new Issue(this);
-
-                issue.setNodes(new ArrayList<ASTNode>(duplicateFields));
+                listOfSubclasses.add(0, type);
+                // TODO: remove the classes from the list that do not have duplicate fields
+                issue.setNodes(listOfSubclasses);
 
                 issues.add(issue);
             }
         }
-
-        logger.debug(issues.toString());
 
         return issues;
     }
