@@ -3,11 +3,12 @@ package nl.han.ica.core.issue.detector;
 import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
-import nl.han.ica.core.issue.detector.visitor.ClassWithTwoSubclassesVisitor;
+import nl.han.ica.core.issue.detector.visitor.TypeDeclarationVisitor;
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import java.util.*;
 
@@ -16,13 +17,15 @@ import java.util.*;
  */
 public class PullUpFieldDetector extends IssueDetector {
 
-    private static final String STRATEGY_NAME = "Pull up duplicate fields.";
+    private static final String STRATEGY_NAME = "Pull up Duplicate Fields.";
     private static final String STRATEGY_DESCRIPTION = "Avoid duplicating fields when it can be placed in the superclass.";
 
-    private ClassWithTwoSubclassesVisitor visitor;
+    private Logger logger = Logger.getLogger(getClass().getName());
+
+    private TypeDeclarationVisitor visitor;
 
     public PullUpFieldDetector() {
-        visitor = new ClassWithTwoSubclassesVisitor(compilationUnits);
+        visitor = new TypeDeclarationVisitor();
     }
 
     /**
@@ -31,47 +34,94 @@ public class PullUpFieldDetector extends IssueDetector {
      * @param listOfSubclasses
      * @return
      */
-    private boolean hasDuplicateFields(List<ASTNode> listOfSubclasses) {
+    private Set<FieldDeclaration> getDuplicateFields(List<TypeDeclaration> listOfSubclasses) {
 
-        FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
-        List<ASTNode> classesWithDuplicateFields = new ArrayList<ASTNode>();
+        FieldDeclarationVisitor visitor = new FieldDeclarationVisitor();
 
         List<FieldDeclaration> allFieldDeclarations = new ArrayList<FieldDeclaration>();
 
-        for (ASTNode node : listOfSubclasses) {
+        Set<FieldDeclaration> returnValues = new HashSet<FieldDeclaration>();
 
-            node.accept(fieldDeclarationVisitor);
-            allFieldDeclarations.addAll(fieldDeclarationVisitor.getFieldDeclarations());
-        }
-        Set<FieldDeclaration> fieldDeclarationSet = new HashSet<>();
+        for (TypeDeclaration node : listOfSubclasses) {
 
-        for (FieldDeclaration fieldDeclaration : allFieldDeclarations) {
-            fieldDeclarationSet.add(fieldDeclaration);
+            node.accept(visitor);
+            allFieldDeclarations.addAll(visitor.getFieldDeclarations());
         }
 
-        return fieldDeclarationSet.size() < allFieldDeclarations.size();
+        for (int i = 0; i < allFieldDeclarations.size(); i++) {
+
+            FieldDeclaration field = allFieldDeclarations.get(i);
+
+            for (int j = i; j < allFieldDeclarations.size(); j++) {
+
+                FieldDeclaration anotherField = allFieldDeclarations.get(j);
+                if (field.toString().equals(anotherField.toString())) {
+                    logger.debug(field.toString() + " " + anotherField.toString());
+                    returnValues.add(field);
+                    returnValues.add(anotherField);
+                }
+            }
+        }
+
+
+        return returnValues;
     }
 
     @Override
     public void detectIssues() {
 
-        visitor.clear();
         for (CompilationUnit unit : compilationUnits) {
             unit.accept(visitor);
         }
 
-        Map<String, List<ASTNode>> subclassesPerSuperclass = visitor.getSubclassesPerSuperClass();
+        List<TypeDeclaration> classes = visitor.getTypeDeclarations();
+        List<TypeDeclaration> superClasses = new ArrayList<>();
+        logger.debug(classes.toString());
+        List<TypeDeclaration> subClasses = new ArrayList<>();
+        HashMap<TypeDeclaration, List<TypeDeclaration>> subClassesPerSuperclass = new HashMap<TypeDeclaration, List<TypeDeclaration>>();
 
-        for (String type : subclassesPerSuperclass.keySet()) {
-            List<ASTNode> listOfSubclasses = subclassesPerSuperclass.get(type);
-
-            if (hasDuplicateFields(listOfSubclasses)) {
-                Issue issue = new Issue(this);
-                issue.setNodes(listOfSubclasses);
-
-                issues.add(issue);
+        for (TypeDeclaration type : classes) {
+            if (type.getSuperclassType() != null) {
+                subClasses.add(type);
+            } else {
+                superClasses.add(type);
             }
         }
+
+        for (TypeDeclaration subClass : subClasses) {
+            for (TypeDeclaration superclass : superClasses) {
+                if (subClass.resolveBinding().getSuperclass().equals(superclass.resolveBinding())) {
+                    if (subClassesPerSuperclass.containsKey(superclass)) {
+                        subClassesPerSuperclass.get(superclass).add(subClass);
+                    } else {
+                        ArrayList<TypeDeclaration> subClassesList = new ArrayList<TypeDeclaration>();
+                        subClassesList.add(subClass);
+                        subClassesPerSuperclass.put(superclass, subClassesList);
+                    }
+                }
+            }
+
+            Set<FieldDeclaration> duplicateFields = new HashSet<>();
+
+            for (TypeDeclaration superClass : subClassesPerSuperclass.keySet()) {
+                if (subClassesPerSuperclass.get(superClass).size() > 1) {
+                    duplicateFields = getDuplicateFields(subClassesPerSuperclass.get(superClass));
+                }
+                logger.debug("Duplicate fields found: " + duplicateFields.size());
+
+                if (duplicateFields.size() > 0) {
+                    logger.debug("Duplicate fields found: creating an issue.");
+                    Issue issue = new Issue(this);
+
+                    logger.debug("print duplicate fields: " + duplicateFields.toString());
+
+                    issue.setNodes(new ArrayList<ASTNode>(duplicateFields));
+
+                    issues.add(issue);
+                }
+            }
+        }
+        logger.debug(issues.toString());
     }
 
     @Override
