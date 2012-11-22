@@ -1,14 +1,13 @@
 package nl.han.ica.core.issue.detector;
 
-import nl.han.ica.core.issue.Issue;
-import nl.han.ica.core.issue.IssueDetector;
 import nl.han.ica.core.ast.visitors.MethodDeclarationVisitor;
 import nl.han.ica.core.ast.visitors.MethodInvocationVisitor;
+import nl.han.ica.core.issue.Issue;
+import nl.han.ica.core.issue.IssueDetector;
+import nl.han.ica.core.util.ASTUtil;
 import org.eclipse.jdt.core.dom.*;
 
 import java.util.*;
-import nl.han.ica.core.util.ASTUtil;
-import nl.han.ica.core.util.FileUtil;
 
 /**
  * @author: Wouter Konecny
@@ -59,7 +58,7 @@ public class HideMethodDetector extends IssueDetector {
             int modifiers = methodDeclaration.getModifiers();
 
             for (MethodInvocation methodInvocation : entry.getValue()) {
-                if(methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding())
+                if (methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding())
                         && !Modifier.isPrivate(modifiers)
                         && ASTUtil.getTypeDeclarationForNode(methodDeclaration) != ASTUtil.getTypeDeclarationForNode(methodInvocation)) {
 
@@ -67,7 +66,7 @@ public class HideMethodDetector extends IssueDetector {
                 }
             }
 
-            if((!Modifier.isPrivate(modifiers) && !methodDeclaration.isConstructor() && !Modifier.isStatic(modifiers)
+            if ((!Modifier.isPrivate(modifiers) && !methodDeclaration.isConstructor() && !Modifier.isStatic(modifiers)
                     && !hasOverrideAnnotation(methodDeclaration)
                     && !isMainMethod(methodDeclaration))
                     && !Modifier.isAbstract(ASTUtil.getTypeDeclarationForNode(methodDeclaration).getModifiers())
@@ -88,30 +87,30 @@ public class HideMethodDetector extends IssueDetector {
     }
 
     private void buildHashMapWithMethodDeclarationsAndInvocations() {
-        for (MethodDeclaration methodDeclaration  : methodDeclarationList) {
+        for (MethodDeclaration methodDeclaration : methodDeclarationList) {
 
             if (!methodUsages.containsKey(methodDeclaration)) {
                 methodUsages.put(methodDeclaration, new ArrayList<MethodInvocation>());
             }
 
             for (MethodInvocation methodInvocation : methodInvocationList) {
-                if(methodDeclaration.resolveBinding() != null && methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding())) {
+                if (methodDeclaration.resolveBinding() != null && methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding())) {
                     methodUsages.get(methodDeclaration).add(methodInvocation);
                 }
             }
 
             // Remove already sorted MethodInvocations from the list.
-            for(MethodInvocation methodInvocation : methodUsages.get(methodDeclaration)) {
+            for (MethodInvocation methodInvocation : methodUsages.get(methodDeclaration)) {
                 methodInvocationList.remove(methodInvocation);
             }
         }
     }
 
     private boolean hasOverrideAnnotation(MethodDeclaration methodDeclaration) {
-        if(methodDeclaration.resolveBinding() != null) {
+        if (methodDeclaration.resolveBinding() != null) {
             IAnnotationBinding[] annotationBindingList = methodDeclaration.resolveBinding().getAnnotations();
             for (IAnnotationBinding binding : annotationBindingList) {
-                if(binding.toString().indexOf("Override") != -1) {
+                if (binding.toString().indexOf("Override") != -1) {
                     return true;
                 }
             }

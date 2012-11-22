@@ -6,9 +6,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 /**
- * User: Teun
- * Date: 09-11-12
- * Time: 14:14
+ * Helper functionality for common operations involving {@link ASTNode}s.
  */
 public class ASTUtil {
 
@@ -28,6 +26,14 @@ public class ASTUtil {
         return getTypeDeclarationForNode(parentNode);
     }
     
+    /**
+     * Find the nearest parent node of a certain type for an {@link ASTNode}.
+     *
+     * @param klass The type class of the parent node to find. Must be derived from ASTNode.
+     * @param node  The node to find a parent node for.
+     * @param <T>   The ASTNode derived type of the parent node.
+     * @return The found parent, or null if no such parent exists.
+     */
     public static <T extends ASTNode> T parent(final Class<T> klass, final ASTNode node) {
         ASTNode parent = node;
         do {

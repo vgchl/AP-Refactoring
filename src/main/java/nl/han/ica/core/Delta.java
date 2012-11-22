@@ -60,13 +60,12 @@ public class Delta {
 
     /**
      * Get the file from this delta
-     * 
+     *
      * @return the file
      */
-    public File getFile(){
+    public File getFile() {
         return sourceFile.getFile();
     }
-    
-    
+
 
 }

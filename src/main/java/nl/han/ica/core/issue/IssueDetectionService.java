@@ -2,6 +2,7 @@ package nl.han.ica.core.issue;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,7 +20,6 @@ public class IssueDetectionService {
             detector.setCompilationUnits(compilationUnits);
             issues.addAll(detector.detectIssues());
         }
-        System.out.println("RETURN ISSUES");
         return issues;
     }
 

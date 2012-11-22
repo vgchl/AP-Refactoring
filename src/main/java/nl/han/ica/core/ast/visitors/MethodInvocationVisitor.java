@@ -1,13 +1,10 @@
 package nl.han.ica.core.ast.visitors;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 /**
  * @author: Wouter Konecny
@@ -29,7 +26,7 @@ public class MethodInvocationVisitor extends ASTVisitor {
      */
     @Override
     public boolean visit(MethodInvocation methodInvocation) {
-        if(methodInvocation.resolveMethodBinding() != null && methodInvocation.resolveMethodBinding().getDeclaringClass().isFromSource()) {
+        if (methodInvocation.resolveMethodBinding() != null && methodInvocation.resolveMethodBinding().getDeclaringClass().isFromSource()) {
             methodInvocations.add(methodInvocation);
         }
         return super.visit(methodInvocation);

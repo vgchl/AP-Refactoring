@@ -49,9 +49,11 @@ public class Job {
      */
     public void process() {
         logger.debug("Processing...");
+
         Set<CompilationUnit> compilationUnits = parser.parse(sourceFiles);
         issues.clear();
         issues.addAll(new ArrayList<>(issueDetectionService.detectIssues(compilationUnits)));
+
         logger.debug("Done processing.");
     }
 
