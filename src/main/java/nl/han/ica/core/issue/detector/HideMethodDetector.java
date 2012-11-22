@@ -30,7 +30,6 @@ public class HideMethodDetector extends IssueDetector {
 
     @Override
     public Set<Issue> detectIssues() {
-
         for (CompilationUnit compilationUnit : compilationUnits) {
             MethodDeclarationVisitor methodDeclarationVisitor = new MethodDeclarationVisitor();
             compilationUnit.accept(methodDeclarationVisitor);
@@ -40,10 +39,8 @@ public class HideMethodDetector extends IssueDetector {
             compilationUnit.accept(methodInvocationVisitor);
             methodInvocationList.addAll(methodInvocationVisitor.getMethodInvocations());
         }
-
         buildHashMapWithMethodDeclarationsAndInvocations();
         findViolatedNodesAndCreateIssues();
-
         return issues;
     }
 
@@ -109,7 +106,7 @@ public class HideMethodDetector extends IssueDetector {
         if (methodDeclaration.resolveBinding() != null) {
             IAnnotationBinding[] annotationBindingList = methodDeclaration.resolveBinding().getAnnotations();
             for (IAnnotationBinding binding : annotationBindingList) {
-                if (binding.toString().indexOf("Override") != -1) {
+                if (binding.toString().contains("Override")) {
                     return true;
                 }
             }
