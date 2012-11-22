@@ -62,10 +62,12 @@ public class EncapsulateFieldSolver extends IssueSolver {
         }
 
         MethodDeclaration getter = createGetter(node.getAST(), fieldDeclaration);
-//        createSetter();
+        MethodDeclaration setter = createSetter(node.getAST(), fieldDeclaration);
+
 
         ListRewrite listRewrite = rewrite.getListRewrite(ASTUtil.parent(TypeDeclaration.class, node), TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
         listRewrite.insertLast(getter, null);
+        listRewrite.insertLast(setter, null);
 
         rewrite.replace(node, fieldDeclaration, null);
         TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
@@ -108,22 +110,32 @@ public class EncapsulateFieldSolver extends IssueSolver {
     private MethodDeclaration createSetter(AST ast, FieldDeclaration field) {
         MethodDeclaration method = ast.newMethodDeclaration();
         VariableDeclarationFragment fragment = (VariableDeclarationFragment) field.fragments().get(0);
-        String name = "set" + WordUtils.capitalize(fragment.getName().toString());
+        String name = fragment.getName().toString();
 
-        method.setReturnType2((Type) ASTNode.copySubtree(ast, field.getType()));
+        method.setReturnType2(null);
         method.modifiers().addAll(ast.newModifiers(Modifier.PUBLIC));
 
-        Block getterBlock = ast.newBlock();
 
-        ReturnStatement returnStatement = ast.newReturnStatement();
+        SingleVariableDeclaration svd = ast.newSingleVariableDeclaration();
+        svd.setType((Type) ASTNode.copySubtree(ast, field.getType()));
+        svd.setName(ast.newSimpleName(name));
 
-        FieldAccess expr2 = ast.newFieldAccess();
-        expr2.setName(ast.newSimpleName(fragment.getName().toString()));
-        returnStatement.setExpression(expr2);
+        method.parameters().add(svd);
+        Block setterBlock = ast.newBlock();
+
+        Assignment as = ast.newAssignment();
+        FieldAccess fa = ast.newFieldAccess();
+
+        fa.setName(ast.newSimpleName(name));
+        fa.setExpression(ast.newThisExpression());
+        as.setLeftHandSide(fa);
+        as.setRightHandSide(ast.newSimpleName(name));
+
+        ExpressionStatement expressionStatement = ast.newExpressionStatement(as);
 
 
-        getterBlock.statements().add(returnStatement);
-        method.setBody(getterBlock);
+        setterBlock.statements().add(expressionStatement);
+        method.setBody(setterBlock);
 
         method.setName(ast.newSimpleName(name));
 
