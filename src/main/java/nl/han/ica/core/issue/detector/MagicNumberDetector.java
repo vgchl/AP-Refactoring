@@ -4,18 +4,17 @@
  */
 package nl.han.ica.core.issue.detector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class MagicNumberDetector extends IssueDetector {
-    
+
     @Override
     public String getTitle() {
         return "Magic Number";
@@ -27,18 +26,21 @@ public class MagicNumberDetector extends IssueDetector {
     }
 
     @Override
-    public Set<Issue> detectIssues() {
+    public void detectIssues() {
         for (CompilationUnit compilationUnit : compilationUnits) {
             MagicNumberVisitor magicNumberVisitor = new MagicNumberVisitor();
             compilationUnit.accept(magicNumberVisitor);
             createIssues(magicNumberVisitor.getMagicNumbers());
         }
-        return issues;
     }
-    
-    
-    private class MagicNumberVisitor extends ASTVisitor {    
-        private List<ASTNode> magicNumbers = new ArrayList<>();
+
+
+    private class MagicNumberVisitor extends ASTVisitor {
+        private Set<ASTNode> magicNumbers;
+
+        public MagicNumberVisitor() {
+            magicNumbers = new HashSet<>();
+        }
 
         @Override
         public boolean visit(NumberLiteral node) {
@@ -48,7 +50,7 @@ public class MagicNumberDetector extends IssueDetector {
             return super.visit(node);
         }
 
-        public List<ASTNode> getMagicNumbers() {
+        public Set<ASTNode> getMagicNumbers() {
             return magicNumbers;
         }
 

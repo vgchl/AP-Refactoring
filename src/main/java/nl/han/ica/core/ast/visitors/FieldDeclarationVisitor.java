@@ -19,24 +19,11 @@ import org.eclipse.jdt.core.dom.*;
 public class FieldDeclarationVisitor extends ASTVisitor {
 
     private List<FieldDeclaration> fieldDeclarations = new ArrayList<>();
-    private ClassInstanceCreation node;
 
     @Override
     public boolean visit(FieldDeclaration node) {
         fieldDeclarations.add(node);
         return super.visit(node);
-    }
-
-    //TODO remove this method, just temp method for resolvebindings
-    @Override
-    public boolean visit(ClassInstanceCreation node) {
-        this.node = node;
-        return super.visit(node);
-    }
-
-
-    public ClassInstanceCreation getNode() {
-        return node;
     }
 
     public final List<FieldDeclaration> getFieldDeclarations() {
