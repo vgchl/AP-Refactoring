@@ -55,7 +55,7 @@ public class PullUpFieldDetector extends IssueDetector {
     }
 
     @Override
-    public Set<Issue> detectIssues() {
+    public void detectIssues() {
 
         visitor.clear();
         for (CompilationUnit unit : compilationUnits) {
@@ -76,8 +76,6 @@ public class PullUpFieldDetector extends IssueDetector {
                 issues.add(issue);
             }
         }
-
-        return issues;
     }
 
     @Override
