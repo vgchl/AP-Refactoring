@@ -21,10 +21,8 @@ public class PullUpFieldDetector extends IssueDetector {
 
     private ClassWithTwoSubclassesVisitor visitor;
 
-    private Set<Issue> issues;
-
     public PullUpFieldDetector() {
-        visitor = new ClassWithTwoSubclassesVisitor();
+        visitor = new ClassWithTwoSubclassesVisitor(compilationUnits);
     }
 
     /**
@@ -35,15 +33,15 @@ public class PullUpFieldDetector extends IssueDetector {
      */
     private boolean hasDuplicateFields(List<ASTNode> listOfSubclasses) {
 
-        FieldDeclarationVisitor visitor = new FieldDeclarationVisitor();
+        FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
         List<ASTNode> classesWithDuplicateFields = new ArrayList<ASTNode>();
 
         List<FieldDeclaration> allFieldDeclarations = new ArrayList<FieldDeclaration>();
 
         for (ASTNode node : listOfSubclasses) {
 
-            node.accept(visitor);
-            allFieldDeclarations.addAll(visitor.getFieldDeclarations());
+            node.accept(fieldDeclarationVisitor);
+            allFieldDeclarations.addAll(fieldDeclarationVisitor.getFieldDeclarations());
         }
         Set<FieldDeclaration> fieldDeclarationSet = new HashSet<>();
 
@@ -55,29 +53,25 @@ public class PullUpFieldDetector extends IssueDetector {
     }
 
     @Override
-    public Set<Issue> detectIssues() {
+    public void detectIssues() {
 
         visitor.clear();
         for (CompilationUnit unit : compilationUnits) {
             unit.accept(visitor);
         }
 
-        Map<Type, List<ASTNode>> subclassesPerSuperclass = visitor.getSubclassesPerSuperClass();
+        Map<String, List<ASTNode>> subclassesPerSuperclass = visitor.getSubclassesPerSuperClass();
 
-        for (Type type : subclassesPerSuperclass.keySet()) {
+        for (String type : subclassesPerSuperclass.keySet()) {
             List<ASTNode> listOfSubclasses = subclassesPerSuperclass.get(type);
 
             if (hasDuplicateFields(listOfSubclasses)) {
                 Issue issue = new Issue(this);
-                listOfSubclasses.add(0, type);
-                // TODO: remove the classes from the list that do not have duplicate fields
                 issue.setNodes(listOfSubclasses);
 
                 issues.add(issue);
             }
         }
-
-        return issues;
     }
 
     @Override

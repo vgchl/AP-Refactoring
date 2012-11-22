@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
 import java.io.IOException;
@@ -38,8 +39,6 @@ public class PullUpFieldSolver extends IssueSolver {
         Solution solution = new Solution(issue, this, parameters);
         List<ASTNode> duplicateFields = issue.getNodes();
 
-        getSuperClass(duplicateFields);
-
         // TODO: make a delta for every class, not every field that moved? This is only applicable when one class has multiple fields to remove.
 
         for (ASTNode node : duplicateFields) {
@@ -63,7 +62,7 @@ public class PullUpFieldSolver extends IssueSolver {
 
             try {
                 textEdit.apply(document);
-            } catch (BadLocationException e) {
+            } catch (MalformedTreeException | BadLocationException e) {
                 log.error("Error removing field declaration.", e);
             }
 
