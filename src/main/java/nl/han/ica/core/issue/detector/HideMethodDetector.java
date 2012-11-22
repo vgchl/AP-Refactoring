@@ -18,7 +18,7 @@ import java.util.WeakHashMap;
 public class HideMethodDetector extends IssueDetector {
 
     private static final String STRATEGY_NAME = "Hide Method";
-    public static final String STRATEGY_DESCRIPTION = "Hide method when it is not used by any other class.";
+    private static final String STRATEGY_DESCRIPTION = "Hide method when it is not used by any other class.";
 
     private List<MethodDeclaration> methodDeclarationList;
     private List<MethodInvocation> methodInvocationList;

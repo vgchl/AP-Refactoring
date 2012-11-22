@@ -20,8 +20,10 @@ import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.issue.IssueDetectionService;
 import nl.han.ica.core.issue.IssueDetector;
 import nl.han.ica.core.issue.IssueSolvingService;
+import nl.han.ica.core.issue.detector.EncapsulateFieldDetector;
 import nl.han.ica.core.issue.detector.HideMethodDetector;
 import nl.han.ica.core.issue.detector.MagicNumberDetector;
+import nl.han.ica.core.issue.solver.EncapsulateFieldSolver;
 import nl.han.ica.core.issue.solver.HideMethodSolver;
 import nl.han.ica.core.issue.solver.MagicNumberSolver;
 import nl.han.ica.core.util.FileUtil;
@@ -68,10 +70,12 @@ public class IssueDetectorIndexController extends BaseController {
         IssueDetectionService detectionService = job.getIssueDetectionService();
         detectionService.addDetector(new MagicNumberDetector());
         detectionService.addDetector(new HideMethodDetector());
+        detectionService.addDetector(new EncapsulateFieldDetector());
 
         IssueSolvingService solvingService = job.getIssueSolvingService();
         solvingService.addSolver(new MagicNumberSolver());
         solvingService.addSolver(new HideMethodSolver());
+        solvingService.addSolver(new EncapsulateFieldSolver());
     }
 
     @Override
