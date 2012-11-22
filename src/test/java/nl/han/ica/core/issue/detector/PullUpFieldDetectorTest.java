@@ -1,17 +1,22 @@
-package nl.han.ica.core.issues.detector;
+package nl.han.ica.core.issue.detector;
 
+import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.issue.Issue;
-import nl.han.ica.core.issue.detector.PullUpFieldDetector;
+import nl.han.ica.core.parser.Parser;
+import nl.han.ica.core.util.FileUtil;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -31,52 +36,31 @@ public class PullUpFieldDetectorTest {
 
     private Set<CompilationUnit> compilationUnits;
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
     @Before
     public void setUp() throws IOException {
 
-        System.out.println("setUp");
         detector = new PullUpFieldDetector();
 
-        StringBuffer buffer = new StringBuffer("");
+        Parser parser = new Parser();
 
-        buffer.append(getSuperClassFile());
-        buffer.append(getAppelFile());
-        buffer.append(getBanaanFile());
+        File fruit = folder.newFile("Fruit.java");
+        FileUtil.setFileContent(fruit, getSuperClassFile());
+        File banaan = folder.newFile("Banaan.java");
+        FileUtil.setFileContent(banaan, getBanaanFile());
+        File appel = folder.newFile("Appel.java");
+        FileUtil.setFileContent(appel, getAppelFile());
 
-        ASTParser parser = createParser();
+        Set<SourceFile> sourceFiles = new HashSet<SourceFile>();
+        sourceFiles.add(new SourceFile(fruit));
+        sourceFiles.add(new SourceFile(banaan));
+        sourceFiles.add(new SourceFile(appel));
 
-        System.out.println("setSource for superclass file");
-        parser.setSource(buffer.toString().toCharArray());
-        CompilationUnit superclass = (CompilationUnit) parser.createAST(null);
-        System.out.println(superclass.toString());
-        compilationUnits.add(superclass);
+        compilationUnits = parser.parse(sourceFiles);
 
-//        ASTParser parser2 = createParser();
-//        System.out.println("setSource for appel file");
-//        parser2.setSource(getAppelFile().toCharArray());
-//        CompilationUnit appelCu = (CompilationUnit) parser2.createAST(null);
-//        System.out.println(appelCu.toString());
-//        compilationUnits.add(appelCu);
-//
-//        ASTParser parser3 = createParser();
-//        System.out.println("setSource for banaanfile");
-//        parser3.setSource(getBanaanFile().toCharArray());
-//        CompilationUnit banaanCu = (CompilationUnit) parser3.createAST(null);
-//        System.out.println(banaanCu.toString());
-//        compilationUnits.add(banaanCu);
-
-
-        System.out.println("setting compilationunits in detector. size: " + compilationUnits.size());
         detector.setCompilationUnits(compilationUnits);
-
-        System.out.println("done");
-    }
-
-    private ASTParser createParser() {
-        System.out.println("creating parser");
-        ASTParser parser = ASTParser.newParser(AST.JLS3);
-        parser.setCompilerOptions(JavaCore.getOptions());
-        return parser;
     }
 
     @Test
@@ -100,7 +84,6 @@ public class PullUpFieldDetectorTest {
                 "public abstract class Fruit {\n" +
                 "\n" +
                 "}\n";
-
 
         return content;
     }
