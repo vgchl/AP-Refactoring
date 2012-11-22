@@ -17,8 +17,9 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import nl.han.ica.core.Job;
 import nl.han.ica.core.SourceFile;
+import nl.han.ica.core.issue.IssueDetectionService;
 import nl.han.ica.core.issue.IssueDetector;
-import nl.han.ica.core.issue.IssueSolver;
+import nl.han.ica.core.issue.IssueSolvingService;
 import nl.han.ica.core.issue.detector.HideMethodDetector;
 import nl.han.ica.core.issue.detector.MagicNumberDetector;
 import nl.han.ica.core.issue.solver.HideMethodSolver;
@@ -64,13 +65,13 @@ public class IssueDetectorIndexController extends BaseController {
     }
 
     private void initializeIssueDetectors() {
-        Set<IssueDetector> issueDetectors = job.getIssueDetectionService().getDetectors();
-        issueDetectors.add(new MagicNumberDetector());
-        issueDetectors.add(new HideMethodDetector());
+        IssueDetectionService detectionService = job.getIssueDetectionService();
+        detectionService.addDetector(new MagicNumberDetector());
+        detectionService.addDetector(new HideMethodDetector());
 
-        Set<IssueSolver> solvers = job.getIssueSolvingService().getIssueSolverLocator().getSolvers();
-        solvers.add(new MagicNumberSolver());
-        solvers.add(new HideMethodSolver());
+        IssueSolvingService solvingService = job.getIssueSolvingService();
+        solvingService.addSolver(new MagicNumberSolver());
+        solvingService.addSolver(new HideMethodSolver());
     }
 
     @Override

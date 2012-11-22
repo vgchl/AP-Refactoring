@@ -24,7 +24,11 @@ public class IssueDetectionService {
     }
 
     public Set<IssueDetector> getDetectors() {
-        return detectors;
+        return Collections.unmodifiableSet(detectors);
+    }
+
+    public void addDetector(IssueDetector issueDetector) {
+        detectors.add(issueDetector);
     }
 
 }

@@ -29,7 +29,8 @@ public class IssueSolvingService {
         solution.getIssueSolver().applySolution(solution);
     }
 
-    public IssueSolverLocator getIssueSolverLocator() {
-        return issueSolverLocator;
+    public void addSolver(IssueSolver issueSolver) {
+        issueSolverLocator.addSolver(issueSolver);
     }
+
 }
