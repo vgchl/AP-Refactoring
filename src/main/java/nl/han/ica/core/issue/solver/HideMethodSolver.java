@@ -54,7 +54,8 @@ public class HideMethodSolver extends IssueSolver {
 
         ASTRewrite rewrite = ASTRewrite.create(node.getAST());
         MethodDeclaration newMethodDeclaration = (MethodDeclaration) ASTNode.copySubtree(node.getAST(), node);
-
+        System.out.println("METHOD NAME: " + newMethodDeclaration.getName());
+        
         if(node instanceof MethodDeclaration){
             int modifiers = newMethodDeclaration.getModifiers();
             int modifierLocation = getAnnotationsSize((MethodDeclaration)node);
@@ -80,7 +81,6 @@ public class HideMethodSolver extends IssueSolver {
     }
 
     private int getAnnotationsSize(MethodDeclaration declaration){
-        System.out.println("Decla: " + declaration.resolveBinding());
         if(declaration.resolveBinding().getAnnotations() != null) {
             return declaration.resolveBinding().getAnnotations().length;
         }

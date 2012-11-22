@@ -11,6 +11,7 @@ import org.eclipse.jdt.core.dom.VariableDeclaration;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.jdt.core.dom.*;
 
 /**
  * @author Corne

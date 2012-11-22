@@ -106,7 +106,14 @@ public class HideMethodDetector extends IssueDetector {
     }
 
     private boolean hasOverrideAnnotation(MethodDeclaration methodDeclaration) {
-        if(methodDeclaration.resolveBinding() != null) {
+        if(methodDeclaration.resolveBinding() != null &&
+                methodDeclaration.resolveBinding().getAnnotations().length > 0) {
+            System.out.println("Bindings: " + methodDeclaration.resolveBinding().getAnnotations()[0].getName());
+            for(Object modifier : methodDeclaration.modifiers()){
+                System.out.println("MODIFIERS: " +modifier);
+            }
+            
+            
             IAnnotationBinding[] annotationBindingList = methodDeclaration.resolveBinding().getAnnotations();
             for (IAnnotationBinding binding : annotationBindingList) {
                 if(binding.toString().indexOf("Override") != -1) {
