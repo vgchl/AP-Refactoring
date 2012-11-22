@@ -136,7 +136,6 @@ public class IssueDetectorIndexController extends BaseController {
         } else {
             job.getSourceFiles().clear();
         }
-        System.out.println("xx");
         onSourceFilesSelected();
     }
 

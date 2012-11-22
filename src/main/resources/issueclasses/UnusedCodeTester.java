@@ -8,6 +8,8 @@ public class UnusedCodeTester {
 
     public static String MYvariBal = "x";
 
+    private String someVaribal = "xdfdsf";
+
     public static void main(String[] args) {
         System.out.println(string1);
         used(100);
@@ -23,6 +25,7 @@ public class UnusedCodeTester {
         if (i == 0) {
         } else if (i == 23) {
         }
+
         return "YES";
     }
 

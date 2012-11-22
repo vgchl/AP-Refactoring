@@ -41,6 +41,7 @@ public class HideMethodDetector extends IssueDetector {
             compilationUnit.accept(methodInvocationVisitor);
             methodInvocationList.addAll(methodInvocationVisitor.getMethodInvocations());
         }
+
         buildHashMapWithMethodDeclarationsAndInvocations();
         findViolatedNodesAndCreateIssues();
     }
