@@ -39,6 +39,8 @@ public class PullUpFieldSolver extends IssueSolver {
         Solution solution = new Solution(issue, this, parameters);
         List<ASTNode> duplicateFields = issue.getNodes();
 
+        log.debug("Issue has the following nodes: \n" + issue.getNodes());
+
         // TODO: make a delta for every class, not every field that moved? This is only applicable when one class has multiple fields to remove.
 
         for (ASTNode node : duplicateFields) {
@@ -80,21 +82,5 @@ public class PullUpFieldSolver extends IssueSolver {
         // remove fields from subclasses
 
         return solution;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    /**
-     * Get the superclass for the given FieldDeclaration nodes. So it will get the class the field is in, and get the superclass for that.
-     *
-     * @param duplicateFields
-     * @return
-     */
-    private ASTNode getSuperClass(List<ASTNode> duplicateFields) {
-
-        TypeDeclaration classWithDuplicateField = (TypeDeclaration) duplicateFields.get(0).getParent();
-
-        /* Get parent to get the class. Getparent on class to get superclass.*/
-        // TODO: get superclass type
-
-        return null;
     }
 }
