@@ -19,9 +19,12 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class EncapsulateFieldSolver extends IssueSolver {
+
+    private static final String PARAMETER_GETTER_NAME = "Getter name";
 
     public EncapsulateFieldSolver() {
         super();
@@ -61,7 +64,7 @@ public class EncapsulateFieldSolver extends IssueSolver {
             fieldDeclaration.modifiers().addAll(0, fieldDeclaration.getAST().newModifiers(Modifier.PRIVATE));
         }
 
-        MethodDeclaration getter = createGetter(node.getAST(), fieldDeclaration);
+        MethodDeclaration getter = createGetter(node.getAST(), fieldDeclaration, parameters.get(PARAMETER_GETTER_NAME));
         MethodDeclaration setter = createSetter(node.getAST(), fieldDeclaration);
 
 
@@ -83,30 +86,32 @@ public class EncapsulateFieldSolver extends IssueSolver {
         return solution;
     }
 
-    private MethodDeclaration createGetter(AST ast, FieldDeclaration field) {
-        MethodDeclaration method = ast.newMethodDeclaration();
+    @SuppressWarnings("unchecked")
+    private MethodDeclaration createGetter(AST ast, FieldDeclaration field, Parameter getterNameParameter) {
         VariableDeclarationFragment fragment = (VariableDeclarationFragment) field.fragments().get(0);
-        String name = "get" + WordUtils.capitalize(fragment.getName().toString());
+        String fieldName = fragment.getName().toString();
+        String getterName = (String) getterNameParameter.getValue();
+        if (getterName.isEmpty()) {
+            getterName = "get" + WordUtils.capitalize(fieldName);
+            getterNameParameter.setValue(getterName);
+        }
 
+        MethodDeclaration method = ast.newMethodDeclaration();
         method.setReturnType2((Type) ASTNode.copySubtree(ast, field.getType()));
         method.modifiers().addAll(ast.newModifiers(Modifier.PUBLIC));
 
-        Block getterBlock = ast.newBlock();
-
         ReturnStatement returnStatement = ast.newReturnStatement();
+        returnStatement.setExpression(ast.newName(fieldName));
 
-        Name expr2 = ast.newName(fragment.getName().toString());
-        returnStatement.setExpression(expr2);
-
+        Block getterBlock = ast.newBlock();
 
         getterBlock.statements().add(returnStatement);
         method.setBody(getterBlock);
-
-        method.setName(ast.newSimpleName(name));
-
+        method.setName(ast.newSimpleName(getterName));
         return method;
     }
 
+    @SuppressWarnings("unchecked")
     private MethodDeclaration createSetter(AST ast, FieldDeclaration field) {
         MethodDeclaration method = ast.newMethodDeclaration();
         VariableDeclarationFragment fragment = (VariableDeclarationFragment) field.fragments().get(0);
@@ -115,24 +120,22 @@ public class EncapsulateFieldSolver extends IssueSolver {
         method.setReturnType2(null);
         method.modifiers().addAll(ast.newModifiers(Modifier.PUBLIC));
 
+        SingleVariableDeclaration singleVariableDeclaration = ast.newSingleVariableDeclaration();
+        singleVariableDeclaration.setType((Type) ASTNode.copySubtree(ast, field.getType()));
+        singleVariableDeclaration.setName(ast.newSimpleName(name));
 
-        SingleVariableDeclaration svd = ast.newSingleVariableDeclaration();
-        svd.setType((Type) ASTNode.copySubtree(ast, field.getType()));
-        svd.setName(ast.newSimpleName(name));
-
-        method.parameters().add(svd);
+        method.parameters().add(singleVariableDeclaration);
         Block setterBlock = ast.newBlock();
 
-        Assignment as = ast.newAssignment();
-        FieldAccess fa = ast.newFieldAccess();
+        Assignment assignment = ast.newAssignment();
+        FieldAccess fieldAccess = ast.newFieldAccess();
 
-        fa.setName(ast.newSimpleName(name));
-        fa.setExpression(ast.newThisExpression());
-        as.setLeftHandSide(fa);
-        as.setRightHandSide(ast.newSimpleName(name));
+        fieldAccess.setName(ast.newSimpleName(name));
+        fieldAccess.setExpression(ast.newThisExpression());
+        assignment.setLeftHandSide(fieldAccess);
+        assignment.setRightHandSide(ast.newSimpleName(name));
 
-        ExpressionStatement expressionStatement = ast.newExpressionStatement(as);
-
+        ExpressionStatement expressionStatement = ast.newExpressionStatement(assignment);
 
         setterBlock.statements().add(expressionStatement);
         method.setBody(setterBlock);
@@ -140,5 +143,19 @@ public class EncapsulateFieldSolver extends IssueSolver {
         method.setName(ast.newSimpleName(name));
 
         return method;
+    }
+
+    @Override
+    protected Map<String, Parameter> defaultParameters() {
+        Map<String, Parameter> parameters = new HashMap<>();
+        Parameter getterName = new Parameter(PARAMETER_GETTER_NAME, "");
+        getterName.getConstraints().add(new Parameter.Constraint() {
+            @Override
+            public boolean isValid(Object value) {
+                return ((String) value).matches("^(get|is|has)[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$");
+            }
+        });
+        parameters.put(getterName.getTitle(), getterName);
+        return parameters;
     }
 }
