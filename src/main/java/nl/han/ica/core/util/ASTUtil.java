@@ -3,6 +3,7 @@ package nl.han.ica.core.util;
 import nl.han.ica.core.SourceFile;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.IBinding;
 
 /**
  * Helper functionality for common operations involving {@link ASTNode}s.
@@ -38,6 +39,13 @@ public final class ASTUtil {
 
     public static SourceFile sourceFileForCompilationUnit(final CompilationUnit compilationUnit) {
         return (SourceFile) compilationUnit.getProperty(SourceFile.SOURCE_FILE_PROPERTY);
+    }
+
+    public static int getAnnotationsSize(IBinding binding) {
+        if (binding.getAnnotations() != null) {
+            return binding.getAnnotations().length;
+        }
+        return 0;
     }
 
 }
