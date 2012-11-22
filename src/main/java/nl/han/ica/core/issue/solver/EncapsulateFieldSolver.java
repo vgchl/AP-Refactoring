@@ -25,6 +25,7 @@ import java.util.Map;
 public class EncapsulateFieldSolver extends IssueSolver {
 
     private static final String PARAMETER_GETTER_NAME = "Getter name";
+    private static final String PARAMETER_SETTER_NAME = "Setter name";
 
     public EncapsulateFieldSolver() {
         super();
@@ -65,7 +66,7 @@ public class EncapsulateFieldSolver extends IssueSolver {
         }
 
         MethodDeclaration getter = createGetter(node.getAST(), fieldDeclaration, parameters.get(PARAMETER_GETTER_NAME));
-        MethodDeclaration setter = createSetter(node.getAST(), fieldDeclaration);
+        MethodDeclaration setter = createSetter(node.getAST(), fieldDeclaration, parameters.get(PARAMETER_SETTER_NAME));
 
 
         ListRewrite listRewrite = rewrite.getListRewrite(ASTUtil.parent(TypeDeclaration.class, node), TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
@@ -112,17 +113,22 @@ public class EncapsulateFieldSolver extends IssueSolver {
     }
 
     @SuppressWarnings("unchecked")
-    private MethodDeclaration createSetter(AST ast, FieldDeclaration field) {
+    private MethodDeclaration createSetter(AST ast, FieldDeclaration field, Parameter setterNameParameter) {
         MethodDeclaration method = ast.newMethodDeclaration();
         VariableDeclarationFragment fragment = (VariableDeclarationFragment) field.fragments().get(0);
-        String name = fragment.getName().toString();
+        String fieldName = fragment.getName().toString();
+        String setterName = (String) setterNameParameter.getValue();
+        if (setterName.isEmpty()) {
+            setterName = "set" + WordUtils.capitalize(fieldName);
+            setterNameParameter.setValue(setterName);
+        }
 
         method.setReturnType2(null);
         method.modifiers().addAll(ast.newModifiers(Modifier.PUBLIC));
 
         SingleVariableDeclaration singleVariableDeclaration = ast.newSingleVariableDeclaration();
         singleVariableDeclaration.setType((Type) ASTNode.copySubtree(ast, field.getType()));
-        singleVariableDeclaration.setName(ast.newSimpleName(name));
+        singleVariableDeclaration.setName(ast.newSimpleName(fieldName));
 
         method.parameters().add(singleVariableDeclaration);
         Block setterBlock = ast.newBlock();
@@ -130,17 +136,17 @@ public class EncapsulateFieldSolver extends IssueSolver {
         Assignment assignment = ast.newAssignment();
         FieldAccess fieldAccess = ast.newFieldAccess();
 
-        fieldAccess.setName(ast.newSimpleName(name));
+        fieldAccess.setName(ast.newSimpleName(fieldName));
         fieldAccess.setExpression(ast.newThisExpression());
         assignment.setLeftHandSide(fieldAccess);
-        assignment.setRightHandSide(ast.newSimpleName(name));
+        assignment.setRightHandSide(ast.newSimpleName(fieldName));
 
         ExpressionStatement expressionStatement = ast.newExpressionStatement(assignment);
 
         setterBlock.statements().add(expressionStatement);
         method.setBody(setterBlock);
 
-        method.setName(ast.newSimpleName(name));
+        method.setName(ast.newSimpleName(setterName));
 
         return method;
     }
@@ -149,13 +155,24 @@ public class EncapsulateFieldSolver extends IssueSolver {
     protected Map<String, Parameter> defaultParameters() {
         Map<String, Parameter> parameters = new HashMap<>();
         Parameter getterName = new Parameter(PARAMETER_GETTER_NAME, "");
+        Parameter setterName = new Parameter(PARAMETER_SETTER_NAME, "");
+
         getterName.getConstraints().add(new Parameter.Constraint() {
             @Override
             public boolean isValid(Object value) {
                 return ((String) value).matches("^(get|is|has)[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$");
             }
         });
+
+        setterName.getConstraints().add(new Parameter.Constraint() {
+            @Override
+            public boolean isValid(Object value) {
+                return ((String) value).matches("^(set)[A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*$");
+            }
+        });
+
         parameters.put(getterName.getTitle(), getterName);
+        parameters.put(setterName.getTitle(), setterName);
         return parameters;
     }
 }
