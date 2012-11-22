@@ -2,12 +2,14 @@ package nl.han.ica.core.issue.detector;
 
 import nl.han.ica.core.ast.visitors.MethodDeclarationVisitor;
 import nl.han.ica.core.ast.visitors.MethodInvocationVisitor;
-import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
 import nl.han.ica.core.util.ASTUtil;
 import org.eclipse.jdt.core.dom.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * @author: Wouter Konecny
@@ -29,7 +31,7 @@ public class HideMethodDetector extends IssueDetector {
     }
 
     @Override
-    public Set<Issue> detectIssues() {
+    public void detectIssues() {
         for (CompilationUnit compilationUnit : compilationUnits) {
             MethodDeclarationVisitor methodDeclarationVisitor = new MethodDeclarationVisitor();
             compilationUnit.accept(methodDeclarationVisitor);
@@ -41,7 +43,6 @@ public class HideMethodDetector extends IssueDetector {
         }
         buildHashMapWithMethodDeclarationsAndInvocations();
         findViolatedNodesAndCreateIssues();
-        return issues;
     }
 
     /**

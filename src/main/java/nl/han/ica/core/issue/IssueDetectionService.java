@@ -17,8 +17,10 @@ public class IssueDetectionService {
     public Set<Issue> detectIssues(Set<CompilationUnit> compilationUnits) {
         Set<Issue> issues = new HashSet<>();
         for (IssueDetector detector : detectors) {
+            detector.reset();
             detector.setCompilationUnits(compilationUnits);
-            issues.addAll(detector.detectIssues());
+            detector.detectIssues();
+            issues.addAll(detector.getIssues());
         }
         return issues;
     }
@@ -29,6 +31,10 @@ public class IssueDetectionService {
 
     public void addDetector(IssueDetector issueDetector) {
         detectors.add(issueDetector);
+    }
+
+    public void removeDetector(IssueDetector issueDetector) {
+        detectors.remove(issueDetector);
     }
 
 }

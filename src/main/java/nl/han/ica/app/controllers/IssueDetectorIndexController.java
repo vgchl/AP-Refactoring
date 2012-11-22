@@ -221,9 +221,9 @@ public class IssueDetectorIndexController extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldSelected, Boolean newSelected) {
                     if (newSelected) {
-                        job.getIssueDetectionService().getDetectors().add(issueDetector);
+                        job.getIssueDetectionService().addDetector(issueDetector);
                     } else {
-                        job.getIssueDetectionService().getDetectors().remove(issueDetector);
+                        job.getIssueDetectionService().removeDetector(issueDetector);
                     }
                     updateCanAnalyze();
                 }

@@ -4,7 +4,6 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -32,10 +31,8 @@ public abstract class IssueDetector {
 
     /**
      * Scans the set of compilation units for issues.
-     *
-     * @return The detected issues.
      */
-    public abstract Set<Issue> detectIssues();
+    public abstract void detectIssues();
 
     /**
      * Returns the detector's title.
@@ -97,9 +94,8 @@ public abstract class IssueDetector {
      * adds the issue to the set of detected issues, and associates the issue with this detector.
      *
      * @param nodes The source nodes to create issues for.
-     * @return The created issue.
      */
-    protected void createIssues(List<ASTNode> nodes) {
+    protected void createIssues(Set<ASTNode> nodes) {
         for (ASTNode node : nodes) {
             issues.add(createIssue(node));
         }
