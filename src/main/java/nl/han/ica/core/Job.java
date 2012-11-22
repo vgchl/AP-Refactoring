@@ -4,7 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetectionService;
-import nl.han.ica.core.issue.IssueSolverLocator;
 import nl.han.ica.core.issue.IssueSolvingService;
 import nl.han.ica.core.parser.Parser;
 import org.apache.log4j.Logger;
@@ -40,8 +39,7 @@ public class Job {
         parser = new Parser();
 
         issueDetectionService = new IssueDetectionService();
-        IssueSolverLocator locator = new IssueSolverLocator();
-        issueSolvingService = new IssueSolvingService(locator);
+        issueSolvingService = new IssueSolvingService();
     }
 
     /**
@@ -49,31 +47,33 @@ public class Job {
      */
     public void process() {
         logger.debug("Processing...");
+
         Set<CompilationUnit> compilationUnits = parser.parse(sourceFiles);
         issues.clear();
         issues.addAll(new ArrayList<>(issueDetectionService.detectIssues(compilationUnits)));
+
         logger.debug("Done processing.");
     }
 
     /**
-     * Solve an issue. Uses the {@link IssueSolvingService} to find a suitable solver.
+     * Create a solution for an issue. Uses the {@link IssueSolvingService} to find a suitable solver.
      *
      * @param issue The issue to solve.
      * @return The solution that solves the issue.
      */
-    public Solution solve(Issue issue) {
-        return issueSolvingService.solveIssue(issue);
+    public Solution createSolution(Issue issue) {
+        return issueSolvingService.createSolution(issue);
     }
 
     /**
-     * Solve an issue. Uses the {@link IssueSolvingService} to find a suitable solver.
+     * Create a solution for an issue. Uses the {@link IssueSolvingService} to find a suitable solver.
      *
      * @param issue      The issue to solve.
      * @param parameters The parameters to use while solving the issue.
      * @return The solution that solves the issue.
      */
-    public Solution solve(Issue issue, Map<String, Parameter> parameters) {
-        return issueSolvingService.solveIssue(issue, parameters);
+    public Solution createSolution(Issue issue, Map<String, Parameter> parameters) {
+        return issueSolvingService.createSolution(issue, parameters);
     }
 
     /**

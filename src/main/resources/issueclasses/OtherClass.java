@@ -1,6 +1,6 @@
 package issueclasses;
 
-public class OtherClass {
+public class OtherClass extends ParentClass {
 
     public OtherClass() {
         System.out.println("Test");
@@ -12,7 +12,16 @@ public class OtherClass {
         System.out.println("This method has to be public: " + s);
     }
 
+    /**
+     * My Comment
+     */
+    @Deprecated
     public void methodThatHasToBePrivate() {
         System.out.println("This method could be private.");
+    }
+
+    @Override
+    public void test() {
+        // Content
     }
 }

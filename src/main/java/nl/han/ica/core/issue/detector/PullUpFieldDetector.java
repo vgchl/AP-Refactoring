@@ -55,7 +55,7 @@ public class PullUpFieldDetector extends IssueDetector {
             for (int j = i; j < allFieldDeclarations.size(); j++) {
 
                 FieldDeclaration anotherField = allFieldDeclarations.get(j);
-                if (field.toString().equals(anotherField.toString())) {
+                if (field.equals(anotherField)) {
                     logger.debug(field.toString() + " " + anotherField.toString());
                     returnValues.add(field);
                     returnValues.add(anotherField);

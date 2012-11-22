@@ -1,19 +1,20 @@
 package nl.han.ica.core.util;
 
+import nl.han.ica.core.SourceFile;
+
 import java.io.*;
 import java.util.*;
-import nl.han.ica.core.SourceFile;
 
 /**
  * Contains helpers for common operations involving files and directories.
  */
-public class FileUtil {
+public final class FileUtil {
 
     /**
      * Private constructor to prevent class initialization.
      */
     private FileUtil() {
-
+        // Private constructor to prevent class initialization.
     }
 
     /**
@@ -64,16 +65,16 @@ public class FileUtil {
      */
     public static String getFileContent(File file) throws IOException {
         String lineSeparator = System.getProperty("line.separator");
-        InputStreamReader fileReader = new InputStreamReader(new FileInputStream(file.getAbsoluteFile()), "UTF8");
-        BufferedReader reader = new BufferedReader(fileReader);
-        String nextLine;
-        StringBuffer buffer = new StringBuffer();
-        while ((nextLine = reader.readLine()) != null) {
-            buffer.append(nextLine);
-            buffer.append(lineSeparator);
+        StringBuffer buffer;
+        try (InputStreamReader fileReader = new InputStreamReader(new FileInputStream(file.getAbsoluteFile()), "UTF8");
+             BufferedReader reader = new BufferedReader(fileReader)) {
+            String nextLine;
+            buffer = new StringBuffer();
+            while ((nextLine = reader.readLine()) != null) {
+                buffer.append(nextLine);
+                buffer.append(lineSeparator);
+            }
         }
-        reader.close();
-        fileReader.close();
         return buffer.toString();
     }
 
