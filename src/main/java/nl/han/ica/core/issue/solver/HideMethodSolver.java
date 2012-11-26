@@ -38,6 +38,7 @@ public class HideMethodSolver extends IssueSolver {
         return issue.getDetector() instanceof HideMethodDetector;
     }
 
+    //TODO clean
     @Override
     protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters) {
         ASTNode node = issue.getNodes().get(0);
@@ -56,9 +57,6 @@ public class HideMethodSolver extends IssueSolver {
 
         ASTRewrite rewrite = ASTRewrite.create(node.getAST());
         MethodDeclaration newMethodDeclaration = (MethodDeclaration) ASTNode.copySubtree(node.getAST(), node);
-        System.out.println("METHOD NAME: " + newMethodDeclaration.getName());
-        System.out.println("PARENT: " + ASTUtil.parent(TypeDeclaration.class, node).getName());
-        System.out.println("BINDING:" + ((MethodDeclaration)node).resolveBinding());
         
         if(node instanceof MethodDeclaration){
             int modifiers = newMethodDeclaration.getModifiers();

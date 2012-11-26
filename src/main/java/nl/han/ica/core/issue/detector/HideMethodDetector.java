@@ -91,7 +91,7 @@ public class HideMethodDetector extends IssueDetector {
             }
 
             for (MethodInvocation methodInvocation : methodInvocationList) {
-                if (methodDeclaration.resolveBinding() != null && methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding())) {
+                if (methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding())) {
                     methodUsages.get(methodDeclaration).add(methodInvocation);
                 }
             }
