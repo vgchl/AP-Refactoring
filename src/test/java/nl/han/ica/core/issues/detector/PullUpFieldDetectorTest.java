@@ -35,11 +35,6 @@ public class PullUpFieldDetectorTest {
     @Before
     public void setUp() throws IOException {
 
-        // build some example files
-        // make compilationunits from them
-        // iterate over compilationunits and accept the detector
-        // get issues from detector
-
         detector = new PullUpFieldDetector();
 
         Set<SourceFile> sourceFiles = new HashSet<SourceFile>();
@@ -55,18 +50,17 @@ public class PullUpFieldDetectorTest {
 
         compilationUnits = parser.parse(sourceFiles);
         detector.setCompilationUnits(compilationUnits);
+        detector.detectIssues();
     }
 
     @Test
     public void testDetectIssuesNotNull() {
-        detector.detectIssues();
         Set<Issue> issues = detector.getIssues();
         assertNotNull(issues);
     }
 
     @Test
     public void testDetectIssues() {
-        detector.detectIssues();
         assertEquals(1, detector.getIssues().size());
     }
 

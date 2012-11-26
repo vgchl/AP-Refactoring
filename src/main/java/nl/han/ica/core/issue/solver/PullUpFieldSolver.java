@@ -69,6 +69,8 @@ public class PullUpFieldSolver extends IssueSolver {
                 Delta delta = solution.createDelta(sourceFile);
                 delta.setBefore(document.get());
 
+                log.debug("Print subclass Before: " + document.getNumberOfLines());
+
                 rewrite = ASTRewrite.create(node.getAST());
 
 
@@ -81,6 +83,8 @@ public class PullUpFieldSolver extends IssueSolver {
                 } catch (MalformedTreeException | BadLocationException e) {
                     log.error("Error removing field declaration.", e);
                 }
+
+                log.debug("print Subclass after: " + document.getNumberOfLines());
 
                 delta.setAfter(document.get());
 
@@ -100,12 +104,7 @@ public class PullUpFieldSolver extends IssueSolver {
     }
 
     private Delta buildSuperClassDelta(TypeDeclaration superClass, FieldDeclaration field, Solution solution){
-        log.debug("Print Superclass: " + superClass.toString());
-        log.debug("Print FieldDeclaration: " + field.toString());
-
         SourceFile sourceFile = (SourceFile) superClass.getRoot().getProperty(SourceFile.SOURCE_FILE_PROPERTY);
-
-
         IDocument document = null;
 
         try {
@@ -117,6 +116,8 @@ public class PullUpFieldSolver extends IssueSolver {
         Delta delta = solution.createDelta(sourceFile);
         delta.setBefore(document.get());
 
+        log.debug("Print superclass before: " + document.getNumberOfLines());
+
         ASTRewrite rewrite = ASTRewrite.create(superClass.getAST());
         ListRewrite listRewrite = rewrite.getListRewrite(superClass, TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
         listRewrite.insertFirst(field, null);
@@ -127,6 +128,8 @@ public class PullUpFieldSolver extends IssueSolver {
         } catch (MalformedTreeException | BadLocationException e) {
             log.fatal("Could not rewrite the AST tree.", e);
         }
+
+        log.debug("Print Superclass after: " + document.getNumberOfLines());
 
         delta.setAfter(document.get());
 

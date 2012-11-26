@@ -34,35 +34,67 @@ public class PullUpFieldDetector extends IssueDetector {
      * @param listOfSubclasses
      * @return
      */
-    private Set<FieldDeclaration> getDuplicateFields(List<TypeDeclaration> listOfSubclasses) {
+    private List<FieldDeclaration> getDuplicateFields(List<TypeDeclaration> listOfSubclasses) {
 
         FieldDeclarationVisitor visitor = new FieldDeclarationVisitor();
+
         List<FieldDeclaration> allFieldDeclarations = new ArrayList<FieldDeclaration>();
-        Set<FieldDeclaration> returnValues = new HashSet<FieldDeclaration>();
+
+        List<FieldDeclaration> returnValues = new ArrayList<FieldDeclaration>();
 
         for (TypeDeclaration node : listOfSubclasses) {
+
             node.accept(visitor);
-            allFieldDeclarations.addAll(visitor.getFieldDeclarations());
         }
-        logger.debug(allFieldDeclarations.toString());
+        allFieldDeclarations.addAll(visitor.getFieldDeclarations());
 
-        for (int i = 0; i < allFieldDeclarations.size(); i++) {
-            FieldDeclaration field = allFieldDeclarations.get(i);
+        FieldDeclarationSet fieldDeclarationSet = new FieldDeclarationSet();
 
-            for (int j = 0; j < allFieldDeclarations.size(); j++) {
-                if (j != i) {
-                    FieldDeclaration anotherField = allFieldDeclarations.get(j);
-                    if (field.toString().equals(anotherField.toString())) {
-                        logger.debug(field.toString() + " " + anotherField.toString());
-                        returnValues.add(field);
-                        returnValues.add(anotherField);
-                    }
-                }
+        logger.debug("Found " + allFieldDeclarations.size() + " field declarations.");
+        for (FieldDeclaration fieldDeclaration : allFieldDeclarations) {
+
+            FieldDeclaration duplicate = fieldDeclarationSet.getDuplicate(fieldDeclaration);
+
+            if (duplicate != null) {
+                returnValues.add(fieldDeclaration);
+                returnValues.add(duplicate);
             }
         }
 
 
         return returnValues;
+    }
+
+    /**
+     * Custom set class so we can check for duplicate FieldDeclarations. This set checks the name (toString) and doesn't use the equals.
+     */
+    private class FieldDeclarationSet extends HashSet<FieldDeclaration> {
+
+        private Set<FieldDeclaration> fields = new HashSet<FieldDeclaration>();
+
+        @Override
+        public boolean add(FieldDeclaration fieldDeclaration) {
+            for (FieldDeclaration field : fields) {
+                if (field.toString().equals(fieldDeclaration.toString())) {
+                    return false;
+                }
+            }
+
+            return fields.add(fieldDeclaration);
+        }
+
+        public FieldDeclaration getDuplicate(FieldDeclaration fieldDeclaration) {
+            FieldDeclaration retVal = null;
+
+            for (FieldDeclaration field : fields) {
+                if (field.toString().equals(fieldDeclaration.toString())) {
+                    return field;
+                }
+            }
+
+            fields.add(fieldDeclaration);
+            return retVal;
+        }
     }
 
     @Override
@@ -74,7 +106,6 @@ public class PullUpFieldDetector extends IssueDetector {
 
         List<TypeDeclaration> classes = visitor.getTypeDeclarations();
         List<TypeDeclaration> superClasses = new ArrayList<>();
-        //logger.debug(classes.toString());
         List<TypeDeclaration> subClasses = new ArrayList<>();
         HashMap<TypeDeclaration, List<TypeDeclaration>> subClassesPerSuperclass = new HashMap<TypeDeclaration, List<TypeDeclaration>>();
 
@@ -98,28 +129,32 @@ public class PullUpFieldDetector extends IssueDetector {
                     }
                 }
             }
+        }
 
-            Set<FieldDeclaration> duplicateFields = new HashSet<>();
+        for (TypeDeclaration superClass : subClassesPerSuperclass.keySet()) {
+            List<FieldDeclaration> duplicateFields = new ArrayList<FieldDeclaration>();
 
-            for (TypeDeclaration superClass : subClassesPerSuperclass.keySet()) {
-                if (subClassesPerSuperclass.get(superClass).size() > 1) {
-                    logger.debug("has subclasses");
-                    duplicateFields = getDuplicateFields(subClassesPerSuperclass.get(superClass));
-                }
-                //logger.debug("Duplicate fields found: " + duplicateFields.size());
+            if (subClassesPerSuperclass.get(superClass).size() > 1) {
+                logger.debug("Found more than one subclass.");
+                duplicateFields = getDuplicateFields(subClassesPerSuperclass.get(superClass));
+            }
+            logger.debug("Duplicate fields found: " + duplicateFields.size());
 
-                if (duplicateFields.size() > 0) {
-                    //logger.debug("Duplicate fields found: creating an issue.");
-                    Issue issue = new Issue(this);
+            if (duplicateFields.size() > 0) {
+                logger.debug("Duplicate fields found: creating an issue.");
+                Issue issue = new Issue(this);
 
-                    //logger.debug("print duplicate fields: " + duplicateFields.toString());
+                logger.debug("print duplicate fields: " + duplicateFields.toString());
 
-                    issue.setNodes(new ArrayList<ASTNode>(duplicateFields));
+                ArrayList<ASTNode> nodes = new ArrayList<ASTNode>(duplicateFields);
+                /* We also need the superclass at the first position. */
+                nodes.add(0, superClass);
+                issue.setNodes(nodes);
 
-                    issues.add(issue);
-                }
+                issues.add(issue);
             }
         }
+
         logger.debug(issues.toString());
     }
 
