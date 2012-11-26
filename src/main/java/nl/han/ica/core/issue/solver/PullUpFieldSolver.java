@@ -42,9 +42,7 @@ public class PullUpFieldSolver extends IssueSolver {
 
         Solution solution = new Solution(issue, this, parameters);
         List<ASTNode> duplicateFields = issue.getNodes();
-        log.debug("Print Duplicate fields: " + duplicateFields.toString());
 
-        // TODO: make a delta for every class, not every field that moved? This is only applicable when one class has multiple fields to remove.
         TypeDeclaration superClass = null;
         FieldDeclaration field = null;
         ASTRewrite rewrite = null;
@@ -55,9 +53,7 @@ public class PullUpFieldSolver extends IssueSolver {
             }
             else{
                 field = (FieldDeclaration) node;
-
                 SourceFile sourceFile = (SourceFile) node.getParent().getRoot().getProperty(SourceFile.SOURCE_FILE_PROPERTY);
-
                 IDocument document = null;
 
                 try {
@@ -69,11 +65,7 @@ public class PullUpFieldSolver extends IssueSolver {
                 Delta delta = solution.createDelta(sourceFile);
                 delta.setBefore(document.get());
 
-                log.debug("Print subclass Before: " + document.getNumberOfLines());
-
                 rewrite = ASTRewrite.create(node.getAST());
-
-
                 rewrite.remove(node, null);
 
                 TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
@@ -84,23 +76,14 @@ public class PullUpFieldSolver extends IssueSolver {
                     log.error("Error removing field declaration.", e);
                 }
 
-                log.debug("print Subclass after: " + document.getNumberOfLines());
 
                 delta.setAfter(document.get());
-
                 solution.getDeltas().add(delta);
             }
         }
 
         solution.getDeltas().add(buildSuperClassDelta(superClass, field, solution));
-        // get fields to remove from Issue
-        // get containing class from fields
-        // get superclass from containing classes
-
-        // add a field to the superclass
-        // remove fields from subclasses
-
-        return solution;  //To change body of implemented methods use File | Settings | File Templates.
+        return solution;
     }
 
     private Delta buildSuperClassDelta(TypeDeclaration superClass, FieldDeclaration field, Solution solution){
@@ -116,8 +99,6 @@ public class PullUpFieldSolver extends IssueSolver {
         Delta delta = solution.createDelta(sourceFile);
         delta.setBefore(document.get());
 
-        log.debug("Print superclass before: " + document.getNumberOfLines());
-
         ASTRewrite rewrite = ASTRewrite.create(superClass.getAST());
         ListRewrite listRewrite = rewrite.getListRewrite(superClass, TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
         listRewrite.insertFirst(field, null);
@@ -129,26 +110,8 @@ public class PullUpFieldSolver extends IssueSolver {
             log.fatal("Could not rewrite the AST tree.", e);
         }
 
-        log.debug("Print Superclass after: " + document.getNumberOfLines());
-
         delta.setAfter(document.get());
 
         return delta;
-    }
-
-    /**
-     * Get the superclass for the given FieldDeclaration nodes. So it will get the class the field is in, and get the superclass for that.
-     *
-     * @param duplicateFields
-     * @return
-     */
-    private ASTNode getSuperClass(List<ASTNode> duplicateFields) {
-
-        TypeDeclaration classWithDuplicateField = (TypeDeclaration) duplicateFields.get(0).getParent();
-
-        /* Get parent to get the class. Getparent on class to get superclass.*/
-        // TODO: get superclass type
-
-        return null;
     }
 }
