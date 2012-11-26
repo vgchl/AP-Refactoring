@@ -1,10 +1,7 @@
 package nl.han.ica.core.issue.detector.visitor;
 
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.apache.log4j.Logger;
+import org.eclipse.jdt.core.dom.*;
 
 import java.util.*;
 
@@ -15,11 +12,13 @@ public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
 
     public static final int MINIMAL_NR_OF_SUBCLASSES = 2;
     private Map<String, List<ASTNode>> subclassesPerSuperClass;
+    private Set<CompilationUnit> compilationUnits;
 
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public ClassWithTwoSubclassesVisitor() {
+    public ClassWithTwoSubclassesVisitor(Set<CompilationUnit> compilationUnits) {
         subclassesPerSuperClass = new HashMap<String, List<ASTNode>>();
+        this.compilationUnits = compilationUnits;
     }
 
     @Override
@@ -31,6 +30,7 @@ public class ClassWithTwoSubclassesVisitor extends ASTVisitor {
             ASTNode subClass = type.getParent();
             if (subclassesPerSuperClass.containsKey(superclass.toString())) {
                 subclassesPerSuperClass.get(superclass.toString()).add(subClass);
+
             } else {
                 ArrayList<ASTNode> subclasses = new ArrayList<ASTNode>();
                 subclasses.add(subClass);

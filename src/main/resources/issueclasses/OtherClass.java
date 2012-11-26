@@ -1,6 +1,6 @@
 package issueclasses;
 
-public class OtherClass extends ParentClass {
+public class OtherClass {
 
     public OtherClass() {
         System.out.println("Test");
@@ -20,7 +20,6 @@ public class OtherClass extends ParentClass {
         System.out.println("This method could be private.");
     }
 
-    @Override
     public void test() {
         // Content
     }

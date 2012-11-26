@@ -37,28 +37,26 @@ public class PullUpFieldDetector extends IssueDetector {
     private Set<FieldDeclaration> getDuplicateFields(List<TypeDeclaration> listOfSubclasses) {
 
         FieldDeclarationVisitor visitor = new FieldDeclarationVisitor();
-
         List<FieldDeclaration> allFieldDeclarations = new ArrayList<FieldDeclaration>();
-
         Set<FieldDeclaration> returnValues = new HashSet<FieldDeclaration>();
 
         for (TypeDeclaration node : listOfSubclasses) {
-
             node.accept(visitor);
             allFieldDeclarations.addAll(visitor.getFieldDeclarations());
         }
+        logger.debug(allFieldDeclarations.toString());
 
         for (int i = 0; i < allFieldDeclarations.size(); i++) {
-
             FieldDeclaration field = allFieldDeclarations.get(i);
 
-            for (int j = i; j < allFieldDeclarations.size(); j++) {
-
-                FieldDeclaration anotherField = allFieldDeclarations.get(j);
-                if (field.equals(anotherField)) {
-                    logger.debug(field.toString() + " " + anotherField.toString());
-                    returnValues.add(field);
-                    returnValues.add(anotherField);
+            for (int j = 0; j < allFieldDeclarations.size(); j++) {
+                if (j != i) {
+                    FieldDeclaration anotherField = allFieldDeclarations.get(j);
+                    if (field.toString().equals(anotherField.toString())) {
+                        logger.debug(field.toString() + " " + anotherField.toString());
+                        returnValues.add(field);
+                        returnValues.add(anotherField);
+                    }
                 }
             }
         }
@@ -68,7 +66,7 @@ public class PullUpFieldDetector extends IssueDetector {
     }
 
     @Override
-    public Set<Issue> detectIssues() {
+    public void detectIssues() {
 
         for (CompilationUnit unit : compilationUnits) {
             unit.accept(visitor);
@@ -76,7 +74,7 @@ public class PullUpFieldDetector extends IssueDetector {
 
         List<TypeDeclaration> classes = visitor.getTypeDeclarations();
         List<TypeDeclaration> superClasses = new ArrayList<>();
-        logger.debug(classes.toString());
+        //logger.debug(classes.toString());
         List<TypeDeclaration> subClasses = new ArrayList<>();
         HashMap<TypeDeclaration, List<TypeDeclaration>> subClassesPerSuperclass = new HashMap<TypeDeclaration, List<TypeDeclaration>>();
 
@@ -105,15 +103,16 @@ public class PullUpFieldDetector extends IssueDetector {
 
             for (TypeDeclaration superClass : subClassesPerSuperclass.keySet()) {
                 if (subClassesPerSuperclass.get(superClass).size() > 1) {
+                    logger.debug("has subclasses");
                     duplicateFields = getDuplicateFields(subClassesPerSuperclass.get(superClass));
                 }
-                logger.debug("Duplicate fields found: " + duplicateFields.size());
+                //logger.debug("Duplicate fields found: " + duplicateFields.size());
 
                 if (duplicateFields.size() > 0) {
-                    logger.debug("Duplicate fields found: creating an issue.");
+                    //logger.debug("Duplicate fields found: creating an issue.");
                     Issue issue = new Issue(this);
 
-                    logger.debug("print duplicate fields: " + duplicateFields.toString());
+                    //logger.debug("print duplicate fields: " + duplicateFields.toString());
 
                     issue.setNodes(new ArrayList<ASTNode>(duplicateFields));
 
@@ -122,8 +121,6 @@ public class PullUpFieldDetector extends IssueDetector {
             }
         }
         logger.debug(issues.toString());
-
-        return issues;
     }
 
     @Override

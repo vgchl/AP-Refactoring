@@ -1,17 +1,13 @@
-package nl.han.ica.core.issue.detector;
+package nl.han.ica.core.issues.detector;
 
 import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.issue.Issue;
+import nl.han.ica.core.issue.detector.PullUpFieldDetector;
 import nl.han.ica.core.parser.Parser;
 import nl.han.ica.core.util.FileUtil;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,48 +32,46 @@ public class PullUpFieldDetectorTest {
 
     private Set<CompilationUnit> compilationUnits;
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-
     @Before
     public void setUp() throws IOException {
 
+        // build some example files
+        // make compilationunits from them
+        // iterate over compilationunits and accept the detector
+        // get issues from detector
+
         detector = new PullUpFieldDetector();
+
+        Set<SourceFile> sourceFiles = new HashSet<SourceFile>();
+        SourceFile superClassSourceFile = new SourceFile(getSuperClassFile());
+        sourceFiles.add(superClassSourceFile);
+
+        for (File file : getSubclassFiles()) {
+            SourceFile sourceFile = new SourceFile(file);
+            sourceFiles.add(sourceFile);
+        }
 
         Parser parser = new Parser();
 
-        File fruit = folder.newFile("Fruit.java");
-        FileUtil.setFileContent(fruit, getSuperClassFile());
-        File banaan = folder.newFile("Banaan.java");
-        FileUtil.setFileContent(banaan, getBanaanFile());
-        File appel = folder.newFile("Appel.java");
-        FileUtil.setFileContent(appel, getAppelFile());
-
-        Set<SourceFile> sourceFiles = new HashSet<SourceFile>();
-        sourceFiles.add(new SourceFile(fruit));
-        sourceFiles.add(new SourceFile(banaan));
-        sourceFiles.add(new SourceFile(appel));
-
         compilationUnits = parser.parse(sourceFiles);
-
         detector.setCompilationUnits(compilationUnits);
     }
 
     @Test
     public void testDetectIssuesNotNull() {
-
-        System.out.println("testDetectIssuesNotNull");
-        Set<Issue> issues = detector.detectIssues();
+        detector.detectIssues();
+        Set<Issue> issues = detector.getIssues();
         assertNotNull(issues);
     }
 
     @Test
     public void testDetectIssues() {
-        System.out.println("testDetectIssues");
-        assertEquals(1, detector.detectIssues().size());
+        detector.detectIssues();
+        assertEquals(1, detector.getIssues().size());
     }
 
-    private String getSuperClassFile() {
+    private File getSuperClassFile() throws IOException {
+        File file = new File("");
 
         String content = "package nl.random.test;\n" +
                 "\n" +
@@ -85,10 +79,13 @@ public class PullUpFieldDetectorTest {
                 "\n" +
                 "}\n";
 
-        return content;
+
+        FileUtil.setFileContent(file, content);
+
+        return file;
     }
 
-    private String getBanaanFile() {
+    private List<File> getSubclassFiles() throws IOException {
         List<File> files = new ArrayList<File>();
 
         String banaan = "package nl.random.test;\n" +
@@ -105,10 +102,7 @@ public class PullUpFieldDetectorTest {
                 "\t\treturn naam;\n" +
                 "\t}\n" +
                 "}\n";
-        return banaan;
-    }
 
-    private String getAppelFile() {
         String appel = "package nl.random.test;\n" +
                 "\n" +
                 "public class Appel extends Fruit {\n" +
@@ -124,6 +118,15 @@ public class PullUpFieldDetectorTest {
                 "\t}\n" +
                 "}\n";
 
-        return appel;
+        File banaanFile = new File("");
+        FileUtil.setFileContent(banaanFile, banaan);
+        files.add(banaanFile);
+
+        File appelFile = new File("");
+        FileUtil.setFileContent(appelFile, appel);
+        files.add(appelFile);
+
+
+        return files;
     }
 }

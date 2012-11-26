@@ -3,6 +3,8 @@ package nl.han.ica.core.issue.solver;
 import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.issue.solver.PullUpFieldSolver;
 import nl.han.ica.core.util.FileUtil;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.junit.Before;
 import org.junit.Test;
 
