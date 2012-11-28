@@ -119,13 +119,15 @@ public class PullUpFieldDetector extends IssueDetector {
 
         for (TypeDeclaration subClass : subClasses) {
             for (TypeDeclaration superclass : superClasses) {
-                if (subClass.resolveBinding().getSuperclass().equals(superclass.resolveBinding())) {
-                    if (subClassesPerSuperclass.containsKey(superclass)) {
-                        subClassesPerSuperclass.get(superclass).add(subClass);
-                    } else {
-                        ArrayList<TypeDeclaration> subClassesList = new ArrayList<TypeDeclaration>();
-                        subClassesList.add(subClass);
-                        subClassesPerSuperclass.put(superclass, subClassesList);
+                if (subClass.resolveBinding().getSuperclass() != null) {
+                    if (subClass.resolveBinding().getSuperclass().equals(superclass.resolveBinding())) {
+                        if (subClassesPerSuperclass.containsKey(superclass)) {
+                            subClassesPerSuperclass.get(superclass).add(subClass);
+                        } else {
+                            ArrayList<TypeDeclaration> subClassesList = new ArrayList<TypeDeclaration>();
+                            subClassesList.add(subClass);
+                            subClassesPerSuperclass.put(superclass, subClassesList);
+                        }
                     }
                 }
             }
@@ -135,27 +137,19 @@ public class PullUpFieldDetector extends IssueDetector {
             List<FieldDeclaration> duplicateFields = new ArrayList<FieldDeclaration>();
 
             if (subClassesPerSuperclass.get(superClass).size() > 1) {
-                logger.debug("Found more than one subclass.");
                 duplicateFields = getDuplicateFields(subClassesPerSuperclass.get(superClass));
             }
-            logger.debug("Duplicate fields found: " + duplicateFields.size());
 
             if (duplicateFields.size() > 0) {
-                logger.debug("Duplicate fields found: creating an issue.");
                 Issue issue = new Issue(this);
-
-                logger.debug("print duplicate fields: " + duplicateFields.toString());
-
                 ArrayList<ASTNode> nodes = new ArrayList<ASTNode>(duplicateFields);
-                /* We also need the superclass at the first position. */
+
                 nodes.add(0, superClass);
                 issue.setNodes(nodes);
 
                 issues.add(issue);
             }
         }
-
-        logger.debug(issues.toString());
     }
 
     @Override
