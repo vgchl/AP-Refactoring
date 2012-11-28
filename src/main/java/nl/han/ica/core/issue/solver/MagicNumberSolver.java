@@ -93,7 +93,7 @@ public class MagicNumberSolver extends IssueSolver {
             return visitor.hasFieldName(name);
         }
 
-        protected void createConstant(final String name, final String value) {
+        private void createConstant(final String name, final String value) {
             AST ast = literalClass.getAST();
 
             ListRewrite listRewrite = rewrite.getListRewrite(literalClass, TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
@@ -106,7 +106,7 @@ public class MagicNumberSolver extends IssueSolver {
             field.modifiers().addAll(ast.newModifiers(Modifier.PRIVATE | Modifier.STATIC | Modifier.FINAL));
 
             listRewrite.insertFirst(field, null);
-        }
+	}
 
         protected void replaceMagicNumberWithConstant(final String name) {
             SimpleName constantReference = literal.getAST().newSimpleName(name);

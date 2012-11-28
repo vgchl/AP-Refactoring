@@ -28,9 +28,10 @@ public class MethodDeclarationVisitor extends ASTVisitor {
     private boolean shouldAddMethod(MethodDeclaration node){
         if(node.isConstructor() && !includeConstructor){
             return false;
-        }else if(!useExternBindings && node.getReturnType2().resolveBinding() == null){
+        }/*else if(!useExternBindings && !node.getReturnType2().resolveBinding().isFromSource()
+                && !node.getReturnType2().isPrimitiveType() && !node.getReturnType2().){
             return false;
-        }else if(node.resolveBinding() == null){
+        }*/else if(node.resolveBinding() == null){
             return false;
         }
         return true;

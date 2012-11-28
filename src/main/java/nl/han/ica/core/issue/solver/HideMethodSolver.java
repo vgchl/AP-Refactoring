@@ -20,7 +20,7 @@ import org.eclipse.text.edits.TextEdit;
 import java.io.IOException;
 import java.util.Map;
 import nl.han.ica.core.util.ASTUtil;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.*;
 
 /**
  * Solver for Hide Method.
@@ -54,10 +54,9 @@ public class HideMethodSolver extends IssueSolver {
 
         Delta delta = solution.createDelta(sourceFile);
         delta.setBefore(document.get());
-
         ASTRewrite rewrite = ASTRewrite.create(node.getAST());
-        MethodDeclaration newMethodDeclaration = (MethodDeclaration) ASTNode.copySubtree(node.getAST(), node);
-        
+        MethodDeclaration newMethodDeclaration = (MethodDeclaration) ASTNode.copySubtree(node.getRoot().getAST(), node);
+        System.out.println("COPY METHODE: " + newMethodDeclaration);
         if(node instanceof MethodDeclaration){
             int modifiers = newMethodDeclaration.getModifiers();
             int modifierLocation = getAnnotationsSize((MethodDeclaration) node);
@@ -65,7 +64,7 @@ public class HideMethodSolver extends IssueSolver {
                 newMethodDeclaration.modifiers().remove(modifierLocation);
 
             }
-            newMethodDeclaration.modifiers().addAll(modifierLocation, newMethodDeclaration.getAST().newModifiers(Modifier.PRIVATE));
+            newMethodDeclaration.modifiers().addAll(modifierLocation, node.getAST().newModifiers(Modifier.PRIVATE));
         }
 
         rewrite.replace(node, newMethodDeclaration, null);

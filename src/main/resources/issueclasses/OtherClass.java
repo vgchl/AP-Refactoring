@@ -15,9 +15,10 @@ public class OtherClass extends ParentClass {
     /**
      * My Comment
      */
-    @Deprecated
-    public void methodThatHasToBePrivate() {
+
+    public String methodThatHasToBePrivate() {
         System.out.println("This method could be private.");
+        return null;
     }
 
     @Override

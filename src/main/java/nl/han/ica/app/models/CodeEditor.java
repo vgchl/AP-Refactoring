@@ -118,8 +118,6 @@ public class CodeEditor {
      * @param script The script to run
      */
     protected void execute(final String script) {
-        logger.info("Executing javascript....");
-        
         if (webView.getEngine().getLoadWorker().getState() == Worker.State.SUCCEEDED) {
             logger.info("Executing...  " + script);
             webView.getEngine().executeScript(script);
@@ -127,7 +125,6 @@ public class CodeEditor {
         } else {
             logger.info("Adding script to cache");
             scriptCache.add(script);
-            logger.info("Added script to cache");
         }
     }
 
