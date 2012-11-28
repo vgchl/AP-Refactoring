@@ -3,7 +3,7 @@ package nl.han.ica.core.issue.detector;
 import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
-import nl.han.ica.core.issue.detector.visitor.TypeDeclarationVisitor;
+import nl.han.ica.core.ast.visitors.TypeDeclarationVisitor;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
