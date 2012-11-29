@@ -121,18 +121,30 @@ public class EncapsulateFieldSolver extends IssueSolver {
 
         delta.setAfter(document.get());
     }
-
+    @SuppressWarnings("unchecked")
     private void refactorQualifiedNames(QualifiedName qualifiedName){
+        log.info("Logger info for corné: " + qualifiedName.getParent().getClass());
+
         SourceFile sourceFile = getSourceFileFromNode(qualifiedName);
         IDocument document = getSourceFileDocument(sourceFile);
         Delta delta = createDelta(sourceFile, document);
         AST ast = qualifiedName.getAST();
 
+
         ASTRewrite rewrite = ASTRewrite.create(ast);
         MethodInvocation methodInvocation = ast.newMethodInvocation();
         methodInvocation.setExpression(ast.newSimpleName(qualifiedName.getQualifier().toString()));
-        methodInvocation.setName(ast.newSimpleName(getter.getName().toString()));
-        rewrite.replace(qualifiedName, methodInvocation , null);
+
+        if(qualifiedName.getParent() instanceof Assignment && qualifiedName != ((Assignment)qualifiedName.getParent()).getRightHandSide()) {
+            Assignment assignment = (Assignment) qualifiedName.getParent();
+            methodInvocation.setName(ast.newSimpleName(setter.getName().toString()));
+            methodInvocation.arguments().add( ASTNode.copySubtree(ast, assignment.getRightHandSide() ) );
+            rewrite.replace(assignment, methodInvocation, null);
+        }
+        else {
+            methodInvocation.setName(ast.newSimpleName(getter.getName().toString()));
+            rewrite.replace(qualifiedName, methodInvocation , null);
+        }
 
         TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
 
