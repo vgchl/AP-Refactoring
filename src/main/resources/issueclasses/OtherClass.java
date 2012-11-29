@@ -2,12 +2,9 @@ package issueclasses;
 
 public class OtherClass extends ParentClass {
 
-   private String steel = "" ;
-
-
+   public String steel = "" ;
 
     public OtherClass() {
-
         UnusedCodeTester.MYvariBal = "xdjfj";
         System.out.println(UnusedCodeTester.MYvariBal);
         System.out.println("Test");

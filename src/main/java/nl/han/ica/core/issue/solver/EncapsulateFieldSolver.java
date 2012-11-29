@@ -9,6 +9,7 @@ import nl.han.ica.core.issue.IssueSolver;
 import nl.han.ica.core.issue.detector.EncapsulateFieldDetector;
 import nl.han.ica.core.util.ASTUtil;
 import org.apache.commons.lang3.text.WordUtils;
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -19,13 +20,19 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class EncapsulateFieldSolver extends IssueSolver {
 
     private static final String PARAMETER_GETTER_NAME = "Getter name";
     private static final String PARAMETER_SETTER_NAME = "Setter name";
+    private Solution solution;
+    private MethodDeclaration getter;
+    private MethodDeclaration setter;
+    private Logger log = Logger.getLogger(getClass());
 
     public EncapsulateFieldSolver() {
         super();
@@ -36,44 +43,97 @@ public class EncapsulateFieldSolver extends IssueSolver {
         return issue.getDetector() instanceof EncapsulateFieldDetector;
     }
 
+    private void refactorNodes(List<ASTNode> nodes) throws InvalidParameterException {
+        for(ASTNode node : nodes){
+            if(node instanceof FieldDeclaration){
+                refactorFieldDeclaration((FieldDeclaration) node);
+            }else if(node instanceof QualifiedName){
+                refactorQualifiedNames((QualifiedName) node);
+            }else {
+                throw new InvalidParameterException();
+            }
+        }
+    }
+
     @Override
     protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters) {
-        ASTNode node = issue.getNodes().get(0);
-        Solution solution = new Solution(issue, this, parameters);
-        SourceFile sourceFile = (SourceFile) node.getRoot().getProperty(SourceFile.SOURCE_FILE_PROPERTY);
+        //ASTNode node = issue.getNodes().get(0);
+        solution = new Solution(issue, this, parameters);
+        refactorNodes(issue.getNodes());
+        log.info(issue.getNodes());
+        return solution;
+    }
 
-        IDocument document = null;
+
+    private SourceFile getSourceFileFromNode(ASTNode node){
+        return (SourceFile) node.getRoot().getProperty(SourceFile.SOURCE_FILE_PROPERTY);
+    }
+
+    private IDocument getSourceFileDocument(SourceFile sourceFile){
+
         try {
-            document = sourceFile.toDocument();
+            return sourceFile.toDocument();
         } catch (IOException e) {
-            // Log
+            return null;
         }
+    }
 
+    private Delta createDelta(SourceFile sourceFile, IDocument documentBefore){
         Delta delta = solution.createDelta(sourceFile);
-        delta.setBefore(document.get());
+        delta.setBefore(documentBefore.get());
+        return delta;
+    }
 
-        ASTRewrite rewrite = ASTRewrite.create(node.getAST());
+    @SuppressWarnings("unchecked")
+    private void refactorFieldDeclaration(FieldDeclaration fieldDeclaration){
+        SourceFile sourceFile = getSourceFileFromNode(fieldDeclaration);
+        IDocument document = getSourceFileDocument(sourceFile);
+        Delta delta = createDelta(sourceFile, document);
+
+        ASTRewrite rewrite = ASTRewrite.create(fieldDeclaration.getAST());
 
         // maen's magic
-        FieldDeclaration fieldDeclaration = (FieldDeclaration) ASTNode.copySubtree(node.getAST(), node);
+        FieldDeclaration fieldDeclarationCopy = (FieldDeclaration) ASTNode.copySubtree(fieldDeclaration.getAST(), fieldDeclaration);
 
-        if (node instanceof FieldDeclaration) {
-            int modifiers = fieldDeclaration.getModifiers();
-            if (Modifier.isPublic(modifiers)) {
-                fieldDeclaration.modifiers().remove(0);
-            }
-            fieldDeclaration.modifiers().addAll(0, fieldDeclaration.getAST().newModifiers(Modifier.PRIVATE));
+
+        int modifiers = fieldDeclaration.getModifiers();
+        if (Modifier.isPublic(modifiers)) {
+            fieldDeclarationCopy.modifiers().remove(0);
         }
 
-        MethodDeclaration getter = createGetter(node.getAST(), fieldDeclaration, parameters.get(PARAMETER_GETTER_NAME));
-        MethodDeclaration setter = createSetter(node.getAST(), fieldDeclaration, parameters.get(PARAMETER_SETTER_NAME));
+        fieldDeclarationCopy.modifiers().addAll(0, fieldDeclaration.getAST().newModifiers(Modifier.PRIVATE));
+        getter = createGetter(fieldDeclaration.getAST(), fieldDeclarationCopy, solution.getParameters().get(PARAMETER_GETTER_NAME));
+        setter = createSetter(fieldDeclaration.getAST(), fieldDeclarationCopy, solution.getParameters().get(PARAMETER_SETTER_NAME));
 
 
-        ListRewrite listRewrite = rewrite.getListRewrite(ASTUtil.parent(TypeDeclaration.class, node), TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
+        ListRewrite listRewrite = rewrite.getListRewrite(ASTUtil.parent(TypeDeclaration.class, fieldDeclaration), TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
         listRewrite.insertLast(getter, null);
         listRewrite.insertLast(setter, null);
 
-        rewrite.replace(node, fieldDeclaration, null);
+        rewrite.replace(fieldDeclaration, fieldDeclarationCopy, null);
+        TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
+
+        try {
+            textEdit.apply(document);
+        } catch (MalformedTreeException | BadLocationException e) {
+            // Log
+        }
+
+        delta.setAfter(document.get());
+    }
+
+    private void refactorQualifiedNames(QualifiedName qualifiedName){
+        SourceFile sourceFile = getSourceFileFromNode(qualifiedName);
+        IDocument document = getSourceFileDocument(sourceFile);
+        Delta delta = createDelta(sourceFile, document);
+        AST ast = qualifiedName.getAST();
+
+        ASTRewrite rewrite = ASTRewrite.create(ast);
+        MethodInvocation methodInvocation = ast.newMethodInvocation();
+        methodInvocation.setExpression(ast.newSimpleName(qualifiedName.getQualifier().toString()));
+        methodInvocation.setName(ast.newSimpleName(getter.getName().toString()));
+        rewrite.replace(qualifiedName, methodInvocation , null);
+
         TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
 
         try {
@@ -84,7 +144,7 @@ public class EncapsulateFieldSolver extends IssueSolver {
 
         delta.setAfter(document.get());
 
-        return solution;
+        log.debug(document);
     }
 
     @SuppressWarnings("unchecked")
@@ -150,6 +210,8 @@ public class EncapsulateFieldSolver extends IssueSolver {
 
         return method;
     }
+
+
 
     @Override
     protected Map<String, Parameter> defaultParameters() {

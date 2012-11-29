@@ -1,15 +1,15 @@
 package nl.han.ica.core.ast.visitors;
 
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.ExpressionStatement;
-import org.eclipse.jdt.core.dom.FieldAccess;
+import org.eclipse.jdt.core.dom.*;
 
 
 import java.util.ArrayList;
 
+
 public class FieldAccessVisitor extends ASTVisitor {
 
-    private ArrayList<FieldAccess> fieldAccessList = new ArrayList();
+    private ArrayList<FieldAccess> fieldAccessList = new ArrayList<>();
+    private ArrayList<QualifiedName> qualifiedNameList = new ArrayList<>();
 
     @Override
     public boolean visit(FieldAccess node) {
@@ -22,7 +22,14 @@ public class FieldAccessVisitor extends ASTVisitor {
         return super.visit(expression);
     }
 
-    public ArrayList<FieldAccess> getFieldAccessList() {
-        return fieldAccessList;
+    @Override
+    public boolean visit(QualifiedName node) {
+        qualifiedNameList.add(node);
+        return super.visit(node);
     }
+
+    public ArrayList<QualifiedName> getQualifiedNameList() {
+        return qualifiedNameList;
+    }
+
 }

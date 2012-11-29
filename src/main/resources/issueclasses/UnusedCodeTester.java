@@ -18,6 +18,7 @@ public class UnusedCodeTester {
 
         OtherClass otherClass = new OtherClass();
         otherClass.method1("xx");
+        otherClass.steel = "hallo";
     }
 
     private String unused(String a, String b, String c) {
