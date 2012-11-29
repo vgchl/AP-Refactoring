@@ -60,7 +60,7 @@ public class EncapsulateFieldSolver extends IssueSolver {
         //ASTNode node = issue.getNodes().get(0);
         solution = new Solution(issue, this, parameters);
         refactorNodes(issue.getNodes());
-        log.info(issue.getNodes());
+//        log.info(issue.getNodes());
         return solution;
     }
 
@@ -92,19 +92,19 @@ public class EncapsulateFieldSolver extends IssueSolver {
 
         ASTRewrite rewrite = ASTRewrite.create(fieldDeclaration.getAST());
 
-        // maen's magic
         FieldDeclaration fieldDeclarationCopy = (FieldDeclaration) ASTNode.copySubtree(fieldDeclaration.getAST(), fieldDeclaration);
 
+        int annotationsSize = ASTUtil.getAnnotationsSize( ((VariableDeclarationFragment) fieldDeclaration.fragments().get(0)).resolveBinding() );
 
         int modifiers = fieldDeclaration.getModifiers();
+
         if (Modifier.isPublic(modifiers)) {
-            fieldDeclarationCopy.modifiers().remove(0);
+            fieldDeclarationCopy.modifiers().remove(annotationsSize);
         }
 
-        fieldDeclarationCopy.modifiers().addAll(0, fieldDeclaration.getAST().newModifiers(Modifier.PRIVATE));
+        fieldDeclarationCopy.modifiers().addAll(annotationsSize, fieldDeclaration.getAST().newModifiers(Modifier.PRIVATE));
         getter = createGetter(fieldDeclaration.getAST(), fieldDeclarationCopy, solution.getParameters().get(PARAMETER_GETTER_NAME));
         setter = createSetter(fieldDeclaration.getAST(), fieldDeclarationCopy, solution.getParameters().get(PARAMETER_SETTER_NAME));
-
 
         ListRewrite listRewrite = rewrite.getListRewrite(ASTUtil.parent(TypeDeclaration.class, fieldDeclaration), TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
         listRewrite.insertLast(getter, null);
@@ -116,20 +116,17 @@ public class EncapsulateFieldSolver extends IssueSolver {
         try {
             textEdit.apply(document);
         } catch (MalformedTreeException | BadLocationException e) {
-            // Log
+            log.fatal(e);
         }
-
         delta.setAfter(document.get());
     }
+
     @SuppressWarnings("unchecked")
     private void refactorQualifiedNames(QualifiedName qualifiedName){
-        log.info("Logger info for corné: " + qualifiedName.getParent().getClass());
-
         SourceFile sourceFile = getSourceFileFromNode(qualifiedName);
         IDocument document = getSourceFileDocument(sourceFile);
         Delta delta = createDelta(sourceFile, document);
         AST ast = qualifiedName.getAST();
-
 
         ASTRewrite rewrite = ASTRewrite.create(ast);
         MethodInvocation methodInvocation = ast.newMethodInvocation();
@@ -151,12 +148,9 @@ public class EncapsulateFieldSolver extends IssueSolver {
         try {
             textEdit.apply(document);
         } catch (MalformedTreeException | BadLocationException e) {
-            // Log
+           log.fatal(e);
         }
-
         delta.setAfter(document.get());
-
-        log.debug(document);
     }
 
     @SuppressWarnings("unchecked")

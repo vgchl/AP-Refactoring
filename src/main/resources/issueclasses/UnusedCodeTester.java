@@ -6,6 +6,7 @@ public class UnusedCodeTester {
 
     public static String string2 = "No!";
 
+    @SuppressWarnings("unchecked")
     public static String MYvariBal = "x";
 
     private String someVaribal = "xdfdsf";
