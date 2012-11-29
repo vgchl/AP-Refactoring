@@ -1,5 +1,6 @@
 package nl.han.ica.core.ast.visitors;
 
+import nl.han.ica.core.util.ASTUtil;
 import org.eclipse.jdt.core.dom.*;
 
 
@@ -24,7 +25,9 @@ public class FieldAccessVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(QualifiedName node) {
-        qualifiedNameList.add(node);
+        if(node.resolveBinding() != null && ASTUtil.parent(MethodDeclaration.class, node) != null){
+            qualifiedNameList.add(node);
+        }
         return super.visit(node);
     }
 

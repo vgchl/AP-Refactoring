@@ -40,32 +40,52 @@ public class EncapsulateFieldDetector extends IssueDetector {
         for (CompilationUnit compilationUnit : compilationUnits) {
             FieldAccessVisitor fieldAccessVisitor = new FieldAccessVisitor();
             compilationUnit.accept(fieldAccessVisitor);
-            qualifiedNamesList.addAll(fieldAccessVisitor.getQualifiedNameList());
+            if(!fieldAccessVisitor.getQualifiedNameList().isEmpty()){
+                qualifiedNamesList.addAll(fieldAccessVisitor.getQualifiedNameList());
+            }
 
             FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
             compilationUnit.accept(fieldDeclarationVisitor);
-            fieldDeclarations.addAll(fieldDeclarationVisitor.getFieldDeclarations());
+            if(!fieldDeclarationVisitor.getFieldDeclarations().isEmpty()){
+                fieldDeclarations.addAll(fieldDeclarationVisitor.getFieldDeclarations());
+            }
 
             log.info(qualifiedNamesList);
             log.info(fieldDeclarations);
 
         }
 
-        for (FieldDeclaration declaration : fieldDeclarations) {
-            fieldDeclarationFieldAccessHashMap.put(declaration, new ArrayList<QualifiedName>());
 
-//            log.info(fieldDeclarationFieldAccessHashMap.values());
-            IBinding binding = ((VariableDeclarationFragment) declaration.fragments().get(0)).resolveBinding();
-
-            for(QualifiedName qualifiedName : qualifiedNamesList){
-                log.info("Binding 1: " + binding);
-                log.info("Binding 2: " + qualifiedName.resolveBinding());
+        for(QualifiedName qualifiedName : qualifiedNamesList){
+            for(FieldDeclaration declaration : fieldDeclarations){
+                if(!fieldDeclarationFieldAccessHashMap.containsKey(declaration)){
+                    fieldDeclarationFieldAccessHashMap.put(declaration, new ArrayList<QualifiedName>());
+                }
+                IBinding binding = ((VariableDeclarationFragment) declaration.fragments().get(0)).resolveBinding();
+                log.fatal("Declaration " + declaration);
+                log.fatal("Declaration binding " + ((VariableDeclarationFragment) declaration.fragments().get(0)).resolveBinding());
+                log.fatal("Qualified Name " + qualifiedName);
+                log.fatal("Qualified Name binding " + qualifiedName.resolveBinding());
                 if(binding.equals(qualifiedName.resolveBinding())){
-
                     fieldDeclarationFieldAccessHashMap.get(declaration).add(qualifiedName);
+                    break;
                 }
             }
+        }
 
+        for (FieldDeclaration declaration : fieldDeclarationFieldAccessHashMap.keySet()){
+            if (Modifier.isPublic(declaration.getModifiers())) {
+                Issue issue = createIssue(declaration);
+                issue.getNodes().addAll(fieldDeclarationFieldAccessHashMap.get(declaration));
+                log.info(fieldDeclarationFieldAccessHashMap.get(declaration));
+            }
+        }
+
+
+        /*for (FieldDeclaration declaration : fieldDeclarations) {
+
+
+            IBinding binding = ((VariableDeclarationFragment) declaration.fragments().get(0)).resolveBinding();
 
 
             if (Modifier.isPublic(declaration.getModifiers())) {
@@ -73,7 +93,7 @@ public class EncapsulateFieldDetector extends IssueDetector {
                 issue.getNodes().addAll(fieldDeclarationFieldAccessHashMap.get(declaration));
                 log.info(fieldDeclarationFieldAccessHashMap.get(declaration));
             }
-        }
+        }*/
 
     }
 
