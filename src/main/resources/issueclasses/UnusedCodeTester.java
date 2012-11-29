@@ -6,7 +6,12 @@ public class UnusedCodeTester {
 
     public static String string2 = "No!";
 
+    @SuppressWarnings("unchecked")
     public static String MYvariBal = "x";
+
+    private String someVaribal = "xdfdsf";
+
+    private static String WtFperMinute;
 
     public static void main(String[] args) {
         System.out.println(string1);
@@ -16,6 +21,8 @@ public class UnusedCodeTester {
 
         OtherClass otherClass = new OtherClass();
         otherClass.method1("xx");
+        otherClass.steel = "hallo";
+        WtFperMinute = otherClass.steel;
     }
 
     private String unused(String a, String b, String c) {
@@ -23,6 +30,7 @@ public class UnusedCodeTester {
         if (i == 0) {
         } else if (i == 23) {
         }
+
         return "YES";
     }
 
