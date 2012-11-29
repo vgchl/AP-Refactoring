@@ -44,10 +44,10 @@ public class Parser {
     public Set<CompilationUnit> parse(Set<SourceFile> sourceFiles) {
         this.sourceFiles = sourceFiles;
 
-        astParser.setEnvironment(FileUtil.directoryPaths(sourceFiles), null, null, false);
-        astParser.setUnitName("test"); // TODO: Check what this does (and whether it can be useful);
+        astParser.setEnvironment(FileUtil.directoryPaths(sourceFiles), null, null, true);
+        astParser.setUnitName("Refactor-Tool"); // TODO: Check what this does (and whether it can be useful);
 
-        String[] bindings = new String[0];
+        String[] bindings = new String[0]; //TODO: see todo above
         ASTRequestor astRequestor = new ASTRequestor(sourceFiles);
         astParser.createASTs(FileUtil.filePaths(sourceFiles), null, bindings, astRequestor, null);
         return astRequestor.getCompilationUnits();

@@ -5,6 +5,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.log4j.Logger;
 
 /**
  * Provides issue detection functionality. Uses a set of {@link IssueDetector}s to find {@link Issue}s in a set of
@@ -13,12 +14,15 @@ import java.util.Set;
 public class IssueDetectionService {
 
     private Set<IssueDetector> detectors;
-
+	private Logger logger;
+    
     /**
      * Instantiate a new IssueDetectionService.
      */
     public IssueDetectionService() {
         this.detectors = new HashSet<>();
+        logger = Logger.getLogger(getClass().getName());
+        logger.info("Created IssueDetectionService");
     }
 
     /**
@@ -28,6 +32,7 @@ public class IssueDetectionService {
      * @return The detected issues.
      */
     public Set<Issue> detectIssues(Set<CompilationUnit> compilationUnits) {
+        logger.info("Detecting issues.....");
         Set<Issue> issues = new HashSet<>();
         for (IssueDetector detector : detectors) {
             detector.reset();
@@ -35,6 +40,7 @@ public class IssueDetectionService {
             detector.detectIssues();
             issues.addAll(detector.getIssues());
         }
+        logger.info("Done detecting issues");
         return issues;
     }
 

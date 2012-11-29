@@ -92,7 +92,7 @@ public class HideMethodDetector extends IssueDetector {
             }
 
             for (MethodInvocation methodInvocation : methodInvocationList) {
-                if (methodDeclaration.resolveBinding() != null && methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding())) {
+                if (methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding())) {
                     methodUsages.get(methodDeclaration).add(methodInvocation);
                 }
             }
@@ -105,14 +105,18 @@ public class HideMethodDetector extends IssueDetector {
     }
 
     private boolean hasOverrideAnnotation(MethodDeclaration methodDeclaration) {
-        if (methodDeclaration.resolveBinding() != null) {
+        if(methodDeclaration.modifiers().get(0) instanceof MarkerAnnotation){
+            return true;
+        }
+        
+        /*if (methodDeclaration.resolveBinding() != null) {
             IAnnotationBinding[] annotationBindingList = methodDeclaration.resolveBinding().getAnnotations();
             for (IAnnotationBinding binding : annotationBindingList) {
                 if (binding.toString().contains("Override")) {
                     return true;
                 }
             }
-        }
+        }*/
         return false;
     }
 
