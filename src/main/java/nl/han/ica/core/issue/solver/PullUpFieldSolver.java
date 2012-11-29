@@ -10,7 +10,6 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

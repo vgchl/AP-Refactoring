@@ -1,39 +1,45 @@
 package nl.han.ica.core.util;
 
-import nl.han.ica.core.SourceFile;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.IBinding;
 
 /**
- * User: Teun
- * Date: 09-11-12
- * Time: 14:14
+ * Helper functionality for common operations involving {@link ASTNode}s.
  */
-public class ASTUtil {
+public final class ASTUtil {
 
-    public static CompilationUnit compilationUnitForASTNode(final ASTNode node) {
-        return (CompilationUnit) node.getRoot();
+    /**
+     * Private constructor to prevent class initialization.
+     */
+    private ASTUtil() {
+        // Private constructor to prevent class initialization.
     }
 
-    public static SourceFile sourceFileForCompilationUnit(final CompilationUnit compilationUnit) {
-        return (SourceFile) compilationUnit.getProperty(SourceFile.SOURCE_FILE_PROPERTY);
-    }
-
-    public static TypeDeclaration getTypeDeclarationForNode(ASTNode node) {
-        ASTNode parentNode = node.getParent();
-        if (parentNode instanceof TypeDeclaration) {
-            return (TypeDeclaration) parentNode;
-        }
-        return getTypeDeclarationForNode(parentNode);
-    }
-    
+    /**
+     * Find the nearest parent node of a certain type for an {@link ASTNode}.
+     *
+     * @param klass The type class of the parent node to find. Must be derived from ASTNode.
+     * @param node  The node to find a parent node for.
+     * @param <T>   The ASTNode derived type of the parent node.
+     * @return The found parent, or null if no such parent exists.
+     */
+    @SuppressWarnings("unchecked")
     public static <T extends ASTNode> T parent(final Class<T> klass, final ASTNode node) {
         ASTNode parent = node;
         do {
             parent = parent.getParent();
+            if(parent == null){
+                return null;
+            }
         } while (parent.getClass() != klass);
         return (T) parent;
+    }
+
+    public static int getAnnotationsSize(IBinding binding) {
+        if (binding.getAnnotations() != null) {
+            return binding.getAnnotations().length;
+        }
+        return 0;
     }
 
 }

@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class RefactorTool extends Application {
 
-    private static final String APP_TITLE = "ART (Awesome Refactor Tool) - v0.Venusaur";
+    private static final String APP_TITLE = "ART (Awesome Refactor Tool) - v0.Charmeleon";
 
     /**
      * The application entry point.

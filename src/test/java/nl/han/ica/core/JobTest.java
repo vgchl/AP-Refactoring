@@ -38,14 +38,14 @@ public class JobTest {
 
     @Test (expected = IllegalStateException.class)
     public void testSolveHasNoSuitableSolverAvailable() {
-       job.solve(issue);
+       job.createSolution(issue);
     }
 
     @Test(expected = IllegalStateException.class)
     public void testSolveWithParameters() {
         Map<String, Parameter> parameters = null;
 
-        job.solve(issue, parameters);
+        job.createSolution(issue, parameters);
     }
 
     @Test

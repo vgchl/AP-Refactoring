@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
+import org.apache.log4j.Logger;
 
 /**
  * Handles the presentation of a single delta from a solution to an issue.
@@ -31,6 +32,7 @@ public class IssueSolveDeltaController extends BaseController {
     private CodeEditor editorAfter;
     private EventListenerList parameterChangeListeners;
     private ParameterControlFactory parameterControlFactory;
+    private Logger logger;
 
     @FXML
     protected WebView editorBeforeView;
@@ -50,6 +52,7 @@ public class IssueSolveDeltaController extends BaseController {
         this.parameters = parameters;
         parameterChangeListeners = new EventListenerList();
         parameterControlFactory = new ParameterControlFactory();
+        logger = Logger.getLogger(getClass());
     }
 
     @Override

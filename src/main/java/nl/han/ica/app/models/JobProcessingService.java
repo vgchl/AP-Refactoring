@@ -36,7 +36,7 @@ public class JobProcessingService extends Service {
                 try {
                     jobProperty.get().process();
                 } catch (IllegalStateException e) {
-                    logger.fatal("Threading exception", e);
+                    logger.error("Threading exception", e);
                 }
                 return null;
             }
