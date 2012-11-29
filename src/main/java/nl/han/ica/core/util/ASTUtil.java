@@ -1,8 +1,7 @@
 package nl.han.ica.core.util;
 
-import nl.han.ica.core.SourceFile;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.IBinding;
 
 /**
  * Helper functionality for common operations involving {@link ASTNode}s.
@@ -24,20 +23,23 @@ public final class ASTUtil {
      * @param <T>   The ASTNode derived type of the parent node.
      * @return The found parent, or null if no such parent exists.
      */
+    @SuppressWarnings("unchecked")
     public static <T extends ASTNode> T parent(final Class<T> klass, final ASTNode node) {
         ASTNode parent = node;
         do {
             parent = parent.getParent();
+            if(parent == null){
+                return null;
+            }
         } while (parent.getClass() != klass);
         return (T) parent;
     }
 
-    public static CompilationUnit compilationUnitForASTNode(final ASTNode node) {
-        return (CompilationUnit) node.getRoot();
-    }
-
-    public static SourceFile sourceFileForCompilationUnit(final CompilationUnit compilationUnit) {
-        return (SourceFile) compilationUnit.getProperty(SourceFile.SOURCE_FILE_PROPERTY);
+    public static int getAnnotationsSize(IBinding binding) {
+        if (binding.getAnnotations() != null) {
+            return binding.getAnnotations().length;
+        }
+        return 0;
     }
 
 }
