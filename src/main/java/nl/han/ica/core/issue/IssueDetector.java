@@ -70,7 +70,7 @@ public abstract class IssueDetector {
      *
      * @return The created issue.
      */
-    private Issue createIssue() {
+    protected Issue createIssue() {
         Issue issue = new Issue(this);
         issues.add(issue);
         return issue;
