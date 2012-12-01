@@ -3,8 +3,10 @@ package nl.han.ica.core.issue;
 import nl.han.ica.core.Delta;
 import nl.han.ica.core.Parameter;
 import nl.han.ica.core.Solution;
+import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.util.FileUtil;
 import org.apache.log4j.Logger;
+import org.eclipse.jdt.core.dom.ASTNode;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -12,7 +14,7 @@ import java.util.Map;
 
 public abstract class IssueSolver {
 
-    private Logger logger;
+    protected final Logger logger;
 
     public IssueSolver() {
         logger = Logger.getLogger(getClass().getName());
@@ -51,6 +53,10 @@ public abstract class IssueSolver {
 
     protected Map<String, Parameter> defaultParameters() {
         return new HashMap<>();
+    }
+
+    protected SourceFile retrieveSourceFile(ASTNode node) {
+        return (SourceFile) node.getRoot().getProperty(SourceFile.SOURCE_FILE_PROPERTY);
     }
 
     private void mergeDefaultParameters(final Map<String, Parameter> parameters) {
