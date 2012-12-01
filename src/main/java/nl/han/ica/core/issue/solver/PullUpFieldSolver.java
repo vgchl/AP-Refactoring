@@ -1,23 +1,15 @@
 package nl.han.ica.core.issue.solver;
 
-import nl.han.ica.core.Delta;
 import nl.han.ica.core.Parameter;
 import nl.han.ica.core.Solution;
-import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueSolver;
 import nl.han.ica.core.issue.detector.PullUpFieldDetector;
 import nl.han.ica.core.util.ASTUtil;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.TextEdit;
 
-import java.io.IOException;
 import java.util.Map;
 
 public class PullUpFieldSolver extends IssueSolver {
@@ -65,7 +57,6 @@ public class PullUpFieldSolver extends IssueSolver {
         } else {
             listRewrite.insertFirst(supertype.getAST().newModifier(Modifier.ModifierKeyword.PROTECTED_KEYWORD), null);
         }
-
         return field;
     }
 
@@ -73,29 +64,6 @@ public class PullUpFieldSolver extends IssueSolver {
         FieldDeclaration fieldA = ASTUtil.parent(FieldDeclaration.class, variableA);
         FieldDeclaration fieldB = ASTUtil.parent(FieldDeclaration.class, variableB);
         return Modifier.isPublic(fieldA.getModifiers()) || Modifier.isPublic(fieldB.getModifiers());
-    }
-
-    protected Delta createDelta(ASTNode node, ASTRewrite rewrite) { // TODO Generalize and pull up
-        SourceFile sourceFile = retrieveSourceFile(node);
-        IDocument document = null;
-        try {
-            document = sourceFile.toDocument();
-        } catch (IOException e) {
-            logger.fatal("Could not read the source file.", e);
-        }
-
-        Delta delta = new Delta(sourceFile);
-        delta.setBefore(document.get());
-
-        TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
-        try {
-            textEdit.apply(document);
-        } catch (MalformedTreeException | BadLocationException e) {
-            logger.fatal("Could not rewrite the AST tree.", e);
-        }
-
-        delta.setAfter(document.get());
-        return delta;
     }
 
     private void addFieldToSupertype(FieldDeclaration field, TypeDeclaration supertype, ASTRewrite rewrite) {
