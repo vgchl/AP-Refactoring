@@ -3,8 +3,16 @@ package nl.han.ica.core.issue;
 import nl.han.ica.core.Delta;
 import nl.han.ica.core.Parameter;
 import nl.han.ica.core.Solution;
+import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.util.FileUtil;
 import org.apache.log4j.Logger;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.TextEdit;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -12,7 +20,7 @@ import java.util.Map;
 
 public abstract class IssueSolver {
 
-    private Logger logger;
+    protected final Logger logger;
 
     public IssueSolver() {
         logger = Logger.getLogger(getClass().getName());
@@ -53,6 +61,10 @@ public abstract class IssueSolver {
         return new HashMap<>();
     }
 
+    protected SourceFile retrieveSourceFile(ASTNode node) {
+        return (SourceFile) node.getRoot().getProperty(SourceFile.SOURCE_FILE_PROPERTY);
+    }
+
     private void mergeDefaultParameters(final Map<String, Parameter> parameters) {
         for (Map.Entry<String, Parameter> entry : defaultParameters().entrySet()) {
             if (!parameters.containsKey(entry.getKey())) {
@@ -60,5 +72,29 @@ public abstract class IssueSolver {
             }
         }
     }
+
+    protected Delta createDelta(ASTNode node, ASTRewrite rewrite) {
+        SourceFile sourceFile = retrieveSourceFile(node);
+        IDocument document = null;
+        try {
+            document = sourceFile.toDocument();
+        } catch (IOException e) {
+            logger.fatal("Could not read the source file.", e);
+        }
+
+        Delta delta = new Delta(sourceFile);
+        delta.setBefore(document.get());
+
+        TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
+        try {
+            textEdit.apply(document);
+        } catch (MalformedTreeException | BadLocationException e) {
+            logger.fatal("Could not rewrite the AST tree.", e);
+        }
+
+        delta.setAfter(document.get());
+        return delta;
+    }
+
 
 }

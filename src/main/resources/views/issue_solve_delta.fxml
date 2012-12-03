@@ -11,7 +11,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
 
-<TitledPane animated="false" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" styleClass="issue-patch" text="Solver.java" textAlignment="LEFT" xmlns:fx="http://javafx.com/fxml">
+<TitledPane fx:id="screenTitle" animated="false" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" styleClass="issue-patch" text="Solver.java" textAlignment="LEFT" xmlns:fx="http://javafx.com/fxml">
   <content>
     <VBox id="VBox" alignment="CENTER" spacing="0.0">
       <children>
