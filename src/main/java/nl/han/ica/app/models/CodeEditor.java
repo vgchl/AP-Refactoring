@@ -8,6 +8,10 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import javafx.event.EventHandler;
+import javafx.scene.web.WebEvent;
+import netscape.javascript.JSException;
 import org.apache.log4j.Logger;
 
 /**
@@ -95,21 +99,28 @@ public class CodeEditor {
     /**
      * Initialize the webview that contains the browser environment for the CodeEditor.
      */
-    protected void initializeWebView() {
+    private void initializeWebView() {
         logger.info("Initialising web view");
-        webView.getEngine().load(getClass().getResource("/editor/editor.html").toExternalForm());
+        
+        String debug = getClass().getResource("/editor/editor.html").toExternalForm();
+        webView.getEngine().load(debug);
+        
         webView.getEngine().getLoadWorker().stateProperty().addListener(
                 new ChangeListener<Worker.State>() {
-            @Override
+            @Override           
             public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
-                if (newState == Worker.State.SUCCEEDED && !scriptCache.isEmpty()) {
+
+                if (newState == Worker.State.SUCCEEDED && !scriptCache.isEmpty() && webView.getEngine().getDocument() != null) {            
                     for (String script : scriptCache) {
                         execute(script);
                     }
                     scriptCache.clear();
+                }else if(newState == Worker.State.SUCCEEDED && webView.getEngine().getDocument() == null){ 
+                    webView.getEngine().reload();
                 }
             }
         });
+        
     }
 
     /**
@@ -118,12 +129,15 @@ public class CodeEditor {
      * @param script The script to run
      */
     protected void execute(final String script) {
-        if (webView.getEngine().getLoadWorker().getState() == Worker.State.SUCCEEDED) {
+        if (webView.getEngine().getDocument() != null) {
             logger.info("Executing...  " + script);
-            webView.getEngine().executeScript(script);
-            logger.info("Executed script");
+            try {
+                webView.getEngine().executeScript(script); 
+            } catch(JSException ex){
+                logger.fatal("Executed script " + ex);               
+            }
+            
         } else {
-            logger.info("Adding script to cache");
             scriptCache.add(script);
         }
     }

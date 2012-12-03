@@ -21,7 +21,6 @@ public class FieldDeclarationVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(FieldDeclaration node) {
-        System.out.println("fdv: " + node);
         if(((VariableDeclarationFragment) node.fragments().get(0)).resolveBinding() != null){
             fieldDeclarations.add(node);
         }

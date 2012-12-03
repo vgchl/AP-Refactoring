@@ -20,7 +20,7 @@ public abstract class BaseController implements Initializable {
      * Debugging logger.
      */
     protected final Logger logger;
-    protected FXMLLoader fxmlLoader;
+    private FXMLLoader fxmlLoader;
 
     /**
      * Initialize a new BaseController.

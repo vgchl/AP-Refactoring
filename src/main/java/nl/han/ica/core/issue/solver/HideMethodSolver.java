@@ -56,7 +56,6 @@ public class HideMethodSolver extends IssueSolver {
         delta.setBefore(document.get());
         ASTRewrite rewrite = ASTRewrite.create(node.getAST());
         MethodDeclaration newMethodDeclaration = (MethodDeclaration) ASTNode.copySubtree(node.getRoot().getAST(), node);
-        System.out.println("COPY METHODE: " + newMethodDeclaration);
         if(node instanceof MethodDeclaration){
             int modifiers = newMethodDeclaration.getModifiers();
             int modifierLocation = getAnnotationsSize((MethodDeclaration) node);

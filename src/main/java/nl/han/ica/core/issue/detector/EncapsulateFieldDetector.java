@@ -49,10 +49,6 @@ public class EncapsulateFieldDetector extends IssueDetector {
             if(!fieldDeclarationVisitor.getFieldDeclarations().isEmpty()){
                 fieldDeclarations.addAll(fieldDeclarationVisitor.getFieldDeclarations());
             }
-
-            log.info(qualifiedNamesList);
-            log.info(fieldDeclarations);
-
         }
 
 
@@ -62,10 +58,6 @@ public class EncapsulateFieldDetector extends IssueDetector {
                     fieldDeclarationFieldAccessHashMap.put(declaration, new ArrayList<QualifiedName>());
                 }
                 IBinding binding = ((VariableDeclarationFragment) declaration.fragments().get(0)).resolveBinding();
-                log.fatal("Declaration " + declaration);
-                log.fatal("Declaration binding " + ((VariableDeclarationFragment) declaration.fragments().get(0)).resolveBinding());
-                log.fatal("Qualified Name " + qualifiedName);
-                log.fatal("Qualified Name binding " + qualifiedName.resolveBinding());
                 if(binding.equals(qualifiedName.resolveBinding())){
                     fieldDeclarationFieldAccessHashMap.get(declaration).add(qualifiedName);
                     break;
@@ -74,27 +66,11 @@ public class EncapsulateFieldDetector extends IssueDetector {
         }
 
         for (FieldDeclaration declaration : fieldDeclarationFieldAccessHashMap.keySet()){
-            if (Modifier.isPublic(declaration.getModifiers())) {
+            if (Modifier.isPublic(declaration.getModifiers()) && !Modifier.isStatic(declaration.getModifiers())) {
                 Issue issue = createIssue(declaration);
                 issue.getNodes().addAll(fieldDeclarationFieldAccessHashMap.get(declaration));
-                log.info(fieldDeclarationFieldAccessHashMap.get(declaration));
             }
         }
-
-
-        /*for (FieldDeclaration declaration : fieldDeclarations) {
-
-
-            IBinding binding = ((VariableDeclarationFragment) declaration.fragments().get(0)).resolveBinding();
-
-
-            if (Modifier.isPublic(declaration.getModifiers())) {
-                Issue issue = createIssue(declaration);
-                issue.getNodes().addAll(fieldDeclarationFieldAccessHashMap.get(declaration));
-                log.info(fieldDeclarationFieldAccessHashMap.get(declaration));
-            }
-        }*/
-
     }
 
     @Override
