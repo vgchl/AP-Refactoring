@@ -29,48 +29,41 @@ public class EncapsulateFieldSolver extends IssueSolver {
 
     private static final String PARAMETER_GETTER_NAME = "Getter name";
     private static final String PARAMETER_SETTER_NAME = "Setter name";
+
     private Solution solution;
     private MethodDeclaration getter;
     private MethodDeclaration setter;
     private Logger log = Logger.getLogger(getClass());
-
-    public EncapsulateFieldSolver() {
-        super();
-    }
 
     @Override
     public boolean canSolve(Issue issue) {
         return issue.getDetector() instanceof EncapsulateFieldDetector;
     }
 
+    @Override
+    protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters) {
+        solution = new Solution(issue, this, parameters);
+        refactorNodes(issue.getNodes());
+        return solution;
+    }
+
     private void refactorNodes(List<ASTNode> nodes) throws InvalidParameterException {
-        for(ASTNode node : nodes){
-            if(node instanceof FieldDeclaration){
+        for (ASTNode node : nodes) {
+            if (node instanceof FieldDeclaration) {
                 refactorFieldDeclaration((FieldDeclaration) node);
-            }else if(node instanceof QualifiedName){
+            } else if (node instanceof QualifiedName) {
                 refactorQualifiedNames((QualifiedName) node);
-            }else {
+            } else {
                 throw new InvalidParameterException();
             }
         }
     }
 
-    @Override
-    protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters) {
-        //ASTNode node = issue.getNodes().get(0);
-        solution = new Solution(issue, this, parameters);
-        refactorNodes(issue.getNodes());
-//        log.info(issue.getNodes());
-        return solution;
-    }
-
-
-    private SourceFile getSourceFileFromNode(ASTNode node){
+    private SourceFile getSourceFileFromNode(ASTNode node) {
         return (SourceFile) node.getRoot().getProperty(SourceFile.SOURCE_FILE_PROPERTY);
     }
 
-    private IDocument getSourceFileDocument(SourceFile sourceFile){
-
+    private IDocument getSourceFileDocument(SourceFile sourceFile) {
         try {
             return sourceFile.toDocument();
         } catch (IOException e) {
@@ -78,14 +71,14 @@ public class EncapsulateFieldSolver extends IssueSolver {
         }
     }
 
-    private Delta createDelta(SourceFile sourceFile, IDocument documentBefore){
+    private Delta createDelta(SourceFile sourceFile, IDocument documentBefore) {
         Delta delta = solution.createDelta(sourceFile);
         delta.setBefore(documentBefore.get());
         return delta;
     }
 
     @SuppressWarnings("unchecked")
-    private void refactorFieldDeclaration(FieldDeclaration fieldDeclaration){
+    private void refactorFieldDeclaration(FieldDeclaration fieldDeclaration) {
         SourceFile sourceFile = getSourceFileFromNode(fieldDeclaration);
         IDocument document = getSourceFileDocument(sourceFile);
         Delta delta = createDelta(sourceFile, document);
@@ -94,7 +87,7 @@ public class EncapsulateFieldSolver extends IssueSolver {
 
         FieldDeclaration fieldDeclarationCopy = (FieldDeclaration) ASTNode.copySubtree(fieldDeclaration.getAST(), fieldDeclaration);
 
-        int annotationsSize = ASTUtil.getAnnotationsSize( ((VariableDeclarationFragment) fieldDeclaration.fragments().get(0)).resolveBinding() );
+        int annotationsSize = ASTUtil.getAnnotationsSize(((VariableDeclarationFragment) fieldDeclaration.fragments().get(0)).resolveBinding());
 
         int modifiers = fieldDeclaration.getModifiers();
 
@@ -122,7 +115,7 @@ public class EncapsulateFieldSolver extends IssueSolver {
     }
 
     @SuppressWarnings("unchecked")
-    private void refactorQualifiedNames(QualifiedName qualifiedName){
+    private void refactorQualifiedNames(QualifiedName qualifiedName) {
         SourceFile sourceFile = getSourceFileFromNode(qualifiedName);
         IDocument document = getSourceFileDocument(sourceFile);
         Delta delta = createDelta(sourceFile, document);
@@ -132,15 +125,14 @@ public class EncapsulateFieldSolver extends IssueSolver {
         MethodInvocation methodInvocation = ast.newMethodInvocation();
         methodInvocation.setExpression(ast.newSimpleName(qualifiedName.getQualifier().toString()));
 
-        if(qualifiedName.getParent() instanceof Assignment && qualifiedName != ((Assignment)qualifiedName.getParent()).getRightHandSide()) {
+        if (qualifiedName.getParent() instanceof Assignment && qualifiedName != ((Assignment) qualifiedName.getParent()).getRightHandSide()) {
             Assignment assignment = (Assignment) qualifiedName.getParent();
             methodInvocation.setName(ast.newSimpleName(setter.getName().toString()));
-            methodInvocation.arguments().add( ASTNode.copySubtree(ast, assignment.getRightHandSide() ) );
+            methodInvocation.arguments().add(ASTNode.copySubtree(ast, assignment.getRightHandSide()));
             rewrite.replace(assignment, methodInvocation, null);
-        }
-        else {
+        } else {
             methodInvocation.setName(ast.newSimpleName(getter.getName().toString()));
-            rewrite.replace(qualifiedName, methodInvocation , null);
+            rewrite.replace(qualifiedName, methodInvocation, null);
         }
 
         TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
@@ -148,7 +140,7 @@ public class EncapsulateFieldSolver extends IssueSolver {
         try {
             textEdit.apply(document);
         } catch (MalformedTreeException | BadLocationException e) {
-           log.fatal(e);
+            log.fatal(e);
         }
         delta.setAfter(document.get());
     }
@@ -180,15 +172,16 @@ public class EncapsulateFieldSolver extends IssueSolver {
 
     @SuppressWarnings("unchecked")
     private MethodDeclaration createSetter(AST ast, FieldDeclaration field, Parameter setterNameParameter) {
-        MethodDeclaration method = ast.newMethodDeclaration();
         VariableDeclarationFragment fragment = (VariableDeclarationFragment) field.fragments().get(0);
         String fieldName = fragment.getName().toString();
         String setterName = (String) setterNameParameter.getValue();
+
         if (setterName.isEmpty()) {
             setterName = "set" + WordUtils.capitalize(fieldName);
             setterNameParameter.setValue(setterName);
         }
 
+        MethodDeclaration method = ast.newMethodDeclaration();
         method.setReturnType2(null);
         method.modifiers().addAll(ast.newModifiers(Modifier.PUBLIC));
 
@@ -197,34 +190,29 @@ public class EncapsulateFieldSolver extends IssueSolver {
         singleVariableDeclaration.setName(ast.newSimpleName(fieldName));
 
         method.parameters().add(singleVariableDeclaration);
-        Block setterBlock = ast.newBlock();
 
-        Assignment assignment = ast.newAssignment();
         FieldAccess fieldAccess = ast.newFieldAccess();
-
         fieldAccess.setName(ast.newSimpleName(fieldName));
         fieldAccess.setExpression(ast.newThisExpression());
+
+        Assignment assignment = ast.newAssignment();
         assignment.setLeftHandSide(fieldAccess);
         assignment.setRightHandSide(ast.newSimpleName(fieldName));
 
-        ExpressionStatement expressionStatement = ast.newExpressionStatement(assignment);
+        Block setterBlock = ast.newBlock();
+        setterBlock.statements().add(ast.newExpressionStatement(assignment));
 
-        setterBlock.statements().add(expressionStatement);
         method.setBody(setterBlock);
-
         method.setName(ast.newSimpleName(setterName));
-
         return method;
     }
-
 
 
     @Override
     protected Map<String, Parameter> defaultParameters() {
         Map<String, Parameter> parameters = new HashMap<>();
-        Parameter getterName = new Parameter(PARAMETER_GETTER_NAME, "");
-        Parameter setterName = new Parameter(PARAMETER_SETTER_NAME, "");
 
+        Parameter getterName = new Parameter(PARAMETER_GETTER_NAME, "");
         getterName.getConstraints().add(new Parameter.Constraint() {
             @Override
             public boolean isValid(Object value) {
@@ -232,6 +220,7 @@ public class EncapsulateFieldSolver extends IssueSolver {
             }
         });
 
+        Parameter setterName = new Parameter(PARAMETER_SETTER_NAME, "");
         setterName.getConstraints().add(new Parameter.Constraint() {
             @Override
             public boolean isValid(Object value) {
@@ -243,4 +232,5 @@ public class EncapsulateFieldSolver extends IssueSolver {
         parameters.put(setterName.getTitle(), setterName);
         return parameters;
     }
+
 }
