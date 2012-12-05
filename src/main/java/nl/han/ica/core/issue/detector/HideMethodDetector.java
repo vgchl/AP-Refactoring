@@ -33,9 +33,13 @@ public class HideMethodDetector extends IssueDetector {
     @Override
     public void detectIssues() {
         for (CompilationUnit compilationUnit : compilationUnits) {
+            //System.out.println("COMPILATIONUNIT: " + compilationUnit);
             MethodDeclarationVisitor methodDeclarationVisitor = new MethodDeclarationVisitor();
             compilationUnit.accept(methodDeclarationVisitor);
-            methodDeclarationList.addAll(methodDeclarationVisitor.getMethodDeclarations());
+
+            for (MethodDeclaration methodDeclaration : methodDeclarationVisitor.getMethodDeclarations()) {
+                methodUsages.put(methodDeclaration, new ArrayList<MethodInvocation>());
+            }
 
             MethodInvocationVisitor methodInvocationVisitor = new MethodInvocationVisitor();
             compilationUnit.accept(methodInvocationVisitor);
@@ -57,15 +61,14 @@ public class HideMethodDetector extends IssueDetector {
             int modifiers = methodDeclaration.getModifiers();
 
             for (MethodInvocation methodInvocation : entry.getValue()) {
-                if (methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding())
-                        && !Modifier.isPrivate(modifiers)
+                if (!Modifier.isPrivate(modifiers)
                         && ASTUtil.parent(TypeDeclaration.class, methodDeclaration) != ASTUtil.parent(TypeDeclaration.class, methodInvocation)) {
                     continue outerloop;
                 }
             }
 
             if ((!Modifier.isPrivate(modifiers) && !methodDeclaration.isConstructor() && !Modifier.isStatic(modifiers)
-                    && !hasOverrideAnnotation(methodDeclaration)
+                    && !hasAnnotation(methodDeclaration)
                     && !isMainMethod(methodDeclaration))
                     && !Modifier.isAbstract(ASTUtil.parent(TypeDeclaration.class, methodDeclaration).getModifiers())
                     && !ASTUtil.parent(TypeDeclaration.class, methodDeclaration).isInterface()) {
@@ -85,39 +88,19 @@ public class HideMethodDetector extends IssueDetector {
     }
 
     private void buildHashMapWithMethodDeclarationsAndInvocations() {
-        for (MethodDeclaration methodDeclaration : methodDeclarationList) {
-
-            if (!methodUsages.containsKey(methodDeclaration)) {
-                methodUsages.put(methodDeclaration, new ArrayList<MethodInvocation>());
-            }
-
-            for (MethodInvocation methodInvocation : methodInvocationList) {
+        for (MethodInvocation methodInvocation : methodInvocationList) {
+            for (MethodDeclaration methodDeclaration : methodUsages.keySet()) {
                 if (methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding())) {
                     methodUsages.get(methodDeclaration).add(methodInvocation);
+                    break;
                 }
             }
-
-            // Remove already sorted MethodInvocations from the list.
-            for (MethodInvocation methodInvocation : methodUsages.get(methodDeclaration)) {
-                methodInvocationList.remove(methodInvocation);
-            }
         }
+
     }
 
-    private boolean hasOverrideAnnotation(MethodDeclaration methodDeclaration) {
-        if (methodDeclaration.modifiers().get(0) instanceof MarkerAnnotation) {
-            return true;
-        }
-
-        /*if (methodDeclaration.resolveBinding() != null) {
-            IAnnotationBinding[] annotationBindingList = methodDeclaration.resolveBinding().getAnnotations();
-            for (IAnnotationBinding binding : annotationBindingList) {
-                if (binding.toString().contains("Override")) {
-                    return true;
-                }
-            }
-        }*/
-        return false;
+    private boolean hasAnnotation(MethodDeclaration methodDeclaration) {
+        return methodDeclaration.modifiers().get(0) instanceof Annotation;
     }
 
     private boolean isMainMethod(MethodDeclaration methodDeclaration) {

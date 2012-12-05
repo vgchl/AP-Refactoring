@@ -74,13 +74,14 @@ public class IssueSolveController extends BaseController {
         solution = issueSolvingService.getValue();
         for (Delta delta : solution.getDeltas()) {
             IssueSolveDeltaController deltaController = new IssueSolveDeltaController(delta, solution.getParameters());
+            deltasContainer.getChildren().add(deltaController.getView());
             deltaController.addParameterChangeListener(new ParameterChangeListener() {
                 @Override
                 public void changed(ParameterEvent event) {
                     issueSolvingService.restart();
                 }
             });
-            deltasContainer.getChildren().add(deltaController.getView());
+
         }
     }
 

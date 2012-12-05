@@ -26,7 +26,7 @@ public class MethodInvocationVisitor extends ASTVisitor {
      */
     @Override
     public boolean visit(MethodInvocation methodInvocation) {
-        if (methodInvocation.resolveMethodBinding() != null && methodInvocation.resolveMethodBinding().getDeclaringClass().isFromSource()) {
+        if (methodInvocation.resolveMethodBinding() != null) {
             methodInvocations.add(methodInvocation);
         }
         return super.visit(methodInvocation);
