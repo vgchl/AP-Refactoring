@@ -9,6 +9,8 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 /**
  * Wrapper around a WebView containing a JavaScript code editor plugin. Provides easy means of communication between the
  * Java and the JavaScript environments.
@@ -17,6 +19,7 @@ public class CodeEditor {
 
     private WebView webView;
     private List<String> scriptCache;
+    private Logger logger;
 
     /**
      * The code editor constructor.
@@ -24,6 +27,8 @@ public class CodeEditor {
      * @param webView The WebView where the editor is loaded in.
      */
     public CodeEditor(WebView webView) {
+        logger = Logger.getLogger(getClass());
+        logger.info("Created CodeEditor");
         scriptCache = new ArrayList<>();
         this.webView = webView;
         initializeWebView();
@@ -92,11 +97,13 @@ public class CodeEditor {
      * Initialize the webview that contains the browser environment for the CodeEditor.
      */
     protected void initializeWebView() {
+        logger.info("Initialising web view");
         webView.getEngine().load(getClass().getResource("/editor/editor.html").toExternalForm());
         webView.getEngine().getLoadWorker().stateProperty().addListener(
                 new ChangeListener<Worker.State>() {
+                    @Override
                     public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
-                        if (newState == Worker.State.SUCCEEDED && scriptCache.size() > 0) {
+                        if (newState == Worker.State.SUCCEEDED && !scriptCache.isEmpty()) {
                             for (String script : scriptCache) {
                                 execute(script);
                             }
@@ -112,10 +119,16 @@ public class CodeEditor {
      * @param script The script to run
      */
     protected void execute(final String script) {
+        logger.info("Executing javascript....");
+
         if (webView.getEngine().getLoadWorker().getState() == Worker.State.SUCCEEDED) {
+            logger.info("Executing...  " + script);
             webView.getEngine().executeScript(script);
+            logger.info("Executed script");
         } else {
+            logger.info("Adding script to cache");
             scriptCache.add(script);
+            logger.info("Added script to cache");
         }
     }
 

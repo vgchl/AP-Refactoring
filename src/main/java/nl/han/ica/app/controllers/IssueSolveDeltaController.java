@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.web.WebView;
 import nl.han.ica.app.models.CodeEditor;
@@ -20,6 +21,8 @@ import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.log4j.Logger;
+
 /**
  * Handles the presentation of a single delta from a solution to an issue.
  */
@@ -31,6 +34,7 @@ public class IssueSolveDeltaController extends BaseController {
     private CodeEditor editorAfter;
     private EventListenerList parameterChangeListeners;
     private ParameterControlFactory parameterControlFactory;
+    private Logger logger;
 
     @FXML
     protected WebView editorBeforeView;
@@ -38,6 +42,8 @@ public class IssueSolveDeltaController extends BaseController {
     protected WebView editorAfterView;
     @FXML
     protected GridPane parametersContainer;
+    @FXML
+    protected TitledPane screenTitle;
 
     /**
      * Instantiate a new IssueSolveDeltaController.
@@ -50,6 +56,8 @@ public class IssueSolveDeltaController extends BaseController {
         this.parameters = parameters;
         parameterChangeListeners = new EventListenerList();
         parameterControlFactory = new ParameterControlFactory();
+        logger = Logger.getLogger(getClass());
+
     }
 
     @Override
@@ -57,6 +65,7 @@ public class IssueSolveDeltaController extends BaseController {
         super.initialize(url, resourceBundle);
         initializeEditors();
         initializeParametersForm();
+        screenTitle.setText(delta.getFile().getName());
     }
 
     private void initializeParametersForm() {

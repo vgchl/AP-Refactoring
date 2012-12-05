@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class RefactorTool extends Application {
 
-    private static final String APP_TITLE = "ART (Awesome Refactor Tool) - v0.Venusaur";
+    private static final String APP_TITLE = "ART (Awesome Refactor Tool) - v0.Charmeleon";
 
     /**
      * The application entry point.
@@ -26,7 +26,7 @@ public class RefactorTool extends Application {
      * Starts the application.
      *
      * @param stage The stage to load the application in (JavaFX 2).
-     * @throws IOException When the view could not be loaded.
+     * @throws IOException          When the view could not be loaded.
      * @throws InterruptedException When the application gets interrupted with faulty concurrency.
      */
     @Override

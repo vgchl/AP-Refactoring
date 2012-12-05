@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
+
 /**
  * Handles the list of detected issues in the main screen. Instructs the issue detail view to show the selected issue.
  */
@@ -104,10 +106,15 @@ public class IssueIndexController extends BaseController {
     private static class IssueCell extends ListCell<Issue> {
 
         @Override
-        protected void updateItem(Issue issue, boolean empty) {
+        protected void updateItem(final Issue issue, boolean empty) {
             super.updateItem(issue, empty);
             if (null != issue) {
-                setText(issue.getDetector().getTitle());
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        setText(issue.getDetector().getTitle());
+                    }
+                });
             }
         }
 

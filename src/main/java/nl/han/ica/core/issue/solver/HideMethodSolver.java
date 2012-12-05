@@ -20,6 +20,9 @@ import org.eclipse.text.edits.TextEdit;
 import java.io.IOException;
 import java.util.Map;
 
+import nl.han.ica.core.util.ASTUtil;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
+
 /**
  * Solver for Hide Method.
  */
@@ -27,7 +30,7 @@ public class HideMethodSolver extends IssueSolver {
 
     private Map<String, Parameter> defaultParameters;
 
-    public HideMethodSolver(){
+    public HideMethodSolver() {
         super();
     }
 
@@ -36,6 +39,7 @@ public class HideMethodSolver extends IssueSolver {
         return issue.getDetector() instanceof HideMethodDetector;
     }
 
+    //TODO clean
     @Override
     protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters) {
         ASTNode node = issue.getNodes().get(0);
@@ -55,13 +59,14 @@ public class HideMethodSolver extends IssueSolver {
         ASTRewrite rewrite = ASTRewrite.create(node.getAST());
         MethodDeclaration newMethodDeclaration = (MethodDeclaration) ASTNode.copySubtree(node.getAST(), node);
 
-        if(node instanceof MethodDeclaration){
+        if (node instanceof MethodDeclaration) {
             int modifiers = newMethodDeclaration.getModifiers();
+            int modifierLocation = getAnnotationsSize((MethodDeclaration) node);
+            if (Modifier.isPublic(modifiers) || Modifier.isProtected(modifiers)) {
+                newMethodDeclaration.modifiers().remove(modifierLocation);
 
-            if(Modifier.isPublic(modifiers) || Modifier.isProtected(modifiers)){
-                newMethodDeclaration.modifiers().remove(0);
             }
-            newMethodDeclaration.modifiers().addAll(0, newMethodDeclaration.getAST().newModifiers(Modifier.PRIVATE));
+            newMethodDeclaration.modifiers().addAll(modifierLocation, newMethodDeclaration.getAST().newModifiers(Modifier.PRIVATE));
         }
 
         rewrite.replace(node, newMethodDeclaration, null);
@@ -73,8 +78,15 @@ public class HideMethodSolver extends IssueSolver {
             // Log
         }
 
-        delta.setAfter("AFTER" + document.get());
+        delta.setAfter(document.get());
 
         return solution;
+    }
+
+    private int getAnnotationsSize(MethodDeclaration declaration) {
+        if (declaration.resolveBinding().getAnnotations() != null) {
+            return declaration.resolveBinding().getAnnotations().length;
+        }
+        return 0;
     }
 }

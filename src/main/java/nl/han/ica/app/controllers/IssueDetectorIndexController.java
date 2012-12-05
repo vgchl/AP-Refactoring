@@ -17,10 +17,13 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import nl.han.ica.core.Job;
 import nl.han.ica.core.SourceFile;
+import nl.han.ica.core.issue.IssueDetectionService;
 import nl.han.ica.core.issue.IssueDetector;
-import nl.han.ica.core.issue.IssueSolver;
+import nl.han.ica.core.issue.IssueSolvingService;
+import nl.han.ica.core.issue.detector.EncapsulateFieldDetector;
 import nl.han.ica.core.issue.detector.HideMethodDetector;
 import nl.han.ica.core.issue.detector.MagicNumberDetector;
+import nl.han.ica.core.issue.solver.EncapsulateFieldSolver;
 import nl.han.ica.core.issue.detector.PullUpFieldDetector;
 import nl.han.ica.core.issue.solver.HideMethodSolver;
 import nl.han.ica.core.issue.solver.MagicNumberSolver;
@@ -66,15 +69,17 @@ public class IssueDetectorIndexController extends BaseController {
     }
 
     private void initializeIssueDetectors() {
-        Set<IssueDetector> issueDetectors = job.getIssueDetectionService().getDetectors();
-        issueDetectors.add(new MagicNumberDetector());
-        //issueDetectors.add(new HideMethodDetector());
-        issueDetectors.add(new PullUpFieldDetector());
+        IssueDetectionService detectionService = job.getIssueDetectionService();
+        detectionService.addDetector(new MagicNumberDetector());
+        detectionService.addDetector(new HideMethodDetector());
+        detectionService.addDetector(new EncapsulateFieldDetector());
+        detectionService.addDetector(new PullUpFieldDetector());
 
-        Set<IssueSolver> solvers = job.getIssueSolvingService().getIssueSolverLocator().getSolvers();
-        solvers.add(new MagicNumberSolver());
-        //solvers.add(new HideMethodSolver());
-        solvers.add(new PullUpFieldSolver());
+        IssueSolvingService solvingService = job.getIssueSolvingService();
+        solvingService.addSolver(new MagicNumberSolver());
+        solvingService.addSolver(new HideMethodSolver());
+        solvingService.addSolver(new EncapsulateFieldSolver());
+        solvingService.addSolver(new PullUpFieldSolver());
     }
 
     @Override
@@ -99,7 +104,7 @@ public class IssueDetectorIndexController extends BaseController {
      * @param event The event that is passed by the view.
      */
     @FXML
-    public void selectSourceFiles(ActionEvent event) {
+    private void selectSourceFiles(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(FILES_SELECTION_TITLE);
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Java Files", "*.java"));
@@ -122,7 +127,7 @@ public class IssueDetectorIndexController extends BaseController {
      * @param event The event that is passed by the view.
      */
     @FXML
-    public void selectSourceDirectory(ActionEvent event) {
+    private void selectSourceDirectory(ActionEvent event) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle(FILES_SELECTION_TITLE);
 
@@ -223,9 +228,9 @@ public class IssueDetectorIndexController extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldSelected, Boolean newSelected) {
                     if (newSelected) {
-                        job.getIssueDetectionService().getDetectors().add(issueDetector);
+                        job.getIssueDetectionService().addDetector(issueDetector);
                     } else {
-                        job.getIssueDetectionService().getDetectors().remove(issueDetector);
+                        job.getIssueDetectionService().removeDetector(issueDetector);
                     }
                     updateCanAnalyze();
                 }

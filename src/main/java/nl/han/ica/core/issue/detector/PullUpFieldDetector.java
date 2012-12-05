@@ -1,95 +1,186 @@
 package nl.han.ica.core.issue.detector;
 
-import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
+import nl.han.ica.core.ast.visitors.TypeDeclarationVisitor;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
-import nl.han.ica.core.issue.detector.visitor.ClassWithTwoSubclassesVisitor;
-import org.apache.log4j.Logger;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.*;
 
 import java.util.*;
 
-/**
- *
- */
+// TODO: Check whether field can be moved up (parent class shouldn't have a field with the same type and name).
 public class PullUpFieldDetector extends IssueDetector {
 
-    private static final String STRATEGY_NAME = "Pull up duplicate fields.";
-    private static final String STRATEGY_DESCRIPTION = "Avoid duplicating fields when it can be placed in the superclass.";
+    private static final String STRATEGY_NAME = "Pull up Duplicate Fields";
+    private static final String STRATEGY_DESCRIPTION = "Avoid duplicating fields when they can be placed in a shared parent class.";
 
-    private Logger logger = Logger.getLogger(getClass().getName());
-
-    private ClassWithTwoSubclassesVisitor visitor;
+    private Map<ITypeBinding, TypeDeclaration> typeDeclarations;
+    private Map<ITypeBinding, Node> typeNodes;
+    private Set<Node> rootTypeNodes;
+    private boolean bothFieldDeclarationsAreFinal = false;
 
     public PullUpFieldDetector() {
-        visitor = new ClassWithTwoSubclassesVisitor();
-        logger.debug("Test");
-    }
-
-    /**
-     * Check the given list of classes if they contain duplicate fields.
-     *
-     * @param listOfSubclasses
-     * @return
-     */
-    private boolean hasDuplicateFields(List<ASTNode> listOfSubclasses) {
-
-        FieldDeclarationVisitor visitor = new FieldDeclarationVisitor();
-        List<ASTNode> classesWithDuplicateFields = new ArrayList<ASTNode>();
-
-        List<FieldDeclaration> allFieldDeclarations = new ArrayList<FieldDeclaration>();
-
-        for (ASTNode node : listOfSubclasses) {
-
-            node.accept(visitor);
-            allFieldDeclarations.addAll(visitor.getFieldDeclarations());
-        }
-        Set<Type> fieldDeclarationSet = new HashSet<>();
-
-        for (FieldDeclaration fieldDeclaration : allFieldDeclarations) {
-            fieldDeclarationSet.add(fieldDeclaration.getType());
-        }
-
-        logger.debug(fieldDeclarationSet.size());
-        logger.debug(allFieldDeclarations.size());
-        return fieldDeclarationSet.size() < allFieldDeclarations.size();
+        typeDeclarations = new HashMap<>();
+        typeNodes = new HashMap<>();
+        rootTypeNodes = new HashSet<>();
     }
 
     @Override
-    public Set<Issue> detectIssues() {
+    public void detectIssues() {
+        reset();
+        collectTypeDeclarations();
+        buildTypeHierarchy();
 
-        visitor.clear();
-        for (CompilationUnit unit : compilationUnits) {
-            unit.accept(visitor);
-            logger.debug("comptest");
-        }
-
-        //visitor.filterTwoOrMoreSubclasses();
-
-        Map<String, List<ASTNode>> subclassesPerSuperclass = visitor.getSubclassesPerSuperClass();
-
-        logger.debug("Test map for content!! "+subclassesPerSuperclass.toString());
-
-        for (String type : subclassesPerSuperclass.keySet()) {
-            List<ASTNode> listOfSubclasses = subclassesPerSuperclass.get(type);
-            logger.debug("blup");
-            if (hasDuplicateFields(listOfSubclasses)) {
-                logger.debug("blaat");
-                Issue issue = new Issue(this);
-                //listOfSubclasses.add(0);
-                // TODO: remove the classes from the list that do not have duplicate fields
-                issue.setNodes(listOfSubclasses);
-
-                issues.add(issue);
+        for (Node node : rootTypeNodes) {
+            Queue<ITypeBinding> remainingTypes = new LinkedList<>();
+            remainingTypes.addAll(node.getAllChildTypes());
+            while (!remainingTypes.isEmpty()) {
+                ITypeBinding typeA = remainingTypes.poll();
+                for (ITypeBinding typeB : remainingTypes) {
+                    if (areSiblings(typeA, typeB)) {
+                        detectDuplicateFields(typeA, typeB);
+                    }
+                }
             }
         }
+    }
 
-        logger.debug(issues.toString());
+    private void collectTypeDeclarations() {
+        TypeDeclarationVisitor visitor = new TypeDeclarationVisitor();
+        for (CompilationUnit compilationUnit : compilationUnits) {
+            compilationUnit.accept(visitor);
+        }
+        for (TypeDeclaration typeDeclaration : visitor.getTypeDeclarations()) {
+            typeDeclarations.put(typeDeclaration.resolveBinding(), typeDeclaration);
+        }
+    }
 
-        return issues;
+    private void buildTypeHierarchy() {
+        for (TypeDeclaration typeDeclaration : typeDeclarations.values()) {
+            ITypeBinding typeBinding = typeDeclaration.resolveBinding();
+            Type superclassType = typeDeclaration.getSuperclassType();
+            ITypeBinding supertypeBinding = null;
+            if (null != superclassType) {
+                supertypeBinding = superclassType.resolveBinding();
+            }
+            Node node = findOrCreateNode(typeBinding);
+            if (null != superclassType && null != supertypeBinding) {
+                Node superNode = findOrCreateNode(supertypeBinding);
+                superNode.addChild(node);
+            } else {
+                rootTypeNodes.add(node);
+            }
+        }
+    }
+
+    private void detectDuplicateFields(ITypeBinding typeA, ITypeBinding typeB) {
+        for (FieldDeclaration fieldA : typeDeclarations.get(typeA).getFields()) {
+            for (FieldDeclaration fieldB : typeDeclarations.get(typeB).getFields()) {
+                if (fieldA.getType().resolveBinding() == fieldB.getType().resolveBinding()) {
+                    detectDuplicateVariables(typeA, typeB, fieldA, fieldB);
+                }
+            }
+        }
+    }
+
+    private void detectDuplicateVariables(ITypeBinding typeA, ITypeBinding typeB, FieldDeclaration fieldA, FieldDeclaration fieldB) {
+        if (bothOrNoneAreStatic(fieldA, fieldB)) {
+            if (bothOrNoneAreFinal(fieldA, fieldB)) {
+                for (Object fragmentA : fieldA.fragments()) {
+                    VariableDeclarationFragment variableA = (VariableDeclarationFragment) fragmentA;
+                    for (Object fragmentB : fieldB.fragments()) {
+                        VariableDeclarationFragment variableB = (VariableDeclarationFragment) fragmentB;
+                        if (variableA.getName().getIdentifier().equals(variableB.getName().getIdentifier())) {
+                            if (bothFieldDeclarationsAreFinal) {
+                                if (!bothValuesAreEqual(variableA, variableB)) {
+                                    break;
+                                }
+                            }
+                            ITypeBinding parent = findNearestParent(typeA, typeB);
+                            if (null != parent) {
+                                createIssue(variableA, variableB, typeDeclarations.get(parent));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean bothValuesAreEqual(VariableDeclarationFragment variableA, VariableDeclarationFragment variableB) {
+        if (variableA.getInitializer().toString().equals(variableB.getInitializer().toString())) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean bothOrNoneAreStatic(FieldDeclaration fieldA, FieldDeclaration fieldB) {
+        int fieldAModifier = fieldA.getModifiers();
+        int fieldBModifier = fieldB.getModifiers();
+        if (Modifier.isStatic(fieldAModifier) && Modifier.isStatic(fieldBModifier)) {
+            return true;
+        } else if (Modifier.isStatic(fieldAModifier) || Modifier.isStatic(fieldBModifier)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean bothOrNoneAreFinal(FieldDeclaration fieldA, FieldDeclaration fieldB) {
+        int fieldAModifier = fieldA.getModifiers();
+        int fieldBModifier = fieldB.getModifiers();
+        if (Modifier.isFinal(fieldAModifier) && Modifier.isFinal(fieldBModifier)) {
+            bothFieldDeclarationsAreFinal = true;
+            return true;
+        } else if (Modifier.isFinal(fieldAModifier) || Modifier.isFinal(fieldBModifier)) {
+            bothFieldDeclarationsAreFinal = false;
+            return false;
+        } else {
+            bothFieldDeclarationsAreFinal = false;
+            return true;
+        }
+    }
+
+    private boolean areSiblings(ITypeBinding typeA, ITypeBinding typeB) {
+        Set<ITypeBinding> childTypesA = typeNodes.get(typeA).getAllChildTypes();
+        Set<ITypeBinding> childTypesB = typeNodes.get(typeB).getAllChildTypes();
+        return !(childTypesA.contains(typeB) || childTypesB.contains(typeA));
+    }
+
+    private ITypeBinding findNearestParent(ITypeBinding typeA, ITypeBinding typeB) {
+        Set<ITypeBinding> parentsA = typeNodes.get(typeA).getAllParentTypes();
+        Node parent = typeNodes.get(typeB).getParent();
+        while (null != parent) {
+            if (parentsA.contains(parent.getTypeBinding())) {
+                break;
+            }
+            parent = parent.getParent();
+        }
+        return (null != parent) ? parent.getTypeBinding() : null;
+    }
+
+    private void createIssue(VariableDeclarationFragment variableA, VariableDeclarationFragment variableB, TypeDeclaration parentTypeDeclaration) {
+        Issue issue = createIssue();
+        issue.getNodes().add(variableA);
+        issue.getNodes().add(variableB);
+        issue.getNodes().add(parentTypeDeclaration);
+        issues.add(issue);
+    }
+
+    private Node findOrCreateNode(ITypeBinding typeBinding) {
+        Node superNode;
+        if (!typeNodes.containsKey(typeBinding)) {
+            superNode = new Node(typeBinding);
+            typeNodes.put(typeBinding, superNode);
+        } else {
+            superNode = typeNodes.get(typeBinding);
+        }
+        return superNode;
+    }
+
+    @Override
+    public void reset() {
+        typeDeclarations.clear();
+        super.reset();
     }
 
     @Override
@@ -101,4 +192,64 @@ public class PullUpFieldDetector extends IssueDetector {
     public String getDescription() {
         return STRATEGY_DESCRIPTION;
     }
+
+    private class Node {
+
+        private ITypeBinding typeBinding;
+        private Node parent;
+        private Set<Node> childNodes;
+
+        public Node(ITypeBinding typeBinding) {
+            childNodes = new HashSet<>();
+            this.typeBinding = typeBinding;
+        }
+
+        public void addChild(Node node) {
+            node.setParent(this);
+            childNodes.add(node);
+        }
+
+        public void setParent(Node parent) {
+            this.parent = parent;
+        }
+
+        public Node getParent() {
+            return parent;
+        }
+
+        public ITypeBinding getTypeBinding() {
+            return typeBinding;
+        }
+
+        public Set<Node> getChildNodes() {
+            return Collections.unmodifiableSet(childNodes);
+        }
+
+        public Set<ITypeBinding> getAllChildTypes() {
+            Set<Node> nodes = new HashSet<>(childNodes);
+            Queue<Node> remainingNodes = new LinkedList<>(childNodes);
+            while (!remainingNodes.isEmpty()) {
+                Node childNode = remainingNodes.poll();
+                nodes.add(childNode);
+                remainingNodes.addAll(childNode.getChildNodes());
+            }
+            Set<ITypeBinding> typeBindings = new HashSet<>();
+            for (Node node : nodes) {
+                typeBindings.add(node.getTypeBinding());
+            }
+            return typeBindings;
+        }
+
+        public Set<ITypeBinding> getAllParentTypes() {
+            Set<ITypeBinding> types = new HashSet<>();
+            Node parent = getParent();
+            while (null != parent) {
+                types.add(parent.getTypeBinding());
+                parent = parent.getParent();
+            }
+            return types;
+        }
+
+    }
+
 }
