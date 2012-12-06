@@ -8,12 +8,10 @@ import nl.han.ica.core.issue.IssueSolver;
 import nl.han.ica.core.issue.detector.RemoveParameterDetector;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
-import org.w3c.dom.NodeList;
 
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -27,6 +25,10 @@ public class RemoveParameterSolver extends IssueSolver {
     private final static int SINGLEVARAIABLEDECLARATION = 1;
     private final static int STARTMETHODINVOCATIONS = 2;
 
+    private MethodDeclaration methodDeclaration;
+    private SingleVariableDeclaration singleVariableDeclaration;
+    private List<ASTNode> methodInvocations;
+
     @Override
     public boolean canSolve(Issue issue) {
         return issue.getDetector() instanceof RemoveParameterDetector;
@@ -36,27 +38,46 @@ public class RemoveParameterSolver extends IssueSolver {
     protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters) {
         System.out.println("All Nodes: " + issue.getNodes().toString());
         System.out.println(issue.getNodes().size());
-        MethodDeclaration methodDeclaration = (MethodDeclaration) issue.getNodes().get(METHODDECLARATION);
-        SingleVariableDeclaration variable = (SingleVariableDeclaration) issue.getNodes().get(SINGLEVARAIABLEDECLARATION);
-        List<ASTNode> methodInvocations = new ArrayList<>();
+
+        methodDeclaration = (MethodDeclaration) issue.getNodes().get(METHODDECLARATION);
+        singleVariableDeclaration = (SingleVariableDeclaration) issue.getNodes().get(SINGLEVARAIABLEDECLARATION);
+
+        /* Remove parameter from the method declaration */
+        Delta methodDeclarationDelta = removeFromDeclaration();
+
+        /* Remove the parameters from invocations */
+        removeFromInvocations(issue);
+
+        Solution solution = new Solution(issue, this, parameters);
+        solution.getDeltas().add(methodDeclarationDelta);
+
+        return solution;
+    }
+
+    private Delta removeFromDeclaration() {
+        ASTRewrite rewrite = ASTRewrite.create(methodDeclaration.getAST());
+        rewrite.remove(singleVariableDeclaration, null);
+        return createDelta(methodDeclaration, rewrite);
+    }
+
+    private List<Delta> removeFromInvocations(Issue issue) {
+        List<Delta> deltas = new ArrayList<Delta>();
+
         if (issue.getNodes().size() > 2) {
             methodInvocations = issue.getNodes().subList(STARTMETHODINVOCATIONS, issue.getNodes().size());
-            System.out.println(methodInvocations.toString());
+
+            ASTRewrite rewrite;
+
+            for (ASTNode method : methodInvocations) {
+                MethodInvocation methodInvocation = (MethodInvocation) method;
+                Expression argument = (Expression) methodInvocation.arguments().get(methodDeclaration.parameters().indexOf(singleVariableDeclaration));
+                rewrite = ASTRewrite.create(method.getAST());
+                rewrite.remove(argument, null);
+
+                deltas.add(createDelta(methodInvocation, rewrite));
+            }
         }
-        ASTRewrite rewrite = ASTRewrite.create(methodDeclaration.getAST());
-        rewrite.remove(variable, null);
-        Delta delta = createDelta(methodDeclaration, rewrite);
-        Delta delta2 = null;
-        for (ASTNode method : methodInvocations) {
-            MethodInvocation meth = (MethodInvocation) method;
-            Expression argument = (Expression) meth.arguments().get(methodDeclaration.parameters().indexOf(variable));
-            rewrite = ASTRewrite.create(method.getAST());
-            rewrite.remove(argument, null);
-            delta2 = createDelta(meth, rewrite);
-        }
-        Solution solution = new Solution(issue, this, parameters);
-        solution.getDeltas().add(delta);
-        solution.getDeltas().add(delta2);
-        return solution;
+
+        return deltas;
     }
 }
