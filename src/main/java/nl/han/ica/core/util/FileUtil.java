@@ -1,21 +1,20 @@
 package nl.han.ica.core.util;
 
+import nl.han.ica.core.SourceFile;
+
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * Contains helpers for common operations involving files and directories.
  */
-public class FileUtil {
+public final class FileUtil {
 
     /**
      * Private constructor to prevent class initialization.
      */
     private FileUtil() {
-
+        // Private constructor to prevent class initialization.
     }
 
     /**
@@ -66,23 +65,23 @@ public class FileUtil {
      */
     public static String getFileContent(File file) throws IOException {
         String lineSeparator = System.getProperty("line.separator");
-        InputStreamReader fileReader = new InputStreamReader(new FileInputStream(file.getAbsoluteFile()), "UTF8");
-        BufferedReader reader = new BufferedReader(fileReader);
-        String nextLine;
-        StringBuffer buffer = new StringBuffer();
-        while ((nextLine = reader.readLine()) != null) {
-            buffer.append(nextLine);
-            buffer.append(lineSeparator);
+        StringBuffer buffer;
+        try (InputStreamReader fileReader = new InputStreamReader(new FileInputStream(file.getAbsoluteFile()), "UTF8");
+             BufferedReader reader = new BufferedReader(fileReader)) {
+            String nextLine;
+            buffer = new StringBuffer();
+            while ((nextLine = reader.readLine()) != null) {
+                buffer.append(nextLine);
+                buffer.append(lineSeparator);
+            }
         }
-        reader.close();
-        fileReader.close();
         return buffer.toString();
     }
 
     /**
      * Sets the contents of a file from a String.
      *
-     * @param file The file to write to.
+     * @param file    The file to write to.
      * @param content The contents to set.
      * @throws IOException When the file could not be found or written to.
      */
@@ -90,5 +89,26 @@ public class FileUtil {
         FileOutputStream fileOutputStream = new FileOutputStream(file);
         fileOutputStream.write(content.getBytes());
         fileOutputStream.close();
+    }
+
+
+    public static String[] filePaths(Set<SourceFile> files) {
+        String[] filePaths = new String[files.size()];
+        int i = 0;
+        for (SourceFile file : files) {
+            filePaths[i] = file.getFile().getPath();
+            i++;
+        }
+        return filePaths;
+    }
+
+    public static String[] directoryPaths(Set<SourceFile> files) {
+        String[] filePaths = new String[files.size()];
+        int i = 0;
+        for (SourceFile file : files) {
+            filePaths[i] = file.getFile().getParentFile().getPath();
+            i++;
+        }
+        return filePaths;
     }
 }

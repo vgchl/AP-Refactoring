@@ -20,6 +20,7 @@ public class ParameterEvent extends Event {
 
     /**
      * Instantiate a new parameter event for a parameter.
+     *
      * @param parameter The parameter involved in the event.
      */
     public ParameterEvent(Parameter parameter) {
@@ -29,6 +30,7 @@ public class ParameterEvent extends Event {
 
     /**
      * Returns parameter involved in the event.
+     *
      * @return parameter involved in the event
      */
     public Parameter getParameter() {
@@ -37,6 +39,7 @@ public class ParameterEvent extends Event {
 
     /**
      * Set the parameter involved in the event.
+     *
      * @param parameter The parameter involved in the event.
      */
     public void setParameter(Parameter parameter) {

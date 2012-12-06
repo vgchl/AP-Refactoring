@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents an external variable used by StrategySolvers to customize the Solution.
+ * Represents an external variable used by {@link nl.han.ica.core.issue.IssueSolver}s to customize the {@link Solution}.
  */
 public class Parameter {
 
@@ -14,6 +14,7 @@ public class Parameter {
 
     /**
      * Instantiates a new Parameter with a title and a value.
+     *
      * @param title The parameter's title.
      * @param value The parameter's value.
      */
@@ -25,6 +26,7 @@ public class Parameter {
 
     /**
      * Returns the parameter's title.
+     *
      * @return The parameter's title.
      */
     public String getTitle() {
@@ -33,6 +35,7 @@ public class Parameter {
 
     /**
      * Sets the parameter's title.
+     *
      * @param title The parameter's title.
      */
     public void setTitle(final String title) {
@@ -41,6 +44,7 @@ public class Parameter {
 
     /**
      * Gets the parameter's value.
+     *
      * @return The parameter's value.
      */
     public Object getValue() {
@@ -49,6 +53,7 @@ public class Parameter {
 
     /**
      * Sets the parameter's value.
+     *
      * @param value The parameter's value.
      */
     public void setValue(final Object value) {
@@ -60,6 +65,7 @@ public class Parameter {
 
     /**
      * Return the parameter's constraints.
+     *
      * @return The parameter's constraints.
      */
     public List<Constraint> getConstraints() {
@@ -68,6 +74,7 @@ public class Parameter {
 
     /**
      * Sets the parameter's constraints.
+     *
      * @param constraints The parameter's constraints.
      */
     public void setConstraints(List<Constraint> constraints) {
@@ -76,11 +83,12 @@ public class Parameter {
 
     @Override
     public String toString() {
-        return "Parameter<" + value.getClass() +":" + value + ">";
+        return "Parameter<" + value.getClass() + ":" + value + ">";
     }
 
     /**
      * Tests whether a value complies with all constraints.
+     *
      * @param value The value to test.
      * @return Whether the value is valid.
      */
@@ -100,6 +108,7 @@ public class Parameter {
 
         /**
          * Test whether the value complies with the constraint.
+         *
          * @param value The value to test.
          * @return Whether the value is valid.
          */

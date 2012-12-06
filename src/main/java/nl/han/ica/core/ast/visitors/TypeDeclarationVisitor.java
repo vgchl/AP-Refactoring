@@ -1,26 +1,27 @@
 package nl.han.ica.core.ast.visitors;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Sjoerd van den Top
- * Date: 7-11-12
- * Time: 11:56
- * To change this template use File | Settings | File Templates.
- */
+import java.util.*;
+
 public class TypeDeclarationVisitor extends ASTVisitor {
 
+    private Set<TypeDeclaration> typeDeclarations;
+
+    public TypeDeclarationVisitor() {
+        typeDeclarations = new HashSet<>();
+    }
+
     @Override
-    public boolean visit(TypeDeclaration node){
-        FieldDeclaration[] fields = node.getFields();
-        for(FieldDeclaration field : fields){
-            System.out.println(field.getType().toString());
-        }
-        TypeDeclaration[] types = node.getTypes();
-        for(TypeDeclaration type : types){
-            System.out.println(type.toString());
-        }
+    public boolean visit(TypeDeclaration node) {
+        typeDeclarations.add(node);
         return super.visit(node);
     }
+
+    public Set<TypeDeclaration> getTypeDeclarations() {
+        return Collections.unmodifiableSet(typeDeclarations);
+    }
+
 }
+
