@@ -63,7 +63,7 @@ public class RemoveParameterSolver extends IssueSolver {
     private List<Delta> removeFromInvocations(Issue issue) {
         List<Delta> deltas = new ArrayList<Delta>();
 
-        if (issue.getNodes().size() > 2) {
+        if (issue.getNodes().size() > STARTMETHODINVOCATIONS) {
             methodInvocations = issue.getNodes().subList(STARTMETHODINVOCATIONS, issue.getNodes().size());
 
             ASTRewrite rewrite;
