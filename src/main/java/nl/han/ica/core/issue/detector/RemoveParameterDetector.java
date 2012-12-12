@@ -5,6 +5,7 @@ import nl.han.ica.core.ast.visitors.MethodInvocationVisitor;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
 
+import nl.han.ica.core.util.ASTUtil;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.*;
 
@@ -13,100 +14,98 @@ import java.util.List;
 
 public class RemoveParameterDetector extends IssueDetector {
 
-	private Logger log = Logger.getLogger(getClass().getName());
+    private Logger log = Logger.getLogger(getClass().getName());
 
-	private static final String STRATEGY_NAME = "Remove parameter";
-	private static final String STRATEGY_DESCRIPTION = "Remove unused parameter from method.";
+    private static final String STRATEGY_NAME = "Remove parameter";
+    private static final String STRATEGY_DESCRIPTION = "Remove unused parameter from method.";
 
-	List<MethodDeclaration> methodDeclarations;
-	List<MethodInvocation> methodInvocations;
-	List<FieldAccess> fieldAccessList;
+    List<MethodDeclaration> methodDeclarations;
+    List<MethodInvocation> methodInvocations;
+    List<FieldAccess> fieldAccessList;
 
-	public RemoveParameterDetector() {
-		methodDeclarations = new ArrayList<MethodDeclaration>();
-		methodInvocations = new ArrayList<MethodInvocation>();
-		fieldAccessList = new ArrayList<FieldAccess>();
-	}
+    public RemoveParameterDetector() {
+        methodDeclarations = new ArrayList<MethodDeclaration>();
+        methodInvocations = new ArrayList<MethodInvocation>();
+        fieldAccessList = new ArrayList<FieldAccess>();
+    }
 
-	@Override
-	public void detectIssues() {
-		reset();
-		collectMethodDeclarations();
-		collectMethodInvocations();
+    @Override
+    public void detectIssues() {
+        reset();
+        collectMethodDeclarations();
+        collectMethodInvocations();
 
-		for (MethodDeclaration methodDeclaration : methodDeclarations) {
-			List<SingleVariableDeclaration> declaredVariables = methodDeclaration
-					.parameters();
+        for (MethodDeclaration methodDeclaration : methodDeclarations) {
+            if (!Modifier.isAbstract(methodDeclaration.getModifiers())
+                    && !hasAnnotation(methodDeclaration)
+                    && !ASTUtil.parent(TypeDeclaration.class, methodDeclaration).isInterface()) {
+                List<SingleVariableDeclaration> declaredVariables = methodDeclaration.parameters();
 
-			if (declaredVariables != null) {
-				log.debug("Variables: "
-						+ methodDeclaration.parameters().toString());
+                if (declaredVariables != null) {
+                    log.debug("Variables: "
+                            + methodDeclaration.parameters().toString());
 
-				for (SingleVariableDeclaration variable : declaredVariables) {
+                    for (SingleVariableDeclaration variable : declaredVariables) {
 
-					if (!usesVariable(methodDeclaration, variable)) {
+                        if (!usesVariable(methodDeclaration, variable)) {
 
-						// TODO: check overrides
-						
-						// check super method
-						// check methods that override this one
-						// if the variable is unused in all of those, create issue
-						// in solver: change super/sub methods and all invocations for those
-						
-						// TODO: only create issue if method does not override something and is not overridden anyhwere
-						
-						Issue issue = createIssue();
-						issue.getNodes().add(methodDeclaration);
-						issue.getNodes().add(variable);
+                            Issue issue = createIssue();
+                            issue.getNodes().add(methodDeclaration);
+                            issue.getNodes().add(variable);
 
-						for (MethodInvocation methodInvocation : methodInvocations) {
-							if (methodDeclaration.resolveBinding().isEqualTo(
-									methodInvocation.resolveMethodBinding())) {
-								issue.getNodes().add(methodInvocation);
-							}
-						}
+                            for (MethodInvocation methodInvocation : methodInvocations) {
+                                if (methodDeclaration.resolveBinding().isEqualTo(
+                                        methodInvocation.resolveMethodBinding())) {
+                                    issue.getNodes().add(methodInvocation);
+                                }
+                            }
 
-					}
-				}
-			}
-		}
-	}
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	private boolean usesVariable(MethodDeclaration methodDeclaration,
-			SingleVariableDeclaration variableDeclaration) {
-		String methodBlock = methodDeclaration.getBody().toString();
+    private boolean usesVariable(MethodDeclaration methodDeclaration,
+                                 SingleVariableDeclaration variableDeclaration) {
+        String methodBlock = methodDeclaration.getBody().toString();
 
-		return methodBlock.contains(variableDeclaration.getName().toString());
-	}
+        return methodBlock.contains(variableDeclaration.getName().toString());
+    }
 
-	private void collectMethodDeclarations() {
-		MethodDeclarationVisitor visitor = new MethodDeclarationVisitor();
-		for (CompilationUnit compilationUnit : compilationUnits) {
-			compilationUnit.accept(visitor);
-		}
-		methodDeclarations = visitor.getMethodDeclarations();
-	}
+    private boolean hasAnnotation(MethodDeclaration methodDeclaration) {
+        return methodDeclaration.modifiers().get(0) instanceof Annotation;
+    }
 
-	private void collectMethodInvocations() {
-		MethodInvocationVisitor visitor = new MethodInvocationVisitor();
-		for (CompilationUnit compilationUnit : compilationUnits) {
-			compilationUnit.accept(visitor);
-		}
-		methodInvocations = visitor.getMethodInvocations();
-	}
+    private void collectMethodDeclarations() {
+        MethodDeclarationVisitor visitor = new MethodDeclarationVisitor();
+        for (CompilationUnit compilationUnit : compilationUnits) {
+            compilationUnit.accept(visitor);
+        }
+        methodDeclarations = visitor.getMethodDeclarations();
+    }
 
-	public void reset() {
-		methodDeclarations.clear();
-		super.reset();
-	}
+    private void collectMethodInvocations() {
+        MethodInvocationVisitor visitor = new MethodInvocationVisitor();
+        for (CompilationUnit compilationUnit : compilationUnits) {
+            compilationUnit.accept(visitor);
+        }
+        methodInvocations = visitor.getMethodInvocations();
+    }
 
-	@Override
-	public String getTitle() {
-		return STRATEGY_NAME;
-	}
+    public void reset() {
+        methodDeclarations.clear();
+        super.reset();
+    }
 
-	@Override
-	public String getDescription() {
-		return STRATEGY_DESCRIPTION;
-	}
+    @Override
+    public String getTitle() {
+        return STRATEGY_NAME;
+    }
+
+    @Override
+    public String getDescription() {
+        return STRATEGY_DESCRIPTION;
+    }
 }

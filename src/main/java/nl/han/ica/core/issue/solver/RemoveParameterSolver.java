@@ -46,10 +46,10 @@ public class RemoveParameterSolver extends IssueSolver {
         Delta methodDeclarationDelta = removeFromDeclaration();
 
         /* Remove the parameters from invocations */
-        removeFromInvocations(issue);
 
         Solution solution = new Solution(issue, this, parameters);
         solution.getDeltas().add(methodDeclarationDelta);
+        solution.getDeltas().addAll(removeFromInvocations(issue));
 
         return solution;
     }
