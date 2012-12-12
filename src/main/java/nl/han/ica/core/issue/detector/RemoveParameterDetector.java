@@ -42,13 +42,8 @@ public class RemoveParameterDetector extends IssueDetector {
                 List<SingleVariableDeclaration> declaredVariables = methodDeclaration.parameters();
 
                 if (declaredVariables != null) {
-                    log.debug("Variables: "
-                            + methodDeclaration.parameters().toString());
-
                     for (SingleVariableDeclaration variable : declaredVariables) {
-
                         if (!usesVariable(methodDeclaration, variable)) {
-
                             Issue issue = createIssue();
                             issue.getNodes().add(methodDeclaration);
                             issue.getNodes().add(variable);

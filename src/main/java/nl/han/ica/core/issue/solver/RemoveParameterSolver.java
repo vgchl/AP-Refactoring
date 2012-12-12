@@ -13,13 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Sjoerd van den Top
- * Date: 6-12-12
- * Time: 11:40
- * To change this template use File | Settings | File Templates.
- */
 public class RemoveParameterSolver extends IssueSolver {
     private final static int METHODDECLARATION = 0;
     private final static int SINGLEVARAIABLEDECLARATION = 1;
@@ -36,8 +29,6 @@ public class RemoveParameterSolver extends IssueSolver {
 
     @Override
     protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters) {
-        System.out.println("All Nodes: " + issue.getNodes().toString());
-        System.out.println(issue.getNodes().size());
 
         methodDeclaration = (MethodDeclaration) issue.getNodes().get(METHODDECLARATION);
         singleVariableDeclaration = (SingleVariableDeclaration) issue.getNodes().get(SINGLEVARAIABLEDECLARATION);
