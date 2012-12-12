@@ -38,7 +38,8 @@ public class RemoveParameterDetector extends IssueDetector {
         for (MethodDeclaration methodDeclaration : methodDeclarations) {
             if (!Modifier.isAbstract(methodDeclaration.getModifiers())
                     && !hasAnnotation(methodDeclaration)
-                    && !ASTUtil.parent(TypeDeclaration.class, methodDeclaration).isInterface()) {
+                    && !ASTUtil.parent(TypeDeclaration.class, methodDeclaration).isInterface()
+                    && !ASTUtil.isMainMethod(methodDeclaration)) {
                 List<SingleVariableDeclaration> declaredVariables = methodDeclaration.parameters();
 
                 if (declaredVariables != null) {

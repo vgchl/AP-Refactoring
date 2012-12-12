@@ -2,6 +2,7 @@ package nl.han.ica.core.util;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 /**
  * Helper functionality for common operations involving {@link ASTNode}s.
@@ -40,6 +41,10 @@ public final class ASTUtil {
             return binding.getAnnotations().length;
         }
         return 0;
+    }
+
+    public static boolean isMainMethod(MethodDeclaration methodDeclaration) {
+        return (methodDeclaration.getName().toString().equals("main"));
     }
 
 }
