@@ -69,7 +69,7 @@ public class HideMethodDetector extends IssueDetector {
 
             if ((!Modifier.isPrivate(modifiers) && !methodDeclaration.isConstructor() && !Modifier.isStatic(modifiers)
                     && !hasAnnotation(methodDeclaration)
-                    && !isMainMethod(methodDeclaration))
+                    && !ASTUtil.isMainMethod(methodDeclaration))
                     && !Modifier.isAbstract(ASTUtil.parent(TypeDeclaration.class, methodDeclaration).getModifiers())
                     && !ASTUtil.parent(TypeDeclaration.class, methodDeclaration).isInterface()) {
                 createIssue(methodDeclaration);
@@ -103,7 +103,4 @@ public class HideMethodDetector extends IssueDetector {
         return methodDeclaration.modifiers().get(0) instanceof Annotation;
     }
 
-    private boolean isMainMethod(MethodDeclaration methodDeclaration) {
-        return (methodDeclaration.getName().toString().equals("main"));
-    }
 }
