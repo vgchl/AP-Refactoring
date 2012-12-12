@@ -6,7 +6,7 @@
 
     <groupId>nl.han</groupId>
     <artifactId>Refactor-Tool</artifactId>
-    <version>0.Venusaur</version>
+    <version>0.Charizard</version>
 
     <dependencies>
         <dependency>
