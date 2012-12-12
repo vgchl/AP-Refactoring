@@ -11,9 +11,7 @@ public final class ASTUtil {
     /**
      * Private constructor to prevent class initialization.
      */
-    private ASTUtil() {
-        // Private constructor to prevent class initialization.
-    }
+    private ASTUtil() {}
 
     /**
      * Find the nearest parent node of a certain type for an {@link ASTNode}.
