@@ -35,4 +35,8 @@ public class FieldAccessVisitor extends ASTVisitor {
         return qualifiedNameList;
     }
 
+    public ArrayList<FieldAccess> getFieldAccessList() {
+        return fieldAccessList;
+    }
+
 }
