@@ -2,12 +2,17 @@ package nl.han.ica.app;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import nl.han.ica.app.controllers.BaseController;
 import nl.han.ica.app.controllers.IssueDetectorIndexController;
 import nl.han.ica.core.Job;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class RefactorTool extends Application {
 
@@ -38,6 +43,13 @@ public class RefactorTool extends Application {
 
         stage.setScene(scene);
         stage.setTitle(APP_TITLE);
+        setApplicationIcon(stage);
         stage.show();
+    }
+
+    private void setApplicationIcon(Stage stage) {
+        InputStream stream = RefactorTool.class.getResourceAsStream("/icon/icon.png");
+        stage.getIcons().add(new Image(stream));
+
     }
 }
