@@ -52,12 +52,30 @@ public class PullUpFieldSolver extends IssueSolver {
         field.setType((Type) ASTNode.copySubtree(supertype.getAST(), fieldAType));
 
         ListRewrite listRewrite = rewrite.getListRewrite(field, FieldDeclaration.MODIFIERS2_PROPERTY);
+        if (mustBeFinal(variableA, variableB)) {
+            listRewrite.insertFirst(supertype.getAST().newModifier(Modifier.ModifierKeyword.FINAL_KEYWORD), null);
+        }
+        if (mustBeStatic(variableA, variableB)) {
+            listRewrite.insertFirst(supertype.getAST().newModifier(Modifier.ModifierKeyword.STATIC_KEYWORD), null);
+        }
         if (mustFieldBePublic(variableA, variableB)) {
             listRewrite.insertFirst(supertype.getAST().newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD), null);
         } else {
             listRewrite.insertFirst(supertype.getAST().newModifier(Modifier.ModifierKeyword.PROTECTED_KEYWORD), null);
         }
         return field;
+    }
+
+    private boolean mustBeFinal(VariableDeclarationFragment variableA, VariableDeclarationFragment variableB) {
+        FieldDeclaration fieldA = ASTUtil.parent(FieldDeclaration.class, variableA);
+        FieldDeclaration fieldB = ASTUtil.parent(FieldDeclaration.class, variableB);
+        return Modifier.isFinal(fieldA.getModifiers()) || Modifier.isFinal(fieldB.getModifiers());
+    }
+
+    private boolean mustBeStatic(VariableDeclarationFragment variableA, VariableDeclarationFragment variableB) {
+        FieldDeclaration fieldA = ASTUtil.parent(FieldDeclaration.class, variableA);
+        FieldDeclaration fieldB = ASTUtil.parent(FieldDeclaration.class, variableB);
+        return Modifier.isStatic(fieldA.getModifiers()) || Modifier.isStatic(fieldB.getModifiers());
     }
 
     private boolean mustFieldBePublic(VariableDeclarationFragment variableA, VariableDeclarationFragment variableB) {

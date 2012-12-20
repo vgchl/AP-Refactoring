@@ -106,7 +106,7 @@ public class MagicNumberSolver extends IssueSolver {
             field.modifiers().addAll(ast.newModifiers(Modifier.PRIVATE | Modifier.STATIC | Modifier.FINAL));
 
             listRewrite.insertFirst(field, null);
-	}
+        }
 
         protected void replaceMagicNumberWithConstant(final String name) {
             SimpleName constantReference = literal.getAST().newSimpleName(name);

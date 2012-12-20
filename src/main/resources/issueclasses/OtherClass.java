@@ -2,7 +2,7 @@ package issueclasses;
 
 public class OtherClass extends ParentClass {
 
-   public String steel = "" ;
+    public String steel = "";
 
     public OtherClass() {
         UnusedCodeTester.MYvariBal = "xdjfj";

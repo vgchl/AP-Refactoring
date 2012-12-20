@@ -2,6 +2,7 @@ package nl.han.ica.core.util;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 /**
  * Helper functionality for common operations involving {@link ASTNode}s.
@@ -11,9 +12,7 @@ public final class ASTUtil {
     /**
      * Private constructor to prevent class initialization.
      */
-    private ASTUtil() {
-        // Private constructor to prevent class initialization.
-    }
+    private ASTUtil() {}
 
     /**
      * Find the nearest parent node of a certain type for an {@link ASTNode}.
@@ -28,7 +27,7 @@ public final class ASTUtil {
         ASTNode parent = node;
         do {
             parent = parent.getParent();
-            if(parent == null){
+            if (parent == null) {
                 return null;
             }
         } while (parent.getClass() != klass);
@@ -40,6 +39,10 @@ public final class ASTUtil {
             return binding.getAnnotations().length;
         }
         return 0;
+    }
+
+    public static boolean isMainMethod(MethodDeclaration methodDeclaration) {
+        return (methodDeclaration.getName().toString().equals("main"));
     }
 
 }

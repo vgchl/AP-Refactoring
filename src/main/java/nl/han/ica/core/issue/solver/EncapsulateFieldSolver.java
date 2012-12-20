@@ -44,12 +44,12 @@ public class EncapsulateFieldSolver extends IssueSolver {
     }
 
     private void refactorNodes(List<ASTNode> nodes) throws InvalidParameterException {
-        for(ASTNode node : nodes){
-            if(node instanceof FieldDeclaration){
+        for (ASTNode node : nodes) {
+            if (node instanceof FieldDeclaration) {
                 refactorFieldDeclaration((FieldDeclaration) node);
-            }else if(node instanceof QualifiedName){
+            } else if (node instanceof QualifiedName) {
                 refactorQualifiedNames((QualifiedName) node);
-            }else {
+            } else {
                 throw new InvalidParameterException();
             }
         }
@@ -65,11 +65,11 @@ public class EncapsulateFieldSolver extends IssueSolver {
     }
 
 
-    private SourceFile getSourceFileFromNode(ASTNode node){
+    private SourceFile getSourceFileFromNode(ASTNode node) {
         return (SourceFile) node.getRoot().getProperty(SourceFile.SOURCE_FILE_PROPERTY);
     }
 
-    private IDocument getSourceFileDocument(SourceFile sourceFile){
+    private IDocument getSourceFileDocument(SourceFile sourceFile) {
 
         try {
             return sourceFile.toDocument();
@@ -78,14 +78,14 @@ public class EncapsulateFieldSolver extends IssueSolver {
         }
     }
 
-    private Delta createDelta(SourceFile sourceFile, IDocument documentBefore){
+    private Delta createDelta(SourceFile sourceFile, IDocument documentBefore) {
         Delta delta = solution.createDelta(sourceFile);
         delta.setBefore(documentBefore.get());
         return delta;
     }
 
     @SuppressWarnings("unchecked")
-    private void refactorFieldDeclaration(FieldDeclaration fieldDeclaration){
+    private void refactorFieldDeclaration(FieldDeclaration fieldDeclaration) {
         SourceFile sourceFile = getSourceFileFromNode(fieldDeclaration);
         IDocument document = getSourceFileDocument(sourceFile);
         Delta delta = createDelta(sourceFile, document);
@@ -94,7 +94,7 @@ public class EncapsulateFieldSolver extends IssueSolver {
 
         FieldDeclaration fieldDeclarationCopy = (FieldDeclaration) ASTNode.copySubtree(fieldDeclaration.getAST(), fieldDeclaration);
 
-        int annotationsSize = ASTUtil.getAnnotationsSize( ((VariableDeclarationFragment) fieldDeclaration.fragments().get(0)).resolveBinding() );
+        int annotationsSize = ASTUtil.getAnnotationsSize(((VariableDeclarationFragment) fieldDeclaration.fragments().get(0)).resolveBinding());
 
         int modifiers = fieldDeclaration.getModifiers();
 
@@ -122,7 +122,7 @@ public class EncapsulateFieldSolver extends IssueSolver {
     }
 
     @SuppressWarnings("unchecked")
-    private void refactorQualifiedNames(QualifiedName qualifiedName){
+    private void refactorQualifiedNames(QualifiedName qualifiedName) {
         SourceFile sourceFile = getSourceFileFromNode(qualifiedName);
         IDocument document = getSourceFileDocument(sourceFile);
         Delta delta = createDelta(sourceFile, document);
@@ -145,14 +145,14 @@ public class EncapsulateFieldSolver extends IssueSolver {
         MethodInvocation methodInvocation = ast.newMethodInvocation();
         methodInvocation.setExpression(ast.newSimpleName(qualifiedName.getQualifier().toString()));
 
-        if(qualifiedName.getParent() instanceof Assignment && qualifiedName != ((Assignment)qualifiedName.getParent()).getRightHandSide()) {
+        if (qualifiedName.getParent() instanceof Assignment && qualifiedName != ((Assignment) qualifiedName.getParent()).getRightHandSide()) {
             Assignment assignment = (Assignment) qualifiedName.getParent();
             methodInvocation.setName(ast.newSimpleName(setter.getName().toString()));
-            methodInvocation.arguments().add( ASTNode.copySubtree(ast, assignment.getRightHandSide() ) );
+            methodInvocation.arguments().add(ASTNode.copySubtree(ast, assignment.getRightHandSide()));
             rewrite.replace(assignment, methodInvocation, null);
         } else {
             methodInvocation.setName(ast.newSimpleName(getter.getName().toString()));
-            rewrite.replace(qualifiedName, methodInvocation , null);
+            rewrite.replace(qualifiedName, methodInvocation, null);
         }
     }
 
@@ -219,7 +219,6 @@ public class EncapsulateFieldSolver extends IssueSolver {
 
         return method;
     }
-
 
 
     @Override

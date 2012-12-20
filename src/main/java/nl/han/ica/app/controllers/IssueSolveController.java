@@ -81,7 +81,7 @@ public class IssueSolveController extends BaseController {
                     issueSolvingService.restart();
                 }
             });
-            
+
         }
     }
 

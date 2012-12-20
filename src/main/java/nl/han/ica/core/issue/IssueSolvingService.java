@@ -33,7 +33,7 @@ public class IssueSolvingService {
     /**
      * Create a solution for an issue, based on a set of parameters.
      *
-     * @param issue The issue to createSolution.
+     * @param issue      The issue to createSolution.
      * @param parameters The parameters to use in the solving process.
      * @return The solution to the issue.
      */

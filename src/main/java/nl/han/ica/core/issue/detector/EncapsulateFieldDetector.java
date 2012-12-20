@@ -40,25 +40,25 @@ public class EncapsulateFieldDetector extends IssueDetector {
         for (CompilationUnit compilationUnit : compilationUnits) {
             FieldAccessVisitor fieldAccessVisitor = new FieldAccessVisitor();
             compilationUnit.accept(fieldAccessVisitor);
-            if(!fieldAccessVisitor.getQualifiedNameList().isEmpty()){
+            if (!fieldAccessVisitor.getQualifiedNameList().isEmpty()) {
                 qualifiedNamesList.addAll(fieldAccessVisitor.getQualifiedNameList());
             }
 
             FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
             compilationUnit.accept(fieldDeclarationVisitor);
-            if(!fieldDeclarationVisitor.getFieldDeclarations().isEmpty()){
+            if (!fieldDeclarationVisitor.getFieldDeclarations().isEmpty()) {
                 fieldDeclarations.addAll(fieldDeclarationVisitor.getFieldDeclarations());
             }
         }
 
 
-        for(QualifiedName qualifiedName : qualifiedNamesList){
-            for(FieldDeclaration declaration : fieldDeclarations){
-                if(!fieldDeclarationFieldAccessHashMap.containsKey(declaration)){
+        for (QualifiedName qualifiedName : qualifiedNamesList) {
+            for (FieldDeclaration declaration : fieldDeclarations) {
+                if (!fieldDeclarationFieldAccessHashMap.containsKey(declaration)) {
                     fieldDeclarationFieldAccessHashMap.put(declaration, new ArrayList<QualifiedName>());
                 }
                 IBinding binding = ((VariableDeclarationFragment) declaration.fragments().get(0)).resolveBinding();
-                if(binding.equals(qualifiedName.resolveBinding())){
+                if (binding.equals(qualifiedName.resolveBinding())) {
                     fieldDeclarationFieldAccessHashMap.get(declaration).add(qualifiedName);
                     break;
                 }

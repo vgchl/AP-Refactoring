@@ -5,6 +5,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -14,8 +15,8 @@ import org.apache.log4j.Logger;
 public class IssueDetectionService {
 
     private Set<IssueDetector> detectors;
-	private Logger logger;
-    
+    private Logger logger;
+
     /**
      * Instantiate a new IssueDetectionService.
      */

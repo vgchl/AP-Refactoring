@@ -36,9 +36,9 @@ public class JobTest {
         Assert.assertTrue(job.getIssues().isEmpty());
     }
 
-    @Test (expected = IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void testSolveHasNoSuitableSolverAvailable() {
-       job.createSolution(issue);
+        job.createSolution(issue);
     }
 
     @Test(expected = IllegalStateException.class)

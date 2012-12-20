@@ -1,6 +1,8 @@
 package issueclasses;
 
-public class UnusedCodeTester {
+public class UnusedCodeTester extends OtherClass {
+
+    public String naam;
 
     public static String string1 = "Si!";
 

@@ -34,10 +34,10 @@ public class HideMethodDetector extends IssueDetector {
             MethodDeclarationVisitor methodDeclarationVisitor = new MethodDeclarationVisitor();
             compilationUnit.accept(methodDeclarationVisitor);
 
-            for(MethodDeclaration methodDeclaration : methodDeclarationVisitor.getMethodDeclarations()){
+            for (MethodDeclaration methodDeclaration : methodDeclarationVisitor.getMethodDeclarations()) {
                 methodUsages.put(methodDeclaration, new ArrayList<MethodInvocation>());
             }
-            
+
             MethodInvocationVisitor methodInvocationVisitor = new MethodInvocationVisitor();
             compilationUnit.accept(methodInvocationVisitor);
             methodInvocationList.addAll(methodInvocationVisitor.getMethodInvocations());
@@ -68,7 +68,7 @@ public class HideMethodDetector extends IssueDetector {
 
             if ((!Modifier.isPrivate(modifiers) && !methodDeclaration.isConstructor() && !Modifier.isStatic(modifiers)
                     && !hasAnnotation(methodDeclaration)
-                    && !isMainMethod(methodDeclaration))
+                    && !ASTUtil.isMainMethod(methodDeclaration))
                     && !Modifier.isAbstract(ASTUtil.parent(TypeDeclaration.class, methodDeclaration).getModifiers())
                     && !ASTUtil.parent(TypeDeclaration.class, methodDeclaration).isInterface()) {
                 createIssue(methodDeclaration);
@@ -88,21 +88,18 @@ public class HideMethodDetector extends IssueDetector {
 
     private void buildHashMapWithMethodDeclarationsAndInvocations() {
         for (MethodInvocation methodInvocation : methodInvocationList) {
-            for(MethodDeclaration methodDeclaration : methodUsages.keySet()){
+            for (MethodDeclaration methodDeclaration : methodUsages.keySet()) {
                 if (methodDeclaration.resolveBinding().equals(methodInvocation.resolveMethodBinding())) {
                     methodUsages.get(methodDeclaration).add(methodInvocation);
                     break;
                 }
             }
         }
-        
+
     }
 
     private boolean hasAnnotation(MethodDeclaration methodDeclaration) {
         return methodDeclaration.modifiers().get(0) instanceof Annotation;
     }
 
-    private boolean isMainMethod(MethodDeclaration methodDeclaration) {
-        return (methodDeclaration.getName().toString().equals("main"));
-    }
 }

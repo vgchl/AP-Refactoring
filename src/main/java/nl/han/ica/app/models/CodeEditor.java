@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+
 import javafx.event.EventHandler;
 import javafx.scene.web.WebEvent;
 import netscape.javascript.JSException;
@@ -101,26 +102,26 @@ public class CodeEditor {
      */
     private void initializeWebView() {
         logger.info("Initialising web view");
-        
+
         String debug = getClass().getResource("/editor/editor.html").toExternalForm();
         webView.getEngine().load(debug);
-        
+
         webView.getEngine().getLoadWorker().stateProperty().addListener(
                 new ChangeListener<Worker.State>() {
-            @Override           
-            public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
+                    @Override
+                    public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
 
-                if (newState == Worker.State.SUCCEEDED && !scriptCache.isEmpty() && webView.getEngine().getDocument() != null) {            
-                    for (String script : scriptCache) {
-                        execute(script);
+                        if (newState == Worker.State.SUCCEEDED && !scriptCache.isEmpty() && webView.getEngine().getDocument() != null) {
+                            for (String script : scriptCache) {
+                                execute(script);
+                            }
+                            scriptCache.clear();
+                        } else if (newState == Worker.State.SUCCEEDED && webView.getEngine().getDocument() == null) {
+                            webView.getEngine().reload();
+                        }
                     }
-                    scriptCache.clear();
-                }else if(newState == Worker.State.SUCCEEDED && webView.getEngine().getDocument() == null){ 
-                    webView.getEngine().reload();
-                }
-            }
-        });
-        
+                });
+
     }
 
     /**
@@ -132,11 +133,11 @@ public class CodeEditor {
         if (webView.getEngine().getDocument() != null) {
             logger.info("Executing...  " + script);
             try {
-                webView.getEngine().executeScript(script); 
-            } catch(JSException ex){
-                logger.fatal("Executed script " + ex);               
+                webView.getEngine().executeScript(script);
+            } catch (JSException ex) {
+                logger.fatal("Executed script " + ex);
             }
-            
+
         } else {
             scriptCache.add(script);
         }

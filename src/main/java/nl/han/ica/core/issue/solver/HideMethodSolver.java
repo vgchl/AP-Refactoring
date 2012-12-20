@@ -19,6 +19,7 @@ import org.eclipse.text.edits.TextEdit;
 
 import java.io.IOException;
 import java.util.Map;
+
 import nl.han.ica.core.util.ASTUtil;
 import org.eclipse.jdt.core.dom.*;
 
@@ -84,8 +85,8 @@ public class HideMethodSolver extends IssueSolver {
         methodDeclaration.modifiers().addAll(modifierLocation, oldDeclaration.getAST().newModifiers(Modifier.PRIVATE));
     }
 
-    private int getAnnotationsSize(MethodDeclaration declaration){
-        if(declaration.resolveBinding().getAnnotations() != null) {
+    private int getAnnotationsSize(MethodDeclaration declaration) {
+        if (declaration.resolveBinding().getAnnotations() != null) {
             return declaration.resolveBinding().getAnnotations().length;
         }
         return 0;

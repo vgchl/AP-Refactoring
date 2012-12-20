@@ -25,7 +25,7 @@ public class FieldAccessVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(QualifiedName node) {
-        if(node.resolveBinding() != null && ASTUtil.parent(MethodDeclaration.class, node) != null){
+        if (node.resolveBinding() != null && ASTUtil.parent(MethodDeclaration.class, node) != null) {
             qualifiedNameList.add(node);
         }
         return super.visit(node);
@@ -33,6 +33,10 @@ public class FieldAccessVisitor extends ASTVisitor {
 
     public ArrayList<QualifiedName> getQualifiedNameList() {
         return qualifiedNameList;
+    }
+
+    public ArrayList<FieldAccess> getFieldAccessList() {
+        return fieldAccessList;
     }
 
 }

@@ -18,6 +18,8 @@ public class PullUpFieldDetector extends IssueDetector {
     private Map<ITypeBinding, Node> typeNodes;
     private Set<Node> rootTypeNodes;
     private Logger logger = Logger.getLogger(getClass());
+    private boolean bothFieldDeclarationsAreFinal = false;
+
 
     public PullUpFieldDetector() {
         typeDeclarations = new HashMap<>();
@@ -86,17 +88,60 @@ public class PullUpFieldDetector extends IssueDetector {
     }
 
     private void detectDuplicateVariables(ITypeBinding typeA, ITypeBinding typeB, FieldDeclaration fieldA, FieldDeclaration fieldB) {
-        for (Object fragmentA : fieldA.fragments()) {
-            VariableDeclarationFragment variableA = (VariableDeclarationFragment) fragmentA;
-            for (Object fragmentB : fieldB.fragments()) {
-                VariableDeclarationFragment variableB = (VariableDeclarationFragment) fragmentB;
-                if (variableA.getName().getIdentifier().equals(variableB.getName().getIdentifier())) {
-                    ITypeBinding parent = findNearestParent(typeA, typeB);
-                    if (null != parent) {
-                        createIssue(variableA, variableB, typeDeclarations.get(parent));
+        if (bothOrNoneAreStatic(fieldA, fieldB)) {
+            if (bothOrNoneAreFinal(fieldA, fieldB)) {
+                for (Object fragmentA : fieldA.fragments()) {
+                    VariableDeclarationFragment variableA = (VariableDeclarationFragment) fragmentA;
+                    for (Object fragmentB : fieldB.fragments()) {
+                        VariableDeclarationFragment variableB = (VariableDeclarationFragment) fragmentB;
+                        if (variableA.getName().getIdentifier().equals(variableB.getName().getIdentifier())) {
+                            if (bothFieldDeclarationsAreFinal) {
+                                if (!bothValuesAreEqual(variableA, variableB)) {
+                                    break;
+                                }
+                            }
+                            ITypeBinding parent = findNearestParent(typeA, typeB);
+                            if (null != parent) {
+                                createIssue(variableA, variableB, typeDeclarations.get(parent));
+                            }
+                        }
                     }
                 }
             }
+        }
+    }
+
+    private boolean bothValuesAreEqual(VariableDeclarationFragment variableA, VariableDeclarationFragment variableB) {
+        if (variableA.getInitializer().toString().equals(variableB.getInitializer().toString())) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean bothOrNoneAreStatic(FieldDeclaration fieldA, FieldDeclaration fieldB) {
+        int fieldAModifier = fieldA.getModifiers();
+        int fieldBModifier = fieldB.getModifiers();
+        if (Modifier.isStatic(fieldAModifier) && Modifier.isStatic(fieldBModifier)) {
+            return true;
+        } else if (Modifier.isStatic(fieldAModifier) || Modifier.isStatic(fieldBModifier)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean bothOrNoneAreFinal(FieldDeclaration fieldA, FieldDeclaration fieldB) {
+        int fieldAModifier = fieldA.getModifiers();
+        int fieldBModifier = fieldB.getModifiers();
+        if (Modifier.isFinal(fieldAModifier) && Modifier.isFinal(fieldBModifier)) {
+            bothFieldDeclarationsAreFinal = true;
+            return true;
+        } else if (Modifier.isFinal(fieldAModifier) || Modifier.isFinal(fieldBModifier)) {
+            bothFieldDeclarationsAreFinal = false;
+            return false;
+        } else {
+            bothFieldDeclarationsAreFinal = false;
+            return true;
         }
     }
 

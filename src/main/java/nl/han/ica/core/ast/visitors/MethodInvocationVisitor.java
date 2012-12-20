@@ -31,7 +31,7 @@ public class MethodInvocationVisitor extends ASTVisitor {
         }
         return super.visit(methodInvocation);
     }
-    
+
     public List<MethodInvocation> getMethodInvocations() {
         return methodInvocations;
     }
