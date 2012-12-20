@@ -3,6 +3,8 @@ package nl.han.ica.core.issue.solver.magicliteral;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import nl.han.ica.core.Parameter;
 import nl.han.ica.core.Solution;
 import nl.han.ica.core.issue.Issue;
@@ -16,6 +18,8 @@ public class MagicLiteralSolver extends IssueSolver {
 
 	private static final String PARAMETER_CONSTANT_NAME = "Constant name";
 
+	private final Logger log = Logger.getLogger(getClass().getName());
+
 	@Override
 	public boolean canSolve(Issue issue) {
 		return issue.getDetector() instanceof MagicLiteralDetector;
@@ -25,10 +29,20 @@ public class MagicLiteralSolver extends IssueSolver {
 	protected Solution internalSolve(Issue issue,
 			Map<String, Parameter> parameters) {
 
-		LiteralSolutionBuilder solutionBuilder = LiteralSolutionBuilderFactory.getSolutionBuilder(
-				issue, this, parameters, PARAMETER_CONSTANT_NAME);
+		LiteralSolutionBuilder solutionBuilder = LiteralSolutionBuilderFactory
+				.getSolutionBuilder(issue, this, parameters,
+						PARAMETER_CONSTANT_NAME);
 
-		return solutionBuilder.build();
+		Solution solution = null;
+
+		if (solutionBuilder != null) {
+			solution = solutionBuilder.build();
+		} else {
+
+			log.error("No suitable SolutionBuilder found.");
+		}
+
+		return solution;
 	}
 
 	@Override
@@ -45,6 +59,6 @@ public class MagicLiteralSolver extends IssueSolver {
 		});
 		parameters.put(PARAMETER_CONSTANT_NAME, constantNameParameter);
 		return parameters;
-	}	
+	}
 
 }
