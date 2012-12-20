@@ -32,12 +32,12 @@ public class UnusedCodeTester extends OtherClass {
         if (i == 0) {
         } else if (i == 23) {
         }
-        char a = a;
-        if ('a' == a) {
+        char ax = 'a';
+        if ('a' == ax) {
         	
         }
         
-        if (unused("asdf", "ghjk", "qwer").size() == 0) {
+        if (unused("asdf", "ghjk", "qwer").length() == 0) {
         	
         }
 
