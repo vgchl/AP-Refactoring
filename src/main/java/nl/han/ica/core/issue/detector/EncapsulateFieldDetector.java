@@ -65,6 +65,10 @@ public class EncapsulateFieldDetector extends IssueDetector {
             }
         }
 
+        findIssues();
+    }
+    
+    private void findIssues(){
         for (FieldDeclaration declaration : fieldDeclarationFieldAccessHashMap.keySet()){
             if (Modifier.isPublic(declaration.getModifiers()) && !Modifier.isStatic(declaration.getModifiers())) {
                 Issue issue = createIssue(declaration);

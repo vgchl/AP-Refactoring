@@ -53,6 +53,5 @@ public class MagicNumberDetector extends IssueDetector {
         public Set<ASTNode> getMagicNumbers() {
             return magicNumbers;
         }
-
     }
 }

@@ -57,13 +57,7 @@ public class HideMethodSolver extends IssueSolver {
         ASTRewrite rewrite = ASTRewrite.create(node.getAST());
         MethodDeclaration newMethodDeclaration = (MethodDeclaration) ASTNode.copySubtree(node.getRoot().getAST(), node);
         if(node instanceof MethodDeclaration){
-            int modifiers = newMethodDeclaration.getModifiers();
-            int modifierLocation = getAnnotationsSize((MethodDeclaration) node);
-            if (Modifier.isPublic(modifiers) || Modifier.isProtected(modifiers)) {
-                newMethodDeclaration.modifiers().remove(modifierLocation);
-
-            }
-            newMethodDeclaration.modifiers().addAll(modifierLocation, node.getAST().newModifiers(Modifier.PRIVATE));
+            replaceModifierWithPrivate(newMethodDeclaration, node);
         }
 
         rewrite.replace(node, newMethodDeclaration, null);
@@ -78,6 +72,16 @@ public class HideMethodSolver extends IssueSolver {
         delta.setAfter(document.get());
 
         return solution;
+    }
+    
+    private void replaceModifierWithPrivate(MethodDeclaration methodDeclaration, ASTNode oldDeclaration){
+        int modifiers = methodDeclaration.getModifiers();
+        int modifierLocation = getAnnotationsSize((MethodDeclaration)oldDeclaration);
+        if (Modifier.isPublic(modifiers) || Modifier.isProtected(modifiers)) {
+            methodDeclaration.modifiers().remove(modifierLocation);
+
+        }
+        methodDeclaration.modifiers().addAll(modifierLocation, oldDeclaration.getAST().newModifiers(Modifier.PRIVATE));
     }
 
     private int getAnnotationsSize(MethodDeclaration declaration){

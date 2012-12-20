@@ -129,19 +129,7 @@ public class EncapsulateFieldSolver extends IssueSolver {
         AST ast = qualifiedName.getAST();
 
         ASTRewrite rewrite = ASTRewrite.create(ast);
-        MethodInvocation methodInvocation = ast.newMethodInvocation();
-        methodInvocation.setExpression(ast.newSimpleName(qualifiedName.getQualifier().toString()));
-
-        if(qualifiedName.getParent() instanceof Assignment && qualifiedName != ((Assignment)qualifiedName.getParent()).getRightHandSide()) {
-            Assignment assignment = (Assignment) qualifiedName.getParent();
-            methodInvocation.setName(ast.newSimpleName(setter.getName().toString()));
-            methodInvocation.arguments().add( ASTNode.copySubtree(ast, assignment.getRightHandSide() ) );
-            rewrite.replace(assignment, methodInvocation, null);
-        }
-        else {
-            methodInvocation.setName(ast.newSimpleName(getter.getName().toString()));
-            rewrite.replace(qualifiedName, methodInvocation , null);
-        }
+        replaceQualifiedNameWithMethodInvocation(ast, qualifiedName, rewrite);
 
         TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
 
@@ -151,6 +139,21 @@ public class EncapsulateFieldSolver extends IssueSolver {
            log.fatal(e);
         }
         delta.setAfter(document.get());
+    }
+    
+    private void replaceQualifiedNameWithMethodInvocation(AST ast, QualifiedName qualifiedName, ASTRewrite rewrite){
+        MethodInvocation methodInvocation = ast.newMethodInvocation();
+        methodInvocation.setExpression(ast.newSimpleName(qualifiedName.getQualifier().toString()));
+
+        if(qualifiedName.getParent() instanceof Assignment && qualifiedName != ((Assignment)qualifiedName.getParent()).getRightHandSide()) {
+            Assignment assignment = (Assignment) qualifiedName.getParent();
+            methodInvocation.setName(ast.newSimpleName(setter.getName().toString()));
+            methodInvocation.arguments().add( ASTNode.copySubtree(ast, assignment.getRightHandSide() ) );
+            rewrite.replace(assignment, methodInvocation, null);
+        } else {
+            methodInvocation.setName(ast.newSimpleName(getter.getName().toString()));
+            rewrite.replace(qualifiedName, methodInvocation , null);
+        }
     }
 
     @SuppressWarnings("unchecked")
