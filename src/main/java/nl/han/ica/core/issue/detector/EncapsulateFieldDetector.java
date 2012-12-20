@@ -37,6 +37,7 @@ public class EncapsulateFieldDetector extends IssueDetector {
 
     @Override
     public void detectIssues() {
+        //TODO REFACTOR, Because not to combine all fields with his qualifiednames yet. 
         for (CompilationUnit compilationUnit : compilationUnits) {
             FieldAccessVisitor fieldAccessVisitor = new FieldAccessVisitor();
             compilationUnit.accept(fieldAccessVisitor);
