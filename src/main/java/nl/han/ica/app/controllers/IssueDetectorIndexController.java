@@ -64,7 +64,7 @@ public class IssueDetectorIndexController extends BaseController {
 
     private void initializeIssueDetectors() {
         IssueDetectionService detectionService = job.getIssueDetectionService();
-        detectionService.addDetector(new MagicNumberDetector());
+        detectionService.addDetector(new MagicLiteralDetector());
         detectionService.addDetector(new HideMethodDetector());
         detectionService.addDetector(new EncapsulateFieldDetector());
         detectionService.addDetector(new PullUpFieldDetector());
@@ -72,7 +72,7 @@ public class IssueDetectorIndexController extends BaseController {
 
 
         IssueSolvingService solvingService = job.getIssueSolvingService();
-        solvingService.addSolver(new MagicNumberSolver());
+        solvingService.addSolver(new MagicLiteralSolver());
         solvingService.addSolver(new HideMethodSolver());
         solvingService.addSolver(new EncapsulateFieldSolver());
         solvingService.addSolver(new PullUpFieldSolver());
