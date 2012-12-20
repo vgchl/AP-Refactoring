@@ -109,10 +109,10 @@ public class IssueDetectorIndexController extends BaseController {
         List<File> files = fileChooser.showOpenMultipleDialog(null);
         if (null != files) {
             for (File file : files) {
-                job.getSourceFiles().add(new SourceFile(file));
+                job.getContext().addSourceFile(new SourceFile(file));
             }
         } else {
-            job.getSourceFiles().clear();
+            job.getContext().clear();
         }
 
         onSourceFilesSelected();
@@ -132,10 +132,10 @@ public class IssueDetectorIndexController extends BaseController {
         if (null != directory) {
             List<File> files = FileUtil.listFilesRecursively(directory, ".java");
             for (File file : files) {
-                job.getSourceFiles().add(new SourceFile(file));
+                job.getContext().addSourceFile(new SourceFile(file));
             }
         } else {
-            job.getSourceFiles().clear();
+            job.getContext().clear();
         }
         onSourceFilesSelected();
     }
@@ -166,14 +166,14 @@ public class IssueDetectorIndexController extends BaseController {
         boolean success = false;
         if (db.hasFiles()) {
             success = true;
-            job.getSourceFiles().clear();
+            job.getContext().clear();
             for (File file : db.getFiles()) {
                 if (file.isDirectory()) {
                     for (File directoryFile : FileUtil.listFilesRecursively(file, ".java")) {
-                        job.getSourceFiles().add(new SourceFile(directoryFile));
+                        job.getContext().addSourceFile(new SourceFile(directoryFile));
                     }
                 } else if (file.getName().endsWith(".java")) {
-                    job.getSourceFiles().add(new SourceFile(file));
+                    job.getContext().addSourceFile(new SourceFile(file));
                 }
             }
             onSourceFilesSelected();
@@ -194,8 +194,8 @@ public class IssueDetectorIndexController extends BaseController {
     }
 
     private void onSourceFilesSelected() {
-        if (job.getSourceFiles().size() > 0) {
-            selectedFilePath.setText(formatFileSet(job.getSourceFiles()));
+        if (job.getContext().hasSourceFiles()) {
+            selectedFilePath.setText(formatFileSet(job.getContext().getSourceFiles()));
             selectedFilePath.setVisible(true);
             selectedFile.setVisible(true);
         } else {

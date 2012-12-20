@@ -7,12 +7,9 @@ import nl.han.ica.core.issue.IssueDetectionService;
 import nl.han.ica.core.issue.IssueSolvingService;
 import nl.han.ica.core.parser.Parser;
 import org.apache.log4j.Logger;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Lists the files and the rules to check them for.
@@ -21,7 +18,7 @@ import java.util.Set;
  */
 public class Job {
 
-    private Set<SourceFile> sourceFiles;
+    private Context context;
     private Parser parser;
     private IssueDetectionService issueDetectionService;
     private IssueSolvingService issueSolvingService;
@@ -34,7 +31,7 @@ public class Job {
     public Job() {
         logger = Logger.getLogger(getClass().getName());
 
-        sourceFiles = new HashSet<>();
+        context = new Context();
         issues = FXCollections.observableArrayList();
         parser = new Parser();
 
@@ -48,9 +45,9 @@ public class Job {
     public void process() {
         logger.debug("Processing...");
 
-        Set<CompilationUnit> compilationUnits = parser.parse(sourceFiles);
+        parser.parse(context);
         issues.clear();
-        issues.addAll(new ArrayList<>(issueDetectionService.detectIssues(compilationUnits)));
+        issues.addAll(new ArrayList<>(issueDetectionService.detectIssues(context)));
 
         logger.debug("Done processing.");
     }
@@ -82,7 +79,7 @@ public class Job {
      * @return Whether files and rules are present.
      */
     public boolean canProcess() {
-        return sourceFiles.size() > 0 && issueDetectionService.getDetectors().size() > 0;
+        return context.hasSourceFiles() && issueDetectionService.getDetectors().size() > 0;
     }
 
     /**
@@ -114,15 +111,6 @@ public class Job {
     }
 
     /**
-     * Get the {@link SourceFile}s the job will process.
-     *
-     * @return The SourceFiles to process.
-     */
-    public Set<SourceFile> getSourceFiles() {
-        return sourceFiles;
-    }
-
-    /**
      * Returns the {@link IssueDetectionService} this job uses to detect issues in the source files.
      *
      * @return The job's IssueDetectionService instance.
@@ -140,4 +128,7 @@ public class Job {
         return issueSolvingService;
     }
 
+    public Context getContext() {
+        return context;
+    }
 }

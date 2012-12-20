@@ -3,10 +3,10 @@ package nl.han.ica.core.issue.detector;
 import nl.han.ica.core.ast.visitors.TypeDeclarationVisitor;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.*;
 
 import java.util.*;
-import org.apache.log4j.Logger;
 
 // TODO: Check whether field can be moved up (parent class shouldn't have a field with the same type and name).
 public class PullUpFieldDetector extends IssueDetector {
@@ -51,9 +51,7 @@ public class PullUpFieldDetector extends IssueDetector {
 
     private void collectTypeDeclarations() {
         TypeDeclarationVisitor visitor = new TypeDeclarationVisitor();
-        for (CompilationUnit compilationUnit : compilationUnits) {
-            compilationUnit.accept(visitor);
-        }
+        context.accept(visitor);
         for (TypeDeclaration typeDeclaration : visitor.getTypeDeclarations()) {
             typeDeclarations.put(typeDeclaration.resolveBinding(), typeDeclaration);
         }
@@ -88,6 +86,7 @@ public class PullUpFieldDetector extends IssueDetector {
     }
 
     private void detectDuplicateVariables(ITypeBinding typeA, ITypeBinding typeB, FieldDeclaration fieldA, FieldDeclaration fieldB) {
+        // TODO: Refactor nested conditions/loops
         if (bothOrNoneAreStatic(fieldA, fieldB)) {
             if (bothOrNoneAreFinal(fieldA, fieldB)) {
                 for (Object fragmentA : fieldA.fragments()) {

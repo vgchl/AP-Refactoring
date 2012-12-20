@@ -7,7 +7,6 @@ package nl.han.ica.core.issue.detector;
 import nl.han.ica.core.issue.IssueDetector;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 
 import java.util.HashSet;
@@ -27,11 +26,9 @@ public class MagicNumberDetector extends IssueDetector {
 
     @Override
     public void detectIssues() {
-        for (CompilationUnit compilationUnit : compilationUnits) {
-            MagicNumberVisitor magicNumberVisitor = new MagicNumberVisitor();
-            compilationUnit.accept(magicNumberVisitor);
-            createIssues(magicNumberVisitor.getMagicNumbers());
-        }
+        MagicNumberVisitor magicNumberVisitor = new MagicNumberVisitor();
+        context.accept(magicNumberVisitor);
+        createIssues(magicNumberVisitor.getMagicNumbers());
     }
 
 

@@ -1,12 +1,12 @@
 package nl.han.ica.core.issue;
 
+import nl.han.ica.core.Context;
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.log4j.Logger;
 
 /**
  * Provides issue detection functionality. Uses a set of {@link IssueDetector}s to find {@link Issue}s in a set of
@@ -23,25 +23,24 @@ public class IssueDetectionService {
     public IssueDetectionService() {
         this.detectors = new HashSet<>();
         logger = Logger.getLogger(getClass().getName());
-        logger.info("Created IssueDetectionService");
     }
 
     /**
      * Let all the {@link IssueDetector}s scan the {@link CompilationUnit}s and find the {@link Issue}s.
      *
-     * @param compilationUnits The compilation units to scan though for issues.
+     * @param context The context (and its compilation units) to scan trough for issues.
      * @return The detected issues.
      */
-    public Set<Issue> detectIssues(Set<CompilationUnit> compilationUnits) {
-        logger.info("Detecting issues.....");
+    public Set<Issue> detectIssues(Context context) {
+        logger.info("Detecting issues...");
         Set<Issue> issues = new HashSet<>();
         for (IssueDetector detector : detectors) {
             detector.reset();
-            detector.setCompilationUnits(compilationUnits);
+            detector.setContext(context);
             detector.detectIssues();
             issues.addAll(detector.getIssues());
         }
-        logger.info("Done detecting issues");
+        logger.debug("Done detecting issues");
         return issues;
     }
 

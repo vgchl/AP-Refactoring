@@ -77,17 +77,13 @@ public class RemoveParameterDetector extends IssueDetector {
 
     private void collectMethodDeclarations() {
         MethodDeclarationVisitor visitor = new MethodDeclarationVisitor();
-        for (CompilationUnit compilationUnit : compilationUnits) {
-            compilationUnit.accept(visitor);
-        }
+        context.accept(visitor);
         methodDeclarations = visitor.getMethodDeclarations();
     }
 
     private void collectMethodInvocations() {
         MethodInvocationVisitor visitor = new MethodInvocationVisitor();
-        for (CompilationUnit compilationUnit : compilationUnits) {
-            compilationUnit.accept(visitor);
-        }
+        context.accept(visitor);
         methodInvocations = visitor.getMethodInvocations();
     }
 
