@@ -76,15 +76,28 @@ public class CodeEditor {
     }
 
     /**
+     * Highlights the given line number in the Code Editor.
+     *
+     * @param lineNrFrom          The linenumber to start highlighting from.
+     * @param lineNrTo            The linenumber to end the highlighing on.
+     * @param backgroundClassName The background classname.
+     */
+    public void highlightLines(int lineNrFrom, int lineNrTo, String backgroundClassName) {
+        for(int i = lineNrFrom; i <= lineNrTo; i++){
+            highlightLine(i, backgroundClassName, backgroundClassName);
+        }
+    }
+
+    /**
      * Highlights a part of a line or a block, for example one word or a few lines.
      *
      * @param lineBegin   The line to start highlight.
      * @param columnBegin The column to start highlighting.
      * @param lineEnd     The line where the highlighting ends.
      * @param columnEnd   The column where the highlighting stops.
-     * @param className   The current class name.
+     * @param cssClassName   The css highlight class name.
      */
-    public void highlightText(int lineBegin, int columnBegin, int lineEnd, int columnEnd, String className) {
+    public void highlightText(int lineBegin, int columnBegin, int lineEnd, int columnEnd, String cssClassName) {
         Position start = new Position(lineBegin - 1, columnBegin - 1);
         Position end = new Position(lineEnd - 1, columnEnd);
         StringBuilder script = new StringBuilder("editor.markText(");
@@ -92,7 +105,7 @@ public class CodeEditor {
         script.append(", ");
         script.append(end.toScript());
         script.append(", ");
-        script.append("'").append(className).append("'");
+        script.append("'").append(cssClassName).append("'");
         script.append(")");
         execute(script.toString());
     }

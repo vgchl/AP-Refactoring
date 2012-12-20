@@ -1,6 +1,12 @@
 package nl.han.ica.core;
 
+import difflib.DiffUtils;
+import difflib.Patch;
+
 import java.io.File;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Represents the changes in a SourceFile.
@@ -67,5 +73,27 @@ public class Delta {
         return sourceFile.getFile();
     }
 
+    /**
+     * Gets the difference between the before and after source.
+     */
+    public List<difflib.Delta> getDifferences() {
+        Patch patch = DiffUtils.diff(contentToLines(before), contentToLines(after));
+        return patch.getDeltas();
+    }
+
+    /**
+     * Splits the content of a file into seperate lines.
+     *
+     * @param content The content to split.
+     * @return a List of all lines in the content string.
+     */
+    private List<String> contentToLines(String content) {
+        String[] lines = content.split(System.getProperty("line.separator"));
+        List<String> linesAsList = new LinkedList<>();
+
+        linesAsList.addAll(Arrays.asList(lines));
+
+        return linesAsList;
+    }
 
 }
