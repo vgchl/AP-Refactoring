@@ -4,13 +4,11 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+
 import nl.han.ica.app.controllers.BaseController;
 import nl.han.ica.app.controllers.IssueDetectorIndexController;
 import nl.han.ica.core.Job;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 

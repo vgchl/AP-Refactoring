@@ -1,48 +1,65 @@
 package nl.han.ica.core;
-//
-//import nl.han.ica.core.issue.IssueSolver;
-//import org.junit.Before;
-//import org.junit.Test;
-//import org.mockito.Mock;
-//import org.mockito.MockitoAnnotations;
-//
-//import static org.junit.Assert.assertEquals;
-//import static org.junit.Assert.assertSame;
-//
-///**
-// * @author: Wouter Konecny
-// * @created: 24-10-12
-// */
+
+import nl.han.ica.core.issue.IssueSolver;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+
+import java.util.ArrayList;
+
+import static org.junit.Assert.*;
+
+
 public class SolutionTest {
-//
-//    private Solution solution = null;
-//
-//    @Mock
-//    private IssueSolver issueSolver;
-//
-//    private String beforeState = "before";
-//    private String afterState = "after";
-//
-//    @Before
-//    public void setUp() throws Exception {
-//        MockitoAnnotations.initMocks(this);
-//        solution = new Solution(null, issueSolver, null);
-//    }
-//
-//    @Test
-//    public void testSetIssueSolver() throws Exception {
-//        assertSame(issueSolver, solution.getIssueSolver());
-//    }
-//
-//    @Test
-//    public void testSetAndGetBefore() throws Exception {
-//        solution.setBefore(beforeState);
-//        assertEquals(beforeState, solution.getBefore());
-//    }
-//
-//    @Test
-//    public void testSetAndGetAfter() throws Exception {
-//        solution.setAfter(afterState);
-//        assertEquals(afterState, solution.getAfter());
-//    }
+
+    private Solution solution = null;
+
+    @Mock
+    private IssueSolver issueSolver;
+    private SourceFile sourceFile;
+
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        solution = new Solution(null, issueSolver, null);
+    }
+
+    @Test
+    public void testGetIssueSolver() throws Exception {
+        assertSame(issueSolver, solution.getIssueSolver());
+    }
+
+    @Test
+    public void testGetIssue() {
+        assertNull(solution.getIssue());
+    }
+
+    @Test
+    public void testGetDeltas() {
+        assertNotNull(solution.getDeltas());
+    }
+
+    @Test
+    public void testSetDeltas() {
+        ArrayList<Delta> deltas = new ArrayList<>();
+        assertNotSame(solution.getDeltas(), deltas);
+        solution.setDeltas(deltas);
+        assertSame(deltas, solution.getDeltas());
+    }
+
+    @Test
+    public void testGetParameters() {
+        assertNull(solution.getParameters());
+    }
+
+    @Test
+    public void testCreateDelta() {
+        assertEquals(solution.createDelta(sourceFile), solution.getDeltas().get(0) );
+    }
+
+
+
+
 }
