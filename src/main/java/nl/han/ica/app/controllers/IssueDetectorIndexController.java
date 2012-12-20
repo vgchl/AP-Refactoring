@@ -22,6 +22,7 @@ import nl.han.ica.core.issue.IssueDetector;
 import nl.han.ica.core.issue.IssueSolvingService;
 import nl.han.ica.core.issue.detector.*;
 import nl.han.ica.core.issue.solver.*;
+import nl.han.ica.core.issue.solver.magicliteral.MagicLiteralSolver;
 import nl.han.ica.core.util.FileUtil;
 
 import java.io.File;
