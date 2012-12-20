@@ -3,7 +3,6 @@ package nl.han.ica.core.issue.solver.magicliteral;
 import java.util.Map;
 
 import nl.han.ica.core.Parameter;
-import nl.han.ica.core.Solution;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueSolver;
 
@@ -14,24 +13,9 @@ import org.eclipse.jdt.core.dom.Type;
 
 public class StringLiteralSolutionBuilder extends LiteralSolutionBuilder {
 
-	public StringLiteralSolutionBuilder(Issue issue,
-			IssueSolver issueSolver, Map<String, Parameter> parameters, String parameterConstantName) {
+	public StringLiteralSolutionBuilder(Issue issue, IssueSolver issueSolver,
+			Map<String, Parameter> parameters, String parameterConstantName) {
 		super(issue, issueSolver, parameters, parameterConstantName);
-	}
-
-	@Override
-	public Solution build() {
-
-		String name = (String) parameters.get(parameterConstantName)
-				.getValue();
-		StringLiteral stringLiteral = (StringLiteral) literal;
-		String value = stringLiteral.getLiteralValue();
-
-		if (!existingConstantExists(name)) {
-			createConstant(name, value);
-		}
-		replaceMagicLiteralWithConstant(name);
-		return buildSolution();
 	}
 
 	@Override
@@ -41,9 +25,16 @@ public class StringLiteralSolutionBuilder extends LiteralSolutionBuilder {
 
 	@Override
 	protected Expression getInitializerExpression(String value, AST ast) {
+
 		StringLiteral newStringLiteral = ast.newStringLiteral();
 		newStringLiteral.setLiteralValue(value);
 		return newStringLiteral;
+	}
+
+	@Override
+	protected String getValueForConstant() {
+		StringLiteral stringLiteral = (StringLiteral) literal;
+		return stringLiteral.getLiteralValue();
 	}
 
 }

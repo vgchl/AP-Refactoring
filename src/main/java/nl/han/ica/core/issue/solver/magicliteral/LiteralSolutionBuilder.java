@@ -40,6 +40,15 @@ public abstract class LiteralSolutionBuilder {
 	private Logger logger;
 	protected String parameterConstantName;
 
+	/**
+	 * Constructor to set Issue, solver, parameters and a default name for the
+	 * new constant.
+	 * 
+	 * @param issue
+	 * @param issueSolver
+	 * @param parameters
+	 * @param parameterConstantName
+	 */
 	public LiteralSolutionBuilder(Issue issue, IssueSolver issueSolver,
 			Map<String, Parameter> parameters, String parameterConstantName) {
 		logger = Logger.getLogger(getClass());
@@ -54,7 +63,34 @@ public abstract class LiteralSolutionBuilder {
 		rewrite = ASTRewrite.create(literalClass.getAST());
 	}
 
-	public abstract Solution build();
+	/**
+	 * Create a Solution. This method creates a constant if it doesn't already exist. 
+	 * @return
+	 */
+	public Solution build() {
+
+		String name = getNameForConstant();
+
+		if (!existingConstantExists(name)) {
+
+			createConstant(name, getValueForConstant());
+		}
+		
+		replaceMagicLiteralWithConstant(name);
+
+		return buildSolution();
+	}
+
+	protected String getNameForConstant() {
+		return (String) parameters.get(parameterConstantName).getValue();
+	}
+
+	protected abstract String getValueForConstant();
+
+	protected abstract Expression getInitializerExpression(final String value,
+			AST ast);
+
+	protected abstract Type getType(AST ast);
 
 	protected boolean existingConstantExists(final String name) {
 		FieldDeclarationVisitor visitor = new FieldDeclarationVisitor();
@@ -83,16 +119,23 @@ public abstract class LiteralSolutionBuilder {
 		listRewrite.insertFirst(field, null);
 	}
 
-	protected abstract Expression getInitializerExpression(
-			final String value, AST ast);
-
-	protected abstract Type getType(AST ast);
-
+	/**
+	 * Create a constant with the given name and replace the magic literal with
+	 * a reference to the constant.
+	 * 
+	 * @param name
+	 */
 	protected void replaceMagicLiteralWithConstant(final String name) {
 		SimpleName constantReference = literal.getAST().newSimpleName(name);
 		rewrite.replace(literal, constantReference, null);
 	}
 
+	/**
+	 * Create a new Solution and set it's Detla's. This method is called by the
+	 * build method.
+	 * 
+	 * @return
+	 */
 	protected Solution buildSolution() {
 		SourceFile sourceFile = (SourceFile) literalClass.getRoot()
 				.getProperty(SourceFile.SOURCE_FILE_PROPERTY);
@@ -107,8 +150,7 @@ public abstract class LiteralSolutionBuilder {
 		Delta delta = solution.createDelta(sourceFile);
 		delta.setBefore(document.get());
 
-		TextEdit textEdit = rewrite.rewriteAST(document,
-				JavaCore.getOptions());
+		TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
 		try {
 			textEdit.apply(document);
 		} catch (MalformedTreeException | BadLocationException e) {

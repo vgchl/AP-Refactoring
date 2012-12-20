@@ -3,7 +3,6 @@ package nl.han.ica.core.issue.solver.magicliteral;
 import java.util.Map;
 
 import nl.han.ica.core.Parameter;
-import nl.han.ica.core.Solution;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueSolver;
 
@@ -22,20 +21,14 @@ public class CharacterLiteralSolutionBuilder extends LiteralSolutionBuilder {
 	}
 
 	@Override
-	public Solution build() {
-		String name = (String) parameters.get(parameterConstantName).getValue();
+	protected String getValueForConstant() {
 		CharacterLiteral charLiteral = (CharacterLiteral) literal;
-		String value = charLiteral.getEscapedValue();
-
-		if (!existingConstantExists(name)) {
-			createConstant(name, value);
-		}
-		replaceMagicLiteralWithConstant(name);
-		return buildSolution();
+		return charLiteral.getEscapedValue();
 	}
 
 	@Override
 	protected Expression getInitializerExpression(String value, AST ast) {
+
 		CharacterLiteral newCharacterLiteral = ast.newCharacterLiteral();
 		newCharacterLiteral.setEscapedValue(value);
 
