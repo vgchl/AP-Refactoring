@@ -20,12 +20,10 @@ public class HideMethodDetector extends IssueDetector {
     private static final String STRATEGY_NAME = "Hide Method";
     private static final String STRATEGY_DESCRIPTION = "Hide method when it is not used by any other class.";
 
-    private List<MethodDeclaration> methodDeclarationList;
     private List<MethodInvocation> methodInvocationList;
     private Map<MethodDeclaration, List<MethodInvocation>> methodUsages;
 
     public HideMethodDetector() {
-        methodDeclarationList = new ArrayList<>();
         methodInvocationList = new ArrayList<>();
         methodUsages = new WeakHashMap<>();
     }
@@ -33,7 +31,6 @@ public class HideMethodDetector extends IssueDetector {
     @Override
     public void detectIssues() {
         for (CompilationUnit compilationUnit : compilationUnits) {
-            //System.out.println("COMPILATIONUNIT: " + compilationUnit);
             MethodDeclarationVisitor methodDeclarationVisitor = new MethodDeclarationVisitor();
             compilationUnit.accept(methodDeclarationVisitor);
 
@@ -54,15 +51,17 @@ public class HideMethodDetector extends IssueDetector {
      * Finds all violated nodes and places them in the violatedNodes list.
      */
     private void findViolatedNodesAndCreateIssues() {
-
         outerloop:
         for (Map.Entry<MethodDeclaration, List<MethodInvocation>> entry : methodUsages.entrySet()) {
             MethodDeclaration methodDeclaration = entry.getKey();
             int modifiers = methodDeclaration.getModifiers();
-
+            
+            if(Modifier.isPrivate(modifiers)){
+                continue;
+            }
             for (MethodInvocation methodInvocation : entry.getValue()) {
-                if (!Modifier.isPrivate(modifiers)
-                        && ASTUtil.parent(TypeDeclaration.class, methodDeclaration) != ASTUtil.parent(TypeDeclaration.class, methodInvocation)) {
+                if (!Modifier.isPrivate(modifiers) &&
+                        ASTUtil.parent(TypeDeclaration.class, methodDeclaration) != ASTUtil.parent(TypeDeclaration.class, methodInvocation)) {
                     continue outerloop;
                 }
             }

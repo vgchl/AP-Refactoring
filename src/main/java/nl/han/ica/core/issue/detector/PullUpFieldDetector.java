@@ -6,6 +6,7 @@ import nl.han.ica.core.issue.IssueDetector;
 import org.eclipse.jdt.core.dom.*;
 
 import java.util.*;
+import org.apache.log4j.Logger;
 
 // TODO: Check whether field can be moved up (parent class shouldn't have a field with the same type and name).
 public class PullUpFieldDetector extends IssueDetector {
@@ -16,7 +17,9 @@ public class PullUpFieldDetector extends IssueDetector {
     private Map<ITypeBinding, TypeDeclaration> typeDeclarations;
     private Map<ITypeBinding, Node> typeNodes;
     private Set<Node> rootTypeNodes;
+    private Logger logger = Logger.getLogger(getClass());
     private boolean bothFieldDeclarationsAreFinal = false;
+
 
     public PullUpFieldDetector() {
         typeDeclarations = new HashMap<>();
@@ -32,7 +35,9 @@ public class PullUpFieldDetector extends IssueDetector {
 
         for (Node node : rootTypeNodes) {
             Queue<ITypeBinding> remainingTypes = new LinkedList<>();
-            remainingTypes.addAll(node.getAllChildTypes());
+            Set<ITypeBinding> allChildTypes = node.getAllChildTypes();
+            remainingTypes.addAll(allChildTypes);
+
             while (!remainingTypes.isEmpty()) {
                 ITypeBinding typeA = remainingTypes.poll();
                 for (ITypeBinding typeB : remainingTypes) {
@@ -72,7 +77,7 @@ public class PullUpFieldDetector extends IssueDetector {
         }
     }
 
-    private void detectDuplicateFields(ITypeBinding typeA, ITypeBinding typeB) {
+    private void detectDuplicateFields(ITypeBinding typeA, ITypeBinding typeB) {        
         for (FieldDeclaration fieldA : typeDeclarations.get(typeA).getFields()) {
             for (FieldDeclaration fieldB : typeDeclarations.get(typeB).getFields()) {
                 if (fieldA.getType().resolveBinding() == fieldB.getType().resolveBinding()) {
@@ -235,17 +240,21 @@ public class PullUpFieldDetector extends IssueDetector {
             }
             Set<ITypeBinding> typeBindings = new HashSet<>();
             for (Node node : nodes) {
-                typeBindings.add(node.getTypeBinding());
+                if(node.getTypeBinding() != null){
+                    typeBindings.add(node.getTypeBinding());
+                }
             }
             return typeBindings;
         }
 
         public Set<ITypeBinding> getAllParentTypes() {
             Set<ITypeBinding> types = new HashSet<>();
-            Node parent = getParent();
-            while (null != parent) {
-                types.add(parent.getTypeBinding());
-                parent = parent.getParent();
+            Node tempParent = getParent();
+            while (null != tempParent) {
+                if(tempParent.getTypeBinding() != null){
+                    types.add(tempParent.getTypeBinding());
+                }
+                tempParent = tempParent.getParent();
             }
             return types;
         }

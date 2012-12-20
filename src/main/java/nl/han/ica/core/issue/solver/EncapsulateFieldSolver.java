@@ -129,6 +129,19 @@ public class EncapsulateFieldSolver extends IssueSolver {
         AST ast = qualifiedName.getAST();
 
         ASTRewrite rewrite = ASTRewrite.create(ast);
+        replaceQualifiedNameWithMethodInvocation(ast, qualifiedName, rewrite);
+
+        TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
+
+        try {
+            textEdit.apply(document);
+        } catch (MalformedTreeException | BadLocationException e) {
+           log.fatal(e);
+        }
+        delta.setAfter(document.get());
+    }
+    
+    private void replaceQualifiedNameWithMethodInvocation(AST ast, QualifiedName qualifiedName, ASTRewrite rewrite){
         MethodInvocation methodInvocation = ast.newMethodInvocation();
         methodInvocation.setExpression(ast.newSimpleName(qualifiedName.getQualifier().toString()));
 
@@ -141,15 +154,6 @@ public class EncapsulateFieldSolver extends IssueSolver {
             methodInvocation.setName(ast.newSimpleName(getter.getName().toString()));
             rewrite.replace(qualifiedName, methodInvocation, null);
         }
-
-        TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
-
-        try {
-            textEdit.apply(document);
-        } catch (MalformedTreeException | BadLocationException e) {
-            log.fatal(e);
-        }
-        delta.setAfter(document.get());
     }
 
     @SuppressWarnings("unchecked")

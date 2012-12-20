@@ -40,7 +40,7 @@ public class RefactorTool extends Application {
 
         BaseController strategySelectionController = new IssueDetectorIndexController(scene, new Job());
         scene.setRoot(strategySelectionController.getView());
-
+        
         stage.setScene(scene);
         stage.setTitle(APP_TITLE);
         setApplicationIcon(stage);

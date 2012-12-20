@@ -24,15 +24,16 @@ public class RemoveParameterDetector extends IssueDetector {
     List<FieldAccess> fieldAccessList;
 
     public RemoveParameterDetector() {
-        methodDeclarations = new ArrayList<MethodDeclaration>();
-        methodInvocations = new ArrayList<MethodInvocation>();
-        fieldAccessList = new ArrayList<FieldAccess>();
+        methodDeclarations = new ArrayList<>();
+        methodInvocations = new ArrayList<>();
+        fieldAccessList = new ArrayList<>();
     }
 
     @Override
     public void detectIssues() {
         reset();
         collectMethodDeclarations();
+        //TODO REFACTOR, Because not needed to combine invocations already with his declarations
         collectMethodInvocations();
 
         for (MethodDeclaration methodDeclaration : methodDeclarations) {
@@ -90,6 +91,7 @@ public class RemoveParameterDetector extends IssueDetector {
         methodInvocations = visitor.getMethodInvocations();
     }
 
+    @Override
     public void reset() {
         methodDeclarations.clear();
         super.reset();
