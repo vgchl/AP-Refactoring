@@ -1,4 +1,4 @@
-package nl.han.ica.core.issues;
+package nl.han.ica.core.issue;
 //
 //import java.util.List;
 //import nl.han.ica.core.issues.criteria.IssueDetector;

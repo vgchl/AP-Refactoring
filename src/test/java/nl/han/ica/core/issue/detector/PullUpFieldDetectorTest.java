@@ -1,20 +1,4 @@
-package nl.han.ica.core.issues.detector;
-
-import nl.han.ica.core.SourceFile;
-import nl.han.ica.core.issue.Issue;
-import nl.han.ica.core.issue.detector.PullUpFieldDetector;
-import nl.han.ica.core.parser.Parser;
-import nl.han.ica.core.util.FileUtil;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+package nl.han.ica.core.issue.detector;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
