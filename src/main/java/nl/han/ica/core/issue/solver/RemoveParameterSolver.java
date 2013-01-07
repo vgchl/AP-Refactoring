@@ -57,12 +57,10 @@ public class RemoveParameterSolver extends IssueSolver {
         if (issue.getNodes().size() > STARTMETHODINVOCATIONS) {
             methodInvocations = issue.getNodes().subList(STARTMETHODINVOCATIONS, issue.getNodes().size());
 
-            ASTRewrite rewrite;
-
             for (ASTNode method : methodInvocations) {
                 MethodInvocation methodInvocation = (MethodInvocation) method;
                 Expression argument = (Expression) methodInvocation.arguments().get(methodDeclaration.parameters().indexOf(singleVariableDeclaration));
-                rewrite = ASTRewrite.create(method.getAST());
+                ASTRewrite rewrite = ASTRewrite.create(method.getAST());
                 rewrite.remove(argument, null);
 
                 deltas.add(createDelta(methodInvocation, rewrite));
