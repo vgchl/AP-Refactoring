@@ -33,10 +33,11 @@ public class MagicLiteralDetector extends IssueDetector {
         //All violated nodes
         private Set<ASTNode> magicLiterals;
 
-        //Implement number literal visitor and make sure it is added to the violated nodes.
+        //TODO: Implement number literal visitor and make sure it is added to the violated nodes.
         // Hint: Use the NumberLiteral class
 
-        //Define if numberliteral is a magicnumber
+        //TODO: Define if numberliteral is a magicnumber
+        //Hint: Check the ASTNODE class for nodetypes
 
 
         public Set<ASTNode> getMagicLiterals() {

@@ -50,12 +50,14 @@ public abstract class LiteralSolutionBuilder {
         this.parameters = parameters;
         this.parameterConstantName = parameterConstantName;
 
-        // get the magic literal from the issue
-        // literal = "...";
-        // Get the class from the literal, we do this so that we can rewrite this class later.
-        // literalClass = ASTUtil.parent(..., ....);
-        // create a rewriter using the literalclass
-        // rewrite = "...";
+        //TODO: Get the magic literal from the issue
+        //HINT: literal = "...";
+
+        //TODO: Get the class from the literal, we do this so that we can rewrite this class later.
+        //HINT: literalClass = ASTUtil.parent(..., ....);
+
+        //TODO: create a rewriter using the literalClass
+        //HINT: rewrite = "...";
     }
 
     /**
@@ -93,17 +95,18 @@ public abstract class LiteralSolutionBuilder {
     protected void createConstant(final String name, final String value) {
         AST ast = literalClass.getAST();
 
-        //Create a list rewrite, make sure to pass the class of the literal.
+        //TODO: Create a ListRewrite, make sure to pass the class of the literal.
+        //Hint: use rewrite to create the ListRewrite
 
-        //Create a variable declaration fragment
+        //TODO: Create a variable declaration fragment
         //Hint: Use ast.new... for the creation of new ast objects
         //Hint: Look at the number literal solution builder!
 
-        //Using the variable, create a field declaration
+        //TODO: Using the variable, create a field declaration
         //Hint: make sure to set the type and mofifiers
 
-        //insert the field in the list
-        //hint: texteditgroup == null
+        //TODO: insert the field in the list
+        //Hint: texteditgroup == null
     }
 
     /**
@@ -113,7 +116,7 @@ public abstract class LiteralSolutionBuilder {
      * @param name
      */
     protected void replaceMagicLiteralWithConstant(final String name) {
-        //Replace literal with name
+        //TODO: Replace literal with name
         //Hint: use rewrite
     }
 
