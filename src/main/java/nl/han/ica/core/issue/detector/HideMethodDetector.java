@@ -1,5 +1,6 @@
 package nl.han.ica.core.issue.detector;
 
+import nl.han.ica.core.Context;
 import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.ast.visitors.MethodDeclarationVisitor;
 import nl.han.ica.core.ast.visitors.MethodInvocationVisitor;
@@ -12,10 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-/**
- * @author: Wouter Konecny
- * @created: 12-11-12
- */
 public class HideMethodDetector extends IssueDetector {
 
     private static final String STRATEGY_NAME = "Hide Method";
@@ -26,11 +23,11 @@ public class HideMethodDetector extends IssueDetector {
 
     public HideMethodDetector() {
         methodInvocationList = new ArrayList<>();
-        methodUsages = new WeakHashMap<MethodDeclaration, ArrayList<MethodInvocation>>();
+        methodUsages = new WeakHashMap<>();
     }
 
     @Override
-    public void detectIssues() {
+    public void internalDetectIssues(Context context) {
         for (SourceFile sourceFile : context.getSourceFiles()) { // TODO: Rewrite with context.visit(ASTVisitor)
             MethodDeclarationVisitor methodDeclarationVisitor = new MethodDeclarationVisitor();
             sourceFile.getCompilationUnit().accept(methodDeclarationVisitor);
@@ -56,8 +53,8 @@ public class HideMethodDetector extends IssueDetector {
         for (Map.Entry<MethodDeclaration, ArrayList<MethodInvocation>> entry : methodUsages.entrySet()) {
             MethodDeclaration methodDeclaration = entry.getKey();
             int modifiers = methodDeclaration.getModifiers();
-            
-            if(Modifier.isPrivate(modifiers)){
+
+            if (Modifier.isPrivate(modifiers)) {
                 continue;
             }
             for (MethodInvocation methodInvocation : entry.getValue()) {
@@ -77,16 +74,6 @@ public class HideMethodDetector extends IssueDetector {
         }
     }
 
-    @Override
-    public String getTitle() {
-        return STRATEGY_NAME;
-    }
-
-    @Override
-    public String getDescription() {
-        return STRATEGY_DESCRIPTION;
-    }
-
     private void buildHashMapWithMethodDeclarationsAndInvocations() {
         for (MethodInvocation methodInvocation : methodInvocationList) {
             for (MethodDeclaration methodDeclaration : methodUsages.keySet()) {
@@ -96,11 +83,20 @@ public class HideMethodDetector extends IssueDetector {
                 }
             }
         }
-
     }
 
     private boolean hasAnnotation(MethodDeclaration methodDeclaration) {
         return methodDeclaration.modifiers().get(0) instanceof Annotation;
+    }
+
+    @Override
+    public String getTitle() {
+        return STRATEGY_NAME;
+    }
+
+    @Override
+    public String getDescription() {
+        return STRATEGY_DESCRIPTION;
     }
 
 }

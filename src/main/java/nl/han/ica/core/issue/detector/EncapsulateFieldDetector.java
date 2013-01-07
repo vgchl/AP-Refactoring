@@ -1,11 +1,11 @@
 package nl.han.ica.core.issue.detector;
 
+import nl.han.ica.core.Context;
 import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.ast.visitors.FieldAccessVisitor;
 import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
-import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.QualifiedName;
@@ -17,12 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-/**
- * @author Maik Diepenbroek
- * @since 22-11-2012
- */
-
 public class EncapsulateFieldDetector extends IssueDetector {
 
     private static final String STRATEGY_NAME = "Encapsulate Field";
@@ -31,7 +25,6 @@ public class EncapsulateFieldDetector extends IssueDetector {
 
     private List<QualifiedName> qualifiedNamesList;
     private Map<FieldDeclaration, List<QualifiedName>> fieldDeclarationFieldAccessHashMap;
-    private Logger log = Logger.getLogger(getClass());
 
     public EncapsulateFieldDetector() {
         fieldDeclarations = new ArrayList<>();
@@ -40,7 +33,7 @@ public class EncapsulateFieldDetector extends IssueDetector {
     }
 
     @Override
-    public void detectIssues() {
+    public void internalDetectIssues(Context context) {
         //TODO REFACTOR, Because not to combine all fields with his qualifiednames yet. 
         for (SourceFile sourceFile : context.getSourceFiles()) { // TODO: Rewrite with context.visit(ASTVisitor)
             FieldAccessVisitor fieldAccessVisitor = new FieldAccessVisitor();
@@ -90,4 +83,5 @@ public class EncapsulateFieldDetector extends IssueDetector {
     public String getDescription() {
         return STRATEGY_DESCRIPTION;
     }
+
 }

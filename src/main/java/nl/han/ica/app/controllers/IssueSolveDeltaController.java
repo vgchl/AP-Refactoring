@@ -12,8 +12,8 @@ import nl.han.ica.app.models.CodeEditor;
 import nl.han.ica.app.models.parameter.ParameterChangeListener;
 import nl.han.ica.app.models.parameter.ParameterControlFactory;
 import nl.han.ica.app.models.parameter.ParameterEvent;
-import nl.han.ica.core.Delta;
-import nl.han.ica.core.Parameter;
+import nl.han.ica.core.solution.Delta;
+import nl.han.ica.core.solution.Parameter;
 
 import javax.swing.event.EventListenerList;
 import java.io.IOException;
@@ -21,8 +21,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import org.apache.log4j.Logger;
 
 /**
  * Handles the presentation of a single delta from a solution to an issue.

@@ -3,6 +3,7 @@ package nl.han.ica.core;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import nl.han.ica.core.issue.Issue;
+import nl.han.ica.core.solution.Parameter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -5,8 +5,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import nl.han.ica.core.Job;
-import nl.han.ica.core.Parameter;
-import nl.han.ica.core.Solution;
+import nl.han.ica.core.solution.Parameter;
+import nl.han.ica.core.solution.Solution;
 import nl.han.ica.core.issue.Issue;
 import org.apache.log4j.Logger;
 

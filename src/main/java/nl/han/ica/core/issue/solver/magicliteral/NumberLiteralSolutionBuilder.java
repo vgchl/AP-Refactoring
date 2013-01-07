@@ -1,6 +1,6 @@
 package nl.han.ica.core.issue.solver.magicliteral;
 
-import nl.han.ica.core.Parameter;
+import nl.han.ica.core.solution.Parameter;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueSolver;
 import org.eclipse.jdt.core.dom.*;
@@ -9,8 +9,7 @@ import java.util.Map;
 
 public class NumberLiteralSolutionBuilder extends LiteralSolutionBuilder {
 
-    public NumberLiteralSolutionBuilder(Issue issue, IssueSolver issueSolver,
-            Map<String, Parameter> parameters, String parameterConstantName) {
+    public NumberLiteralSolutionBuilder(Issue issue, IssueSolver issueSolver, Map<String, Parameter> parameters, String parameterConstantName) {
         super(issue, issueSolver, parameters, parameterConstantName);
     }
 
@@ -22,7 +21,6 @@ public class NumberLiteralSolutionBuilder extends LiteralSolutionBuilder {
 
     @Override
     protected Type getType(AST ast) {
-
         NumberLiteral numberLiteral = (NumberLiteral) literal;
         String token = numberLiteral.getToken();
 
@@ -35,12 +33,11 @@ public class NumberLiteralSolutionBuilder extends LiteralSolutionBuilder {
         } else {
             return ast.newPrimitiveType(PrimitiveType.INT);
         }
-
     }
 
     @Override
     protected Expression getInitializerExpression(String value, AST ast) {
-
         return ast.newNumberLiteral(value);
     }
+
 }

@@ -2,7 +2,7 @@ package nl.han.ica.app.models.parameter;
 
 import javafx.event.Event;
 import javafx.event.EventType;
-import nl.han.ica.core.Parameter;
+import nl.han.ica.core.solution.Parameter;
 
 /**
  * Provides context to events involving parameters.

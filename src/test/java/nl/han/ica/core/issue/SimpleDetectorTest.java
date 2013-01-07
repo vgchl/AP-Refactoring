@@ -1,5 +1,6 @@
 package nl.han.ica.core.issue;
 
+import nl.han.ica.core.Context;
 import nl.han.ica.core.issue.detector.SimpleDetector;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -25,14 +26,14 @@ public class SimpleDetectorTest {
     private Issue issue;
 
     private Set astNodeSet;
-    private Set compilationUnits;
+    private Context context;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         simpleDetector = new SimpleDetector();
         astNodeSet = new HashSet();
-        compilationUnits = new HashSet();
+        context = new Context();
     }
 
     @Test
@@ -65,14 +66,6 @@ public class SimpleDetectorTest {
         simpleDetector.createIssues(astNodeSet);
         assertEquals(1, simpleDetector.getIssues().size());
     }
-
-//    @Test @SuppressWarnings("unchecked")
-//    public void testThatCompilationUnitsAreSet() {
-//        assertTrue(simpleDetector.getCompilationUnits().isEmpty());
-//        compilationUnits.add(compilationUnit);
-//        simpleDetector.setCompilationUnits(compilationUnits);
-//        assertEquals(1, simpleDetector.getCompilationUnits().size());
-//    }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testThatIssueListIsUnmodifiableWhenRemoving() {
