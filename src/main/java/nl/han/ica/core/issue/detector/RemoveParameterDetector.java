@@ -33,33 +33,36 @@ public class RemoveParameterDetector extends IssueDetector {
     public void detectIssues() {
         reset();
         collectMethodDeclarations();
-        //TODO REFACTOR, Because not needed to combine invocations already with his declarations
         collectMethodInvocations();
 
         for (MethodDeclaration methodDeclaration : methodDeclarations) {
             if (!Modifier.isAbstract(methodDeclaration.getModifiers())
                     && !hasAnnotation(methodDeclaration)
                     && !ASTUtil.parent(TypeDeclaration.class, methodDeclaration).isInterface()
-                    && !ASTUtil.isMainMethod(methodDeclaration)) {
-                List<SingleVariableDeclaration> declaredVariables = methodDeclaration.parameters();
+                    && !ASTUtil.isMainMethod(methodDeclaration) && methodDeclaration.parameters() != null) {
+                checkVariables(methodDeclaration, methodDeclaration.parameters());
+            }
+        }
+    }
 
-                if (declaredVariables != null) {
-                    for (SingleVariableDeclaration variable : declaredVariables) {
-                        if (!usesVariable(methodDeclaration, variable)) {
-                            Issue issue = createIssue();
-                            issue.getNodes().add(methodDeclaration);
-                            issue.getNodes().add(variable);
+    private void checkVariables(MethodDeclaration methodDeclaration, List<SingleVariableDeclaration> declaredVariables) {
+        for (SingleVariableDeclaration variable : declaredVariables) {
+            if (!usesVariable(methodDeclaration, variable)) {
+                Issue issue = createIssue();
+                issue.getNodes().add(methodDeclaration);
+                issue.getNodes().add(variable);
 
-                            for (MethodInvocation methodInvocation : methodInvocations) {
-                                if (methodDeclaration.resolveBinding().isEqualTo(
-                                        methodInvocation.resolveMethodBinding())) {
-                                    issue.getNodes().add(methodInvocation);
-                                }
-                            }
+                findCorrespondingInvocations(methodDeclaration, issue);
 
-                        }
-                    }
-                }
+            }
+        }
+    }
+
+    private void findCorrespondingInvocations(MethodDeclaration methodDeclaration, Issue issue) {
+        for (MethodInvocation methodInvocation : methodInvocations) {
+            if (methodDeclaration.resolveBinding().isEqualTo(
+                    methodInvocation.resolveMethodBinding())) {
+                issue.getNodes().add(methodInvocation);
             }
         }
     }
