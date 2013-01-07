@@ -35,12 +35,10 @@ public class NumberLiteralSolutionBuilder extends LiteralSolutionBuilder {
         } else {
             return ast.newPrimitiveType(PrimitiveType.INT);
         }
-
     }
 
     @Override
     protected Expression getInitializerExpression(String value, AST ast) {
-
         return ast.newNumberLiteral(value);
     }
 }

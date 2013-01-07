@@ -50,9 +50,12 @@ public abstract class LiteralSolutionBuilder {
         this.parameters = parameters;
         this.parameterConstantName = parameterConstantName;
 
-        literal = issue.getNodes().get(0);
-        literalClass = ASTUtil.parent(TypeDeclaration.class, literal);
-        rewrite = ASTRewrite.create(literalClass.getAST());
+        // get the magic literal from the issue
+        // literal = "...";
+        // Get the class from the literal, we do this so that we can rewrite this class later.
+        // literalClass = ASTUtil.parent(..., ....);
+        // create a rewriter using the literalclass
+        // rewrite = "...";
     }
 
     /**
@@ -90,16 +93,17 @@ public abstract class LiteralSolutionBuilder {
     protected void createConstant(final String name, final String value) {
         AST ast = literalClass.getAST();
 
-        ListRewrite listRewrite = rewrite.getListRewrite(literalClass, TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
-        VariableDeclarationFragment variable = ast.newVariableDeclarationFragment();
-        variable.setName(ast.newSimpleName(name));
-        variable.setInitializer(getInitializerExpression(value, ast));
+        //Create a list rewrite, make sure to pass the class of the literal.
 
-        FieldDeclaration field = ast.newFieldDeclaration(variable);
-        field.setType(getType(ast));
-        field.modifiers().addAll(ast.newModifiers(Modifier.PRIVATE | Modifier.STATIC | Modifier.FINAL));
+        //Create a variable declaration fragment
+        //Hint: Use ast.new... for the creation of new ast objects
+        //Hint: Look at the number literal solution builder!
 
-        listRewrite.insertFirst(field, null);
+        //Using the variable, create a field declaration
+        //Hint: make sure to set the type and mofifiers
+
+        //insert the field in the list
+        //hint: texteditgroup == null
     }
 
     /**
@@ -109,12 +113,12 @@ public abstract class LiteralSolutionBuilder {
      * @param name
      */
     protected void replaceMagicLiteralWithConstant(final String name) {
-        SimpleName constantReference = literal.getAST().newSimpleName(name);
-        rewrite.replace(literal, constantReference, null);
+        //Replace literal with name
+        //Hint: use rewrite
     }
 
     /**
-     * Create a new Solution and set it's Detla's. This method is called by the
+     * Create a new Solution and set it's Delta's. This method is called by the
      * build method.
      *
      * @return
@@ -137,6 +141,7 @@ public abstract class LiteralSolutionBuilder {
             textEdit.apply(document);
         } catch (MalformedTreeException | BadLocationException e) {
             logger.fatal("Could not rewrite the AST tree.", e);
+
         }
 
         delta.setAfter(document.get());

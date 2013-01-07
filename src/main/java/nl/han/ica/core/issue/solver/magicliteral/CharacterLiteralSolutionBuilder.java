@@ -15,19 +15,17 @@ public class CharacterLiteralSolutionBuilder extends LiteralSolutionBuilder {
 
     @Override
     protected String getValueForConstant() {
-        CharacterLiteral charLiteral = (CharacterLiteral) literal;
-        return charLiteral.getEscapedValue();
+        return null;
     }
 
     @Override
     protected Expression getInitializerExpression(String value, AST ast) {
-        CharacterLiteral newCharacterLiteral = ast.newCharacterLiteral();
-        newCharacterLiteral.setEscapedValue(value);
-        return newCharacterLiteral;
+        return null;
     }
 
     @Override
     protected Type getType(AST ast) {
-        return ast.newPrimitiveType(PrimitiveType.CHAR);
+        return null;
     }
+
 }

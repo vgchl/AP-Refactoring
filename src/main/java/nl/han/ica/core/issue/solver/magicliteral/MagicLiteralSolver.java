@@ -24,6 +24,7 @@ public class MagicLiteralSolver extends IssueSolver {
     @Override
     protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters) {
         LiteralSolutionBuilder solutionBuilder = LiteralSolutionBuilderFactory.getSolutionBuilder(issue, this, parameters, PARAMETER_CONSTANT_NAME);
+
         if (solutionBuilder == null) {
             throw new UnsupportedOperationException("No suitable solution builder available.");
         }

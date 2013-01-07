@@ -18,21 +18,20 @@ public class StringLiteralSolutionBuilder extends LiteralSolutionBuilder {
     }
 
     @Override
-    protected Type getType(AST ast) {
-        return ast.newSimpleType(ast.newName("String"));
+    protected String getValueForConstant() {
+        return null;
+
     }
 
     @Override
     protected Expression getInitializerExpression(String value, AST ast) {
-
-        StringLiteral newStringLiteral = ast.newStringLiteral();
-        newStringLiteral.setLiteralValue(value);
-        return newStringLiteral;
+        return null;
     }
 
     @Override
-    protected String getValueForConstant() {
-        StringLiteral stringLiteral = (StringLiteral) literal;
-        return stringLiteral.getLiteralValue();
+    protected Type getType(AST ast) {
+        return null;
     }
+
+
 }

@@ -30,40 +30,14 @@ public class MagicLiteralDetector extends IssueDetector {
     }
 
     private class MagicLiteralVisitor extends ASTVisitor {
-
+        //All violated nodes
         private Set<ASTNode> magicLiterals;
 
-        public MagicLiteralVisitor() {
-            magicLiterals = new HashSet<>();
-        }
+        //Implement number literal visitor and make sure it is added to the violated nodes.
+        // Hint: Use the NumberLiteral class
 
-        @Override
-        public boolean visit(NumberLiteral node) {
-            addLiteralNode(node);
+        //Define if numberliteral is a magicnumber
 
-            return super.visit(node);
-        }
-
-        @Override
-        public boolean visit(StringLiteral node) {
-            addLiteralNode(node);
-
-            return super.visit(node);
-        }
-
-        @Override
-        public boolean visit(CharacterLiteral node) {
-
-            addLiteralNode(node);
-
-            return super.visit(node);
-        }
-
-        private void addLiteralNode(ASTNode node) {
-            if (node.getParent().getNodeType() != ASTNode.VARIABLE_DECLARATION_FRAGMENT) {
-                magicLiterals.add(node);
-            }
-        }
 
         public Set<ASTNode> getMagicLiterals() {
             return magicLiterals;
