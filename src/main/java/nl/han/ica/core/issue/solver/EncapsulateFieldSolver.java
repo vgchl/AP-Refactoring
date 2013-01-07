@@ -1,8 +1,8 @@
 package nl.han.ica.core.issue.solver;
 
-import nl.han.ica.core.Delta;
-import nl.han.ica.core.Parameter;
-import nl.han.ica.core.Solution;
+import nl.han.ica.core.solution.Delta;
+import nl.han.ica.core.solution.Parameter;
+import nl.han.ica.core.solution.Solution;
 import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueSolver;
@@ -70,7 +70,6 @@ public class EncapsulateFieldSolver extends IssueSolver {
     }
 
     private IDocument getSourceFileDocument(SourceFile sourceFile) {
-
         try {
             return sourceFile.toDocument();
         } catch (IOException e) {

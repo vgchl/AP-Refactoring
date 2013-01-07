@@ -35,10 +35,7 @@ public class IssueDetectionService {
         logger.info("Detecting issues...");
         Set<Issue> issues = new HashSet<>();
         for (IssueDetector detector : detectors) {
-            detector.reset();
-            detector.setContext(context);
-            detector.detectIssues();
-            issues.addAll(detector.getIssues());
+            issues.addAll(detector.detectIssues(context));
         }
         logger.debug("Done detecting issues");
         return issues;

@@ -1,12 +1,11 @@
 package nl.han.ica.core.issue.detector;
 
+import nl.han.ica.core.Context;
 import nl.han.ica.core.ast.visitors.MethodDeclarationVisitor;
 import nl.han.ica.core.ast.visitors.MethodInvocationVisitor;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
-
 import nl.han.ica.core.util.ASTUtil;
-import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.*;
 
 import java.util.ArrayList;
@@ -28,10 +27,10 @@ public class RemoveParameterDetector extends IssueDetector {
     }
 
     @Override
-    public void detectIssues() {
-        reset();
-        collectMethodDeclarations();
-        collectMethodInvocations();
+    public void internalDetectIssues(Context context) {
+        collectMethodDeclarations(context);
+        //TODO REFACTOR, Because not needed to combine invocations already with his declarations
+        collectMethodInvocations(context);
 
         for (MethodDeclaration methodDeclaration : methodDeclarations) {
             if (!Modifier.isAbstract(methodDeclaration.getModifiers())
@@ -65,8 +64,7 @@ public class RemoveParameterDetector extends IssueDetector {
         }
     }
 
-    private boolean usesVariable(MethodDeclaration methodDeclaration,
-                                 SingleVariableDeclaration variableDeclaration) {
+    private boolean usesVariable(MethodDeclaration methodDeclaration, SingleVariableDeclaration variableDeclaration) {
         String methodBlock = methodDeclaration.getBody().toString();
 
         return methodBlock.contains(variableDeclaration.getName().toString());
@@ -76,13 +74,13 @@ public class RemoveParameterDetector extends IssueDetector {
         return methodDeclaration.modifiers().get(0) instanceof Annotation;
     }
 
-    private void collectMethodDeclarations() {
+    private void collectMethodDeclarations(Context context) {
         MethodDeclarationVisitor visitor = new MethodDeclarationVisitor();
         context.accept(visitor);
         methodDeclarations = visitor.getMethodDeclarations();
     }
 
-    private void collectMethodInvocations() {
+    private void collectMethodInvocations(Context context) {
         MethodInvocationVisitor visitor = new MethodInvocationVisitor();
         context.accept(visitor);
         methodInvocations = visitor.getMethodInvocations();

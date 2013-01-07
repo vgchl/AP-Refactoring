@@ -1,7 +1,8 @@
-package nl.han.ica.core;
+package nl.han.ica.core.solution;
 
 import difflib.DiffUtils;
 import difflib.Patch;
+import nl.han.ica.core.SourceFile;
 
 import java.io.File;
 import java.util.Arrays;

@@ -1,10 +1,10 @@
-package nl.han.ica.core;
+package nl.han.ica.core.solution;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents an external variable used by {@link nl.han.ica.core.issue.IssueSolver}s to customize the {@link Solution}.
+ * Represents an external variable used by {@link nl.han.ica.core.issue.IssueSolver}s to customize the {@link nl.han.ica.core.solution.Solution}.
  */
 public class Parameter {
 

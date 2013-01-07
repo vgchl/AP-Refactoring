@@ -1,5 +1,6 @@
 package nl.han.ica.core;
 
+import nl.han.ica.core.solution.Delta;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

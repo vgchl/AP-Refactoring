@@ -1,5 +1,6 @@
-package nl.han.ica.core;
+package nl.han.ica.core.solution;
 
+import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueSolver;
 
@@ -80,7 +81,7 @@ public class Solution {
     /**
      * Convenience method that instantiates a new {@link Delta} and associates it with this solution.
      *
-     * @param sourceFile The {@link SourceFile} the {@link Delta} applies to.
+     * @param sourceFile The {@link nl.han.ica.core.SourceFile} the {@link Delta} applies to.
      * @return The newly created {@link Delta}.
      */
     public Delta createDelta(SourceFile sourceFile) {

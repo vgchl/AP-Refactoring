@@ -1,9 +1,9 @@
 package nl.han.ica.core.issue.detector;
 
+import nl.han.ica.core.Context;
 import nl.han.ica.core.ast.visitors.TypeDeclarationVisitor;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
-import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.*;
 
 import java.util.*;
@@ -17,7 +17,6 @@ public class PullUpFieldDetector extends IssueDetector {
     private Map<ITypeBinding, TypeDeclaration> typeDeclarations;
     private Map<ITypeBinding, Node> typeNodes;
     private Set<Node> rootTypeNodes;
-    private Logger logger = Logger.getLogger(getClass());
     private boolean bothFieldDeclarationsAreFinal = false;
 
 
@@ -28,9 +27,8 @@ public class PullUpFieldDetector extends IssueDetector {
     }
 
     @Override
-    public void detectIssues() {
-        reset();
-        collectTypeDeclarations();
+    public void internalDetectIssues(Context context) {
+        collectTypeDeclarations(context);
         buildTypeHierarchy();
 
         for (Node node : rootTypeNodes) {
@@ -49,7 +47,7 @@ public class PullUpFieldDetector extends IssueDetector {
         }
     }
 
-    private void collectTypeDeclarations() {
+    private void collectTypeDeclarations(Context context) {
         TypeDeclarationVisitor visitor = new TypeDeclarationVisitor();
         context.accept(visitor);
         for (TypeDeclaration typeDeclaration : visitor.getTypeDeclarations()) {
@@ -75,7 +73,7 @@ public class PullUpFieldDetector extends IssueDetector {
         }
     }
 
-    private void detectDuplicateFields(ITypeBinding typeA, ITypeBinding typeB) {        
+    private void detectDuplicateFields(ITypeBinding typeA, ITypeBinding typeB) {
         for (FieldDeclaration fieldA : typeDeclarations.get(typeA).getFields()) {
             for (FieldDeclaration fieldB : typeDeclarations.get(typeB).getFields()) {
                 if (fieldA.getType().resolveBinding() == fieldB.getType().resolveBinding()) {
@@ -239,7 +237,7 @@ public class PullUpFieldDetector extends IssueDetector {
             }
             Set<ITypeBinding> typeBindings = new HashSet<>();
             for (Node node : nodes) {
-                if(node.getTypeBinding() != null){
+                if (node.getTypeBinding() != null) {
                     typeBindings.add(node.getTypeBinding());
                 }
             }
@@ -250,7 +248,7 @@ public class PullUpFieldDetector extends IssueDetector {
             Set<ITypeBinding> types = new HashSet<>();
             Node tempParent = getParent();
             while (null != tempParent) {
-                if(tempParent.getTypeBinding() != null){
+                if (tempParent.getTypeBinding() != null) {
                     types.add(tempParent.getTypeBinding());
                 }
                 tempParent = tempParent.getParent();

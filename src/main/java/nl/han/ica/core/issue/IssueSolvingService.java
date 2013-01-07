@@ -1,7 +1,7 @@
 package nl.han.ica.core.issue;
 
-import nl.han.ica.core.Parameter;
-import nl.han.ica.core.Solution;
+import nl.han.ica.core.solution.Parameter;
+import nl.han.ica.core.solution.Solution;
 
 import java.util.Map;
 
