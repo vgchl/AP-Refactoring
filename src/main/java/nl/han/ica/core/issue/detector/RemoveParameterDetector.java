@@ -6,6 +6,7 @@ import nl.han.ica.core.ast.visitors.MethodInvocationVisitor;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
 import nl.han.ica.core.util.ASTUtil;
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.*;
 
 import java.util.ArrayList;
