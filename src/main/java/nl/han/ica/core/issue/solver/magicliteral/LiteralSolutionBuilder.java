@@ -97,16 +97,23 @@ public abstract class LiteralSolutionBuilder {
 
         //TODO: Create a ListRewrite, make sure to pass the class of the literal.
         //Hint: use rewrite to create the ListRewrite
+        //Hint: Look at the TypeDeclaration class ChildListPropertyDescriptor
 
-        //TODO: Create a variable declaration fragment
+        //TODO: Create a VariableDeclarationFragment
         //Hint: Use ast.new... for the creation of new ast objects
-        //Hint: Look at the number literal solution builder!
+        //Hint: Look at the NumberLiteralSolutionBuilder!
 
-        //TODO: Using the variable, create a field declaration
-        //Hint: make sure to set the type and mofifiers
+        //TODO: Set the name and initializer
+
+
+        //TODO: Using the variable, create a FieldDeclaration
+
+        //TODO: Set the type and modifiers
+        //For the modifiers use:
+        // fieldDeclaration.modifiers.addAll(ast.newModifiers(Modifier.STATIC | Modifier.PRIVATE | Modifier.FINAL));
 
         //TODO: insert the field in the list
-        //Hint: texteditgroup == null
+        //Hint: TextEditGroup == null
     }
 
     /**
@@ -117,7 +124,8 @@ public abstract class LiteralSolutionBuilder {
      */
     protected void replaceMagicLiteralWithConstant(final String name) {
         //TODO: Replace literal with name
-        //Hint: use rewrite
+        //Hint: Use rewrite
+        //Hint: Use SimpleName
     }
 
     /**
