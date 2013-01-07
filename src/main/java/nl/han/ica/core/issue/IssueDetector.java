@@ -3,6 +3,7 @@ package nl.han.ica.core.issue;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -61,7 +62,7 @@ public abstract class IssueDetector {
      * @return The set of detected issues.
      */
     public Set<Issue> getIssues() {
-        return issues;
+        return Collections.unmodifiableSet(issues);
     }
 
     /**
@@ -110,4 +111,13 @@ public abstract class IssueDetector {
         this.compilationUnits = compilationUnits;
     }
 
+    /**
+     * Get the compilation units
+     *
+     * @return compilationUnits The set of compilation units
+     */
+
+    public Set<CompilationUnit> getCompilationUnits() {
+        return this.compilationUnits;
+    }
 }
