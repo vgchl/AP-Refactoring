@@ -14,10 +14,6 @@ public class Context {
         sourceFiles = new HashSet<>();
     }
 
-    public Context(final Set<SourceFile> sourceFiles) {
-        this.sourceFiles = sourceFiles;
-    }
-
     public void accept(ASTVisitor visitor) {
         for (SourceFile sourceFile : sourceFiles) {
             sourceFile.getCompilationUnit().accept(visitor);
@@ -41,7 +37,7 @@ public class Context {
     }
 
     public boolean hasSourceFiles() {
-        return sourceFiles.size() > 0;
+        return !sourceFiles.isEmpty();
     }
 
 }
