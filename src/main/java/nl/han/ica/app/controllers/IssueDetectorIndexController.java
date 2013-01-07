@@ -22,6 +22,7 @@ import nl.han.ica.core.issue.IssueDetector;
 import nl.han.ica.core.issue.IssueSolvingService;
 import nl.han.ica.core.issue.detector.*;
 import nl.han.ica.core.issue.solver.*;
+import nl.han.ica.core.issue.solver.magicliteral.MagicLiteralSolver;
 import nl.han.ica.core.util.FileUtil;
 
 import java.io.File;
@@ -64,7 +65,7 @@ public class IssueDetectorIndexController extends BaseController {
 
     private void initializeIssueDetectors() {
         IssueDetectionService detectionService = job.getIssueDetectionService();
-        detectionService.addDetector(new MagicNumberDetector());
+        detectionService.addDetector(new MagicLiteralDetector());
         detectionService.addDetector(new HideMethodDetector());
         detectionService.addDetector(new EncapsulateFieldDetector());
         detectionService.addDetector(new PullUpFieldDetector());
@@ -72,7 +73,7 @@ public class IssueDetectorIndexController extends BaseController {
 
 
         IssueSolvingService solvingService = job.getIssueSolvingService();
-        solvingService.addSolver(new MagicNumberSolver());
+        solvingService.addSolver(new MagicLiteralSolver());
         solvingService.addSolver(new HideMethodSolver());
         solvingService.addSolver(new EncapsulateFieldSolver());
         solvingService.addSolver(new PullUpFieldSolver());

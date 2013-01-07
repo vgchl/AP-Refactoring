@@ -18,6 +18,7 @@ import nl.han.ica.core.Parameter;
 import javax.swing.event.EventListenerList;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -122,6 +123,23 @@ public class IssueSolveDeltaController extends BaseController {
         editorBefore.setValue(delta.getBefore());
         editorAfter = new CodeEditor(editorAfterView);
         editorAfter.setValue(delta.getAfter());
+
+        highlightChangesInEditor();
+    }
+
+    private void highlightChangesInEditor() {
+        List<difflib.Delta> deltas = delta.getDifferences();
+        for (difflib.Delta del : deltas) {
+            int originalChangeStartingPosition = del.getOriginal().getPosition();
+            int originalChangeEndPosition = del.getOriginal().last();
+            String beforeChangeTypeClass = del.getType().toString().toLowerCase();
+            editorBefore.highlightLines(originalChangeStartingPosition, originalChangeEndPosition, beforeChangeTypeClass);
+
+            int revisedChangeStartingPosition = del.getRevised().getPosition();
+            int revisedChangeEndPosition = del.getRevised().last();
+            String afterChangeTypeClass = del.getType().toString().toLowerCase();
+            editorAfter.highlightLines(revisedChangeStartingPosition, revisedChangeEndPosition, afterChangeTypeClass);
+        }
     }
 
     @Override

@@ -14,3 +14,15 @@ body {
 .change-before {
   background-color: #df8f8f !important;
 }
+
+.change {
+    background-color: yellow !important;
+}
+
+.delete {
+    background-color: #ff7479 !important;
+}
+
+.insert {
+    background-color: #5bff44 !important;
+}
