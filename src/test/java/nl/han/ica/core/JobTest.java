@@ -60,7 +60,7 @@ public class JobTest {
 
     @Test
     public void testGetSourceFiles() {
-        Assert.assertEquals(sourceFiles, job.getSourceFiles());
+        Assert.assertEquals(sourceFiles, job.getContext().getSourceFiles());
     }
 
     @Test

@@ -1,11 +1,15 @@
 package nl.han.ica.core.issue.detector;
 
+import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.ast.visitors.FieldAccessVisitor;
 import nl.han.ica.core.ast.visitors.FieldDeclarationVisitor;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
 import org.apache.log4j.Logger;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -38,20 +42,19 @@ public class EncapsulateFieldDetector extends IssueDetector {
     @Override
     public void detectIssues() {
         //TODO REFACTOR, Because not to combine all fields with his qualifiednames yet. 
-        for (CompilationUnit compilationUnit : compilationUnits) {
+        for (SourceFile sourceFile : context.getSourceFiles()) { // TODO: Rewrite with context.visit(ASTVisitor)
             FieldAccessVisitor fieldAccessVisitor = new FieldAccessVisitor();
-            compilationUnit.accept(fieldAccessVisitor);
+            sourceFile.getCompilationUnit().accept(fieldAccessVisitor);
             if (!fieldAccessVisitor.getQualifiedNameList().isEmpty()) {
                 qualifiedNamesList.addAll(fieldAccessVisitor.getQualifiedNameList());
             }
 
             FieldDeclarationVisitor fieldDeclarationVisitor = new FieldDeclarationVisitor();
-            compilationUnit.accept(fieldDeclarationVisitor);
+            sourceFile.getCompilationUnit().accept(fieldDeclarationVisitor);
             if (!fieldDeclarationVisitor.getFieldDeclarations().isEmpty()) {
                 fieldDeclarations.addAll(fieldDeclarationVisitor.getFieldDeclarations());
             }
         }
-
 
         for (QualifiedName qualifiedName : qualifiedNamesList) {
             for (FieldDeclaration declaration : fieldDeclarations) {

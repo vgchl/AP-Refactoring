@@ -1,5 +1,6 @@
 package nl.han.ica.core.issue.detector;
 
+import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.ast.visitors.MethodDeclarationVisitor;
 import nl.han.ica.core.ast.visitors.MethodInvocationVisitor;
 import nl.han.ica.core.issue.IssueDetector;
@@ -21,25 +22,25 @@ public class HideMethodDetector extends IssueDetector {
     private static final String STRATEGY_DESCRIPTION = "Hide method when it is not used by any other class.";
 
     private List<MethodInvocation> methodInvocationList;
-    private Map<MethodDeclaration, List<MethodInvocation>> methodUsages;
+    private Map<MethodDeclaration, ArrayList<MethodInvocation>> methodUsages;
 
     public HideMethodDetector() {
         methodInvocationList = new ArrayList<>();
-        methodUsages = new WeakHashMap<>();
+        methodUsages = new WeakHashMap<MethodDeclaration, ArrayList<MethodInvocation>>();
     }
 
     @Override
     public void detectIssues() {
-        for (CompilationUnit compilationUnit : compilationUnits) {
+        for (SourceFile sourceFile : context.getSourceFiles()) { // TODO: Rewrite with context.visit(ASTVisitor)
             MethodDeclarationVisitor methodDeclarationVisitor = new MethodDeclarationVisitor();
-            compilationUnit.accept(methodDeclarationVisitor);
+            sourceFile.getCompilationUnit().accept(methodDeclarationVisitor);
 
             for (MethodDeclaration methodDeclaration : methodDeclarationVisitor.getMethodDeclarations()) {
                 methodUsages.put(methodDeclaration, new ArrayList<MethodInvocation>());
             }
 
             MethodInvocationVisitor methodInvocationVisitor = new MethodInvocationVisitor();
-            compilationUnit.accept(methodInvocationVisitor);
+            sourceFile.getCompilationUnit().accept(methodInvocationVisitor);
             methodInvocationList.addAll(methodInvocationVisitor.getMethodInvocations());
         }
 
@@ -52,7 +53,7 @@ public class HideMethodDetector extends IssueDetector {
      */
     private void findViolatedNodesAndCreateIssues() {
         outerloop:
-        for (Map.Entry<MethodDeclaration, List<MethodInvocation>> entry : methodUsages.entrySet()) {
+        for (Map.Entry<MethodDeclaration, ArrayList<MethodInvocation>> entry : methodUsages.entrySet()) {
             MethodDeclaration methodDeclaration = entry.getKey();
             int modifiers = methodDeclaration.getModifiers();
             

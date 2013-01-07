@@ -1,8 +1,10 @@
 package nl.han.ica.core.issue;
 
+import nl.han.ica.core.Context;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +17,7 @@ public abstract class IssueDetector {
     /**
      * The set of compilation units to scan for issues.
      */
-    protected Set<CompilationUnit> compilationUnits;
+    protected Context context;
     /**
      * The set of detected issues.
      */
@@ -25,7 +27,6 @@ public abstract class IssueDetector {
      * Instantiate a new issue detector.
      */
     public IssueDetector() {
-        compilationUnits = new HashSet<>();
         issues = new HashSet<>();
     }
 
@@ -61,7 +62,7 @@ public abstract class IssueDetector {
      * @return The set of detected issues.
      */
     public Set<Issue> getIssues() {
-        return issues;
+        return Collections.unmodifiableSet(issues);
     }
 
     /**
@@ -104,10 +105,10 @@ public abstract class IssueDetector {
     /**
      * Set the compilation units this detector will scan for issues.
      *
-     * @param compilationUnits The compilation units this detector will scan through.
+     * @param context The compilation units this detector will scan through.
      */
-    public void setCompilationUnits(Set<CompilationUnit> compilationUnits) {
-        this.compilationUnits = compilationUnits;
+    public void setContext(Context context) {
+        this.context = context;
     }
 
 }

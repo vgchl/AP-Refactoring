@@ -1,5 +1,6 @@
 package nl.han.ica.core.parser;
 
+import nl.han.ica.core.Context;
 import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.util.FileUtil;
 import org.apache.log4j.Logger;
@@ -16,7 +17,6 @@ import java.util.Set;
 public class Parser {
 
     private ASTParser astParser;
-    private Set<SourceFile> sourceFiles;
     private Logger logger;
 
     /**
@@ -38,18 +38,19 @@ public class Parser {
     /**
      * Parse a set of {@link SourceFile}s.
      *
-     * @param sourceFiles The SourceFiles to parse.
+     * @param context The SourceFiles to parse.
      * @return
      */
-    public Set<CompilationUnit> parse(Set<SourceFile> sourceFiles) {
-        this.sourceFiles = sourceFiles;
+    public Set<CompilationUnit> parse(Context context) {
+        astParser.setEnvironment(FileUtil.directoryPaths(context.getSourceFiles()), null, null, true);
+        astParser.setUnitName("Refactor-Tool");
 
-        astParser.setEnvironment(FileUtil.directoryPaths(sourceFiles), null, null, true);
-        astParser.setUnitName("Refactor-Tool"); // TODO: Check what this does (and whether it can be useful);
+        String[] bindings = new String[0];
+        ASTRequestor astRequestor = new ASTRequestor(context.getSourceFiles());
 
-        String[] bindings = new String[0]; //TODO: see todo above
-        ASTRequestor astRequestor = new ASTRequestor(sourceFiles);
-        astParser.createASTs(FileUtil.filePaths(sourceFiles), null, bindings, astRequestor, null);
+        logger.debug("Parsing context: " + context);
+        astParser.createASTs(FileUtil.filePaths(context.getSourceFiles()), null, bindings, astRequestor, null);
+
         return astRequestor.getCompilationUnits();
     }
 
