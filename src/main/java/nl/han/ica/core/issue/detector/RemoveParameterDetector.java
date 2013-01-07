@@ -14,19 +14,17 @@ import java.util.List;
 
 public class RemoveParameterDetector extends IssueDetector {
 
-    private Logger log = Logger.getLogger(getClass().getName());
-
     private static final String STRATEGY_NAME = "Remove parameter";
     private static final String STRATEGY_DESCRIPTION = "Remove unused parameter from method.";
 
-    List<MethodDeclaration> methodDeclarations;
-    List<MethodInvocation> methodInvocations;
-    List<FieldAccess> fieldAccessList;
+    private Logger logger;
+    private List<MethodDeclaration> methodDeclarations;
+    private List<MethodInvocation> methodInvocations;
 
     public RemoveParameterDetector() {
+        logger = Logger.getLogger(getClass().getName());
         methodDeclarations = new ArrayList<>();
         methodInvocations = new ArrayList<>();
-        fieldAccessList = new ArrayList<>();
     }
 
     @Override
@@ -40,25 +38,24 @@ public class RemoveParameterDetector extends IssueDetector {
                     && !hasAnnotation(methodDeclaration)
                     && !ASTUtil.parent(TypeDeclaration.class, methodDeclaration).isInterface()
                     && !ASTUtil.isMainMethod(methodDeclaration) && methodDeclaration.parameters() != null) {
-                checkVariables(methodDeclaration, methodDeclaration.parameters());
+                checkVariablesAndCreateIssue(methodDeclaration, methodDeclaration.parameters());
             }
         }
     }
 
-    private void checkVariables(MethodDeclaration methodDeclaration, List<SingleVariableDeclaration> declaredVariables) {
+    private void checkVariablesAndCreateIssue(MethodDeclaration methodDeclaration, List<SingleVariableDeclaration> declaredVariables) {
         for (SingleVariableDeclaration variable : declaredVariables) {
             if (!usesVariable(methodDeclaration, variable)) {
                 Issue issue = createIssue();
                 issue.getNodes().add(methodDeclaration);
                 issue.getNodes().add(variable);
 
-                findCorrespondingInvocations(methodDeclaration, issue);
-
+                addCorrespondingInvocationsToIssue(methodDeclaration, issue);
             }
         }
     }
 
-    private void findCorrespondingInvocations(MethodDeclaration methodDeclaration, Issue issue) {
+    private void addCorrespondingInvocationsToIssue(MethodDeclaration methodDeclaration, Issue issue) {
         for (MethodInvocation methodInvocation : methodInvocations) {
             if (methodDeclaration.resolveBinding().isEqualTo(
                     methodInvocation.resolveMethodBinding())) {
@@ -93,6 +90,7 @@ public class RemoveParameterDetector extends IssueDetector {
     @Override
     public void reset() {
         methodDeclarations.clear();
+        methodInvocations.clear();
         super.reset();
     }
 
