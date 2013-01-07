@@ -14,30 +14,29 @@ import org.eclipse.jdt.core.dom.Type;
 
 public class CharacterLiteralSolutionBuilder extends LiteralSolutionBuilder {
 
-	public CharacterLiteralSolutionBuilder(Issue issue,
-			IssueSolver issueSolver, Map<String, Parameter> parameters,
-			String parameterConstantName) {
-		super(issue, issueSolver, parameters, parameterConstantName);
-	}
+    public CharacterLiteralSolutionBuilder(Issue issue,
+            IssueSolver issueSolver, Map<String, Parameter> parameters,
+            String parameterConstantName) {
+        super(issue, issueSolver, parameters, parameterConstantName);
+    }
 
-	@Override
-	protected String getValueForConstant() {
-		CharacterLiteral charLiteral = (CharacterLiteral) literal;
-		return charLiteral.getEscapedValue();
-	}
+    @Override
+    protected String getValueForConstant() {
+        CharacterLiteral charLiteral = (CharacterLiteral) literal;
+        return charLiteral.getEscapedValue();
+    }
 
-	@Override
-	protected Expression getInitializerExpression(String value, AST ast) {
+    @Override
+    protected Expression getInitializerExpression(String value, AST ast) {
 
-		CharacterLiteral newCharacterLiteral = ast.newCharacterLiteral();
-		newCharacterLiteral.setEscapedValue(value);
+        CharacterLiteral newCharacterLiteral = ast.newCharacterLiteral();
+        newCharacterLiteral.setEscapedValue(value);
 
-		return newCharacterLiteral;
-	}
+        return newCharacterLiteral;
+    }
 
-	@Override
-	protected Type getType(AST ast) {
-		return ast.newPrimitiveType(PrimitiveType.CHAR);
-	}
-
+    @Override
+    protected Type getType(AST ast) {
+        return ast.newPrimitiveType(PrimitiveType.CHAR);
+    }
 }

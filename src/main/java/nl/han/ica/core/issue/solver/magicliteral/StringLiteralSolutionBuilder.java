@@ -13,28 +13,27 @@ import org.eclipse.jdt.core.dom.Type;
 
 public class StringLiteralSolutionBuilder extends LiteralSolutionBuilder {
 
-	public StringLiteralSolutionBuilder(Issue issue, IssueSolver issueSolver,
-			Map<String, Parameter> parameters, String parameterConstantName) {
-		super(issue, issueSolver, parameters, parameterConstantName);
-	}
+    public StringLiteralSolutionBuilder(Issue issue, IssueSolver issueSolver,
+            Map<String, Parameter> parameters, String parameterConstantName) {
+        super(issue, issueSolver, parameters, parameterConstantName);
+    }
 
-	@Override
-	protected Type getType(AST ast) {
-		return ast.newSimpleType(ast.newName("String"));
-	}
+    @Override
+    protected Type getType(AST ast) {
+        return ast.newSimpleType(ast.newName("String"));
+    }
 
-	@Override
-	protected Expression getInitializerExpression(String value, AST ast) {
+    @Override
+    protected Expression getInitializerExpression(String value, AST ast) {
 
-		StringLiteral newStringLiteral = ast.newStringLiteral();
-		newStringLiteral.setLiteralValue(value);
-		return newStringLiteral;
-	}
+        StringLiteral newStringLiteral = ast.newStringLiteral();
+        newStringLiteral.setLiteralValue(value);
+        return newStringLiteral;
+    }
 
-	@Override
-	protected String getValueForConstant() {
-		StringLiteral stringLiteral = (StringLiteral) literal;
-		return stringLiteral.getLiteralValue();
-	}
-
+    @Override
+    protected String getValueForConstant() {
+        StringLiteral stringLiteral = (StringLiteral) literal;
+        return stringLiteral.getLiteralValue();
+    }
 }

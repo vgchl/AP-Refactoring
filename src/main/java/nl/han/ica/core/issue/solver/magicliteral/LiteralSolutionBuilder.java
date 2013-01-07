@@ -31,135 +31,135 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
 public abstract class LiteralSolutionBuilder {
-	protected Issue issue;
-	private IssueSolver issueSolver;
-	protected Map<String, Parameter> parameters;
-	private ASTRewrite rewrite;
-	protected ASTNode literal;
-	private TypeDeclaration literalClass;
-	private Logger logger;
-	protected String parameterConstantName;
 
-	/**
-	 * Constructor to set Issue, solver, parameters and a default name for the
-	 * new constant.
-	 * 
-	 * @param issue
-	 * @param issueSolver
-	 * @param parameters
-	 * @param parameterConstantName
-	 */
-	public LiteralSolutionBuilder(Issue issue, IssueSolver issueSolver,
-			Map<String, Parameter> parameters, String parameterConstantName) {
-		logger = Logger.getLogger(getClass());
+    protected Issue issue;
+    private IssueSolver issueSolver;
+    protected Map<String, Parameter> parameters;
+    private ASTRewrite rewrite;
+    protected ASTNode literal;
+    private TypeDeclaration literalClass;
+    private Logger logger;
+    protected String parameterConstantName;
 
-		this.issue = issue;
-		this.issueSolver = issueSolver;
-		this.parameters = parameters;
-		this.parameterConstantName = parameterConstantName;
+    /**
+     * Constructor to set Issue, solver, parameters and a default name for the
+     * new constant.
+     *
+     * @param issue
+     * @param issueSolver
+     * @param parameters
+     * @param parameterConstantName
+     */
+    public LiteralSolutionBuilder(Issue issue, IssueSolver issueSolver,
+            Map<String, Parameter> parameters, String parameterConstantName) {
+        logger = Logger.getLogger(getClass());
 
-		literal = issue.getNodes().get(0);
-		literalClass = ASTUtil.parent(TypeDeclaration.class, literal);
-		rewrite = ASTRewrite.create(literalClass.getAST());
-	}
+        this.issue = issue;
+        this.issueSolver = issueSolver;
+        this.parameters = parameters;
+        this.parameterConstantName = parameterConstantName;
 
-	/**
-	 * Create a Solution. This method creates a constant if it doesn't already exist. 
-	 * @return
-	 */
-	public Solution build() {
+        literal = issue.getNodes().get(0);
+        literalClass = ASTUtil.parent(TypeDeclaration.class, literal);
+        rewrite = ASTRewrite.create(literalClass.getAST());
+    }
 
-		String name = getNameForConstant();
+    /**
+     * Create a Solution. This method creates a constant if it doesn't already
+     * exist.
+     *
+     * @return
+     */
+    public Solution build() {
 
-		if (!existingConstantExists(name)) {
+        String name = getNameForConstant();
 
-			createConstant(name, getValueForConstant());
-		}
-		
-		replaceMagicLiteralWithConstant(name);
+        if (!existingConstantExists(name)) {
 
-		return buildSolution();
-	}
+            createConstant(name, getValueForConstant());
+        }
 
-	protected String getNameForConstant() {
-		return (String) parameters.get(parameterConstantName).getValue();
-	}
+        replaceMagicLiteralWithConstant(name);
 
-	protected abstract String getValueForConstant();
+        return buildSolution();
+    }
 
-	protected abstract Expression getInitializerExpression(final String value,
-			AST ast);
+    protected String getNameForConstant() {
+        return (String) parameters.get(parameterConstantName).getValue();
+    }
 
-	protected abstract Type getType(AST ast);
+    protected abstract String getValueForConstant();
 
-	protected boolean existingConstantExists(final String name) {
-		FieldDeclarationVisitor visitor = new FieldDeclarationVisitor();
-		literalClass.accept(visitor);
-		return visitor.hasFieldName(name);
-	}
+    protected abstract Expression getInitializerExpression(final String value,
+            AST ast);
 
-	@SuppressWarnings("unchecked")
-	protected void createConstant(final String name, final String value) {
-		AST ast = literalClass.getAST();
+    protected abstract Type getType(AST ast);
 
-		ListRewrite listRewrite = rewrite.getListRewrite(literalClass,
-				TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
-		VariableDeclarationFragment variable = ast
-				.newVariableDeclarationFragment();
-		variable.setName(ast.newSimpleName(name));
+    protected boolean existingConstantExists(final String name) {
+        FieldDeclarationVisitor visitor = new FieldDeclarationVisitor();
+        literalClass.accept(visitor);
+        return visitor.hasFieldName(name);
+    }
 
-		variable.setInitializer(getInitializerExpression(value, ast));
+    @SuppressWarnings("unchecked")
+    protected void createConstant(final String name, final String value) {
+        AST ast = literalClass.getAST();
 
-		FieldDeclaration field = ast.newFieldDeclaration(variable);
-		field.setType(getType(ast));
-		field.modifiers().addAll(
-				ast.newModifiers(Modifier.PRIVATE | Modifier.STATIC
-						| Modifier.FINAL));
+        ListRewrite listRewrite = rewrite.getListRewrite(literalClass,
+                TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
+        VariableDeclarationFragment variable = ast.newVariableDeclarationFragment();
+        variable.setName(ast.newSimpleName(name));
 
-		listRewrite.insertFirst(field, null);
-	}
+        variable.setInitializer(getInitializerExpression(value, ast));
 
-	/**
-	 * Create a constant with the given name and replace the magic literal with
-	 * a reference to the constant.
-	 * 
-	 * @param name
-	 */
-	protected void replaceMagicLiteralWithConstant(final String name) {
-		SimpleName constantReference = literal.getAST().newSimpleName(name);
-		rewrite.replace(literal, constantReference, null);
-	}
+        FieldDeclaration field = ast.newFieldDeclaration(variable);
+        field.setType(getType(ast));
+        field.modifiers().addAll(
+                ast.newModifiers(Modifier.PRIVATE | Modifier.STATIC
+                | Modifier.FINAL));
 
-	/**
-	 * Create a new Solution and set it's Detla's. This method is called by the
-	 * build method.
-	 * 
-	 * @return
-	 */
-	protected Solution buildSolution() {
-		SourceFile sourceFile = (SourceFile) literalClass.getRoot()
-				.getProperty(SourceFile.SOURCE_FILE_PROPERTY);
-		Solution solution = new Solution(issue, issueSolver, parameters);
-		IDocument document = null;
-		try {
-			document = sourceFile.toDocument();
-		} catch (IOException e) {
-			logger.fatal("Could not read the source file.", e);
-		}
+        listRewrite.insertFirst(field, null);
+    }
 
-		Delta delta = solution.createDelta(sourceFile);
-		delta.setBefore(document.get());
+    /**
+     * Create a constant with the given name and replace the magic literal with
+     * a reference to the constant.
+     *
+     * @param name
+     */
+    protected void replaceMagicLiteralWithConstant(final String name) {
+        SimpleName constantReference = literal.getAST().newSimpleName(name);
+        rewrite.replace(literal, constantReference, null);
+    }
 
-		TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
-		try {
-			textEdit.apply(document);
-		} catch (MalformedTreeException | BadLocationException e) {
-			logger.fatal("Could not rewrite the AST tree.", e);
-		}
+    /**
+     * Create a new Solution and set it's Detla's. This method is called by the
+     * build method.
+     *
+     * @return
+     */
+    protected Solution buildSolution() {
+        SourceFile sourceFile = (SourceFile) literalClass.getRoot().getProperty(SourceFile.SOURCE_FILE_PROPERTY);
+        Solution solution = new Solution(issue, issueSolver, parameters);
+        IDocument document = null;
+        try {
+            document = sourceFile.toDocument();
+        } catch (IOException e) {
+            logger.fatal("Could not read the source file.", e);
+        }
 
-		delta.setAfter(document.get());
+        Delta delta = solution.createDelta(sourceFile);
+        delta.setBefore(document.get());
 
-		return solution;
-	}
+        TextEdit textEdit = rewrite.rewriteAST(document, JavaCore.getOptions());
+        try {
+            textEdit.apply(document);
+        } catch (MalformedTreeException | BadLocationException e) {
+            logger.fatal("Could not rewrite the AST tree.", e);
+        }
 
+        delta.setAfter(document.get());
+
+        return solution;
+    }
 }
