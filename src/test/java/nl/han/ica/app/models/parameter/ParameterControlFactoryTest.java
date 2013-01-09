@@ -29,4 +29,9 @@ public class ParameterControlFactoryTest {
         TextField textField = (TextField) parameterControlFactory.controlForParameter(new Parameter("Hi,", "expr"), null);
         assertEquals("expr", textField.getText());
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testControlForParameterWithWrongValueType() throws Exception {
+        TextField textField = (TextField) parameterControlFactory.controlForParameter(new Parameter("Hi,", 1), null);
+    }
 }
