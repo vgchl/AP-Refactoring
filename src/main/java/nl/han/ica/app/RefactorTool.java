@@ -14,7 +14,7 @@ import java.io.InputStream;
 
 public class RefactorTool extends Application {
 
-    private static final String APP_TITLE = "ART (Awesome Refactor Tool) - v0.Charizard";
+    private static final String APP_TITLE = "ART (Awesome Refactor Tool) - v0.Bulbasaur";
 
     /**
      * The application entry point.
