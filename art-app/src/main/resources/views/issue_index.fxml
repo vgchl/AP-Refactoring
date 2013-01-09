@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+
+<BorderPane minHeight="700.0" minWidth="900.0" prefHeight="700.0" prefWidth="1200.0" styleClass="SCENE_BUILDER_THEME" xmlns:fx="http://javafx.com/fxml">
+  <center>
+    <StackPane id="content" fx:id="contentPane" prefHeight="150.0" prefWidth="200.0">
+      <children>
+        <HBox id="HBox" alignment="CENTER" spacing="5.0" styleClass="gray-linnen">
+          <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Select an issue from the list on the left." HBox.hgrow="ALWAYS" />
+          </children>
+        </HBox>
+      </children>
+    </StackPane>
+  </center>
+  <left>
+    <TitledPane id="issues-sidebar" fx:id="sidebar" animated="false" collapsible="false" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="-1.0" prefWidth="250.0" text="Issues">
+      <content>
+        <ListView id="issue-list" fx:id="issues" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" />
+      </content>
+    </TitledPane>
+  </left>
+  <stylesheets>
+    <URL value="@../theme/styles/main.css" />
+    <URL value="@../theme/styles/controls.css" />
+    <URL value="@../theme/styles/resolve_issues.css" />
+  </stylesheets>
+</BorderPane>

@@ -5,8 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>nl.han</groupId>
-    <artifactId>Refactor-Tool</artifactId>
+    <artifactId>art</artifactId>
+    <packaging>pom</packaging>
     <version>0.Charizard</version>
+
+    <modules>
+        <module>art-core</module>
+        <module>art-app</module>
+    </modules>
 
     <dependencies>
         <dependency>
@@ -108,7 +114,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>nl.han.ica.app.RefactorTool</mainClass>
+                            <mainClass>art.app.RefactorTool</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

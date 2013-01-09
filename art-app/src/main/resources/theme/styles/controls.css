@@ -1,0 +1,520 @@
+/*
+ *
+ * This file is a generic theme so can be applied to any JavaFX application.
+ * Because of this all styleclass names should be standard styleclasses
+ * spcified in the JavaFX controls skins.
+ *
+ */
+
+.SCENE_BUILDER_THEME {
+    /*-fx-base: #e0e0e0;*/
+    -fx-background: derive(-fx-base, 3.7%);
+    -fx-text-base-color: #111111;
+    -fx-focus-color: rgb(23,134,248);
+    SB_focus-blur-color: rgba(23,134,248,0.2);
+    SB_focus-error-color: rgb(248,44,23);
+    SB_focus-blur-error-color: rgba(248,44,23,0.2);
+
+    -fx-control-inner-background: white;
+    -fx-text-inner-color: -fx-text-base-color;
+
+    -fx-box-border: derive(-fx-background, -0.291);
+
+    -fx-shadow-highlight-color: derive(-fx-color, -0.022);
+    -fx-outer-border: derive(-fx-color, -0.291);
+    -fx-inner-border: linear-gradient(
+        to bottom,
+        derive(-fx-color, 0.579) 0%,
+        derive(-fx-color, 0.022) 100%
+    );
+    -fx-body-color: linear-gradient(
+        to bottom,
+        derive(-fx-color, 0.353) 0%,
+        derive(-fx-color, -0.058) 100%
+    );
+
+    -fx-mark-color: derive(-fx-base, -60%);
+    -fx-mark-highlight-color: derive(-fx-color, 90%);
+
+    SB_textbox-border: derive(-fx-color, -25.4%);
+    SB_textbox-border-inner: derive(-fx-control-inner-background, -8.8%);
+    SB_textbox-border-inner2: derive(-fx-control-inner-background, -2.6%);
+
+    SB_scrollbar-track: derive(-fx-color, 27.5%);
+    SB_scrollbar-thumb: derive(-fx-color, -26.3%);
+    SB_scrollbar-corner-border: derive(SB_scrollbar-track, -10%);
+
+    SB-header-gradient: linear-gradient(
+        to bottom,
+        derive(-fx-base, 9.7%) 0%,
+        derive(-fx-base, -7%) 46%,
+        derive(-fx-base, -26.5%) 100%
+    );
+    SB-header-bottom-border: derive(-fx-base, -50%);
+}
+
+/* ============ ROOT PANEL ================================================= */
+.root {
+    -fx-background-color: -fx-background;
+}
+
+/* ============ PULLDOWN ARROWS ============================================ */
+.combo-box .arrow, .menu-button .arrow, .choice-box .arrow {
+    -fx-padding: 2 3 3 4;
+    -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+}
+.choice-box .arrow {
+    -fx-scale-x: 0.9; /* for some reason, choice-box arrows are slightly wider */
+}
+
+/* ============ BUTTON ===================================================== */
+.button {
+    -fx-background-radius: 4, 4, 3, 2;
+    -fx-padding: 3 6 3 6;
+}
+.button:focused {
+    -fx-background-color:
+        SB_focus-blur-color,
+        -fx-focus-color,
+        -fx-inner-border,
+        -fx-body-color;
+}
+
+/* ============ MENU BUTTON ================================================= */
+.menu-button {
+    -fx-padding: 1 0 0 0;
+    -fx-background-radius: 4, 4, 3, 2;
+}
+.menu-button:focused {
+    -fx-background-color:
+        SB_focus-blur-color,
+        -fx-focus-color,
+        -fx-inner-border,
+        -fx-body-color;
+}
+
+/*.menu-button .label {
+    -fx-padding: 0.166667em 1.5em 0.25em 6px;
+}*/
+
+/* ============ CHOICE BOX ================================================== */
+.choice-box {
+    -fx-background-radius: 4, 4, 3, 2;
+    -fx-padding: 1 6 0 3;
+}
+.choice-box:focused {
+    -fx-background-color:
+        SB_focus-blur-color,
+        -fx-focus-color,
+        -fx-inner-border,
+        -fx-body-color;
+}
+
+/* ============ TOGGLE BUTTON =============================================== */
+.toggle-button {
+    -fx-background-radius: 4, 4, 3, 2;
+    -fx-padding: 3 6 3 6;
+}
+.toggle-button:focused {
+    -fx-background-color:
+        SB_focus-blur-color,
+        -fx-focus-color,
+        -fx-inner-border,
+        -fx-body-color;
+}
+.toggle-button:selected Text {
+    -fx-effect: dropshadow( one-pass-box , rgba(0,0,0,0.9) , 2, 0.0 , 0 , 1 );
+}
+.toggle-button:selected {
+    -fx-background-color:
+        -fx-shadow-highlight-color,
+        linear-gradient( to bottom, derive(-fx-color,-90%) 0%, derive(-fx-color,-60%) 100% ),
+        linear-gradient( to bottom, derive(-fx-color,-60%) 0%, derive(-fx-color,-35%) 50%, derive(-fx-color,-30%) 98%, derive(-fx-color,-50%) 100% ),
+        linear-gradient( to right, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 10%, rgba(0,0,0,0) 90%, rgba(0,0,0,0.3) 100% );
+    -fx-background-insets: 0 0 -1 0, 0, 1, 1;
+    /* TODO: -fx-text-fill should be derived */
+    -fx-text-fill: -fx-light-text-color;
+}
+.toggle-button:selected:focused {
+    -fx-background-color:
+        SB_focus-blur-color,
+        -fx-focus-color,
+        linear-gradient( to bottom, derive(-fx-color,-60%) 0%, derive(-fx-color,-35%) 50%, derive(-fx-color,-30%) 98%, derive(-fx-color,-50%) 100% ),
+        linear-gradient( to right, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 10%, rgba(0,0,0,0) 90%, rgba(0,0,0,0.3) 100% );
+    -fx-background-insets: -1.4, 0, 1, 1;
+}
+.toggle-button-left {
+    -fx-background-radius: 3 0 0 3;
+    -fx-background-insets: 0 0 -1 0, 0, 1 0 1 1, 2 0 2 2;
+    -fx-border-color: transparent -fx-outer-border transparent transparent;
+    -fx-border-insets: 4 0 4 0;
+    -fx-padding: -2 6 -2 6;
+}
+.toggle-button-left:focused {
+    -fx-background-radius: 3 0 0 3;
+    -fx-background-insets: -1.4 0 -1.4 -1.4, 0 0 0 0, 1, 2;
+    -fx-border-color: transparent;
+}
+.toggle-button-left:selected {
+    -fx-border-color: transparent;
+}
+.toggle-button-left:selected:focused {
+    -fx-border-color: transparent;
+}
+.toggle-button-center {
+    -fx-background-radius: 0;
+    -fx-background-insets: 0 0 -1 0, 0, 1 0 1 0, 2 0 2 0;
+    -fx-border-color: transparent -fx-outer-border transparent transparent;
+    -fx-border-insets: 4 0 4 0;
+    -fx-padding: -2 6 -2 6;
+}
+.toggle-button-center:focused {
+    -fx-background-radius: 0;
+    -fx-background-insets: -1.4 0 -1.4 -1, 0 0 0 -1, 1 1 1 0, 2 2 2 1;
+    -fx-border-color: transparent;
+}
+.toggle-button-center:selected {
+    -fx-background-insets: -1.4 0 -1.4 -1, 0 0 0 -1, 1 1 1 0, 1 1 1 0;
+    -fx-border-color: transparent;
+}
+.toggle-button-center:selected:focused {
+    -fx-background-insets: -1.4 0 -1.4 -1, 0 0 0 -1, 1 1 1 0, 1 1 1 0;
+    -fx-border-color: transparent;
+}
+.toggle-button-right {
+    -fx-background-radius: 0 3 3 0;
+    -fx-background-insets: 0 0 -1 0, 0, 1 1 1 0, 2 2 2 0;
+    -fx-padding: 3 6 3 6;
+}
+.toggle-button-right:focused {
+    -fx-background-radius: 0 3 3 0;
+    -fx-background-insets: -1.4 -1.4 -1.4 -1, 0 0 0 -1, 1 1 1 0, 2 2 2 1;
+}
+.toggle-button-right:selected {
+    -fx-background-insets: -1.4 -1.4 -1.4 -1, 0 0 0 -1, 1 1 1 0, 1 1 1 0;
+}
+.toggle-button-right:selected:focused {
+    -fx-background-insets: -1.4 -1.4 -1.4 -1, 0 0 0 -1, 1 1 1 0, 1 1 1 0;
+}
+
+/* ============ TEXT FIELD ================================================== */
+.text-field {
+    -fx-background-color:
+        SB_textbox-border,
+        SB_textbox-border-inner,
+        SB_textbox-border-inner2,
+        -fx-control-inner-background;
+    -fx-background-radius: 2;
+    -fx-background-insets: 0, 1, 2 1 1 1, 3 2 1 2;
+}
+.text-field:focused {
+    -fx-background-color:
+        SB_focus-blur-color,
+        -fx-focus-color,
+        SB_textbox-border-inner,
+        SB_textbox-border-inner2,
+        -fx-control-inner-background;
+    -fx-background-insets: -1.4, 0, 1, 2 1 1 1, 3 2 1 2;
+}
+
+.text-field-erroneous {
+    -fx-background-color:
+        SB_focus-error-color,
+        SB_textbox-border-inner,
+        SB_textbox-border-inner2,
+        -fx-control-inner-background;
+    -fx-background-radius: 2;
+    -fx-background-insets: 0, 1, 2 1 1 1, 3 2 1 2;
+}
+.text-field-erroneous:focused {
+    -fx-background-color:
+        SB_focus-blur-error-color,
+        SB_focus-error-color,
+        SB_textbox-border-inner,
+        SB_textbox-border-inner2,
+        -fx-control-inner-background;
+    -fx-background-insets: -1.4, 0, 1, 2 1 1 1, 3 2 1 2;
+}
+
+
+/* ============ TEXT AREA =================================================== */
+.text-area {
+    -fx-padding: 0;
+    -fx-background-color:
+        SB_textbox-border,
+        SB_textbox-border-inner,
+        SB_textbox-border-inner2,
+        -fx-control-inner-background;
+    -fx-background-radius: 2;
+    -fx-background-insets: 0, 1, 2 1 1 1, 3 2 1 2;
+}
+.text-area:focused {
+    -fx-background-color:
+        SB_focus-blur-color,
+        -fx-focus-color,
+        SB_textbox-border-inner,
+        SB_textbox-border-inner2,
+        -fx-control-inner-background;
+    -fx-background-insets: -1.4, 0, 1, 2 1 1 1, 3 2 1 2;
+}
+
+/* ============ COMBO BOX =================================================== */
+.combo-box .list-cell {
+    -fx-padding: 0 0 1 8;
+}
+.combo-box .arrow-button {
+    -fx-padding: 1 5 0 5;
+}
+.combo-box:editable .arrow-button {
+    -fx-background-color:
+        SB_textbox-border,
+        -fx-inner-border,
+        -fx-body-color;
+    -fx-background-radius: 0 3 3 0, 0 3 3 0, 0 2 2 0, 0 1 1 0;
+    -fx-padding: 1 5 0 5;
+}
+.combo-box-base .text-field  {
+    -fx-background-radius: 2 5 5 2;
+    -fx-padding: 3 5 3 5;
+}
+.check-box .box {
+    -fx-background-color:
+        -fx-shadow-highlight-color,
+        -fx-outer-border,
+        -fx-inner-border,
+        -fx-body-color;
+}
+.check-box:focused .box {
+    -fx-background-color:
+        SB_focus-blur-color,
+        -fx-focus-color,
+        -fx-inner-border,
+        -fx-body-color;
+}
+.check-box:selected .mark {
+    -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+}
+
+/* ============ SLIDER ====================================================== */
+.slider .thumb {
+    -fx-background-color:
+        derive(-fx-outer-border,-15%),
+        derive(-fx-color, 95%),
+        -fx-body-color;
+    -fx-padding: 7px;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.15) , 4, 0.0 , 0 , 2 );
+}
+.slider:focused .thumb {
+    -fx-background-color:
+        SB_focus-blur-color,
+        -fx-focus-color,
+        derive(-fx-color, 95%),
+        -fx-body-color;
+    -fx-background-insets: -1.4,0, 1, 2;
+}
+.slider .track {
+    -fx-padding: 2px;
+    -fx-background-radius: 7px;
+    -fx-background-color:
+        -fx-inner-border,
+        -fx-outer-border,
+        linear-gradient(to bottom, derive(-fx-color,-20.3%), derive(-fx-color,-11.5%));
+}
+
+/* ============ SCROLL BARS ================================================= */
+.scroll-bar {
+    -fx-background-color:
+        -fx-outer-border,
+        SB_scrollbar-track;
+    -fx-background-insets: 0,1;
+}
+.scroll-bar .track {
+    -fx-background-color: null;
+}
+.scroll-bar:horizontal .track-background {
+    -fx-background-insets: 0, 1 0 0 0;
+}
+.scroll-bar:vertical .track-background {
+    -fx-background-insets: 0, 0 0 0 1;
+}
+.scroll-bar .thumb {
+    -fx-background-color: SB_scrollbar-thumb;
+    -fx-background-insets: 3;
+    -fx-background-radius: 5px;
+}
+.scroll-bar:horizontal .increment-button , .scroll-bar:horizontal .decrement-button{
+    -fx-background-color: null;
+    -fx-padding: 6 0 6 0;
+}
+.scroll-bar:vertical .increment-button , .scroll-bar:vertical .decrement-button{
+    -fx-background-color: null;
+    -fx-padding: 0 6 0 6;
+}
+.scroll-bar .increment-arrow, .scroll-bar .decrement-arrow {
+    -fx-background-color: null;
+    -fx-padding: 0;
+}
+.corner {
+    -fx-background-color:
+        SB_scrollbar-corner-border,
+        SB_scrollbar-track;
+    -fx-background-insets: 0, 1 0 0 1;
+}
+/* Scrolbars in ScrollPane */
+.scroll-pane > * > .scroll-bar:horizontal {
+    -fx-background-insets: 0,1 0 0 0;
+    -fx-padding: 0;
+}
+.scroll-pane > * > .scroll-bar:horizontal .increment-button ,.scroll-pane > * > .scroll-bar:horizontal .decrement-button{
+    -fx-background-color: null;
+    -fx-padding: 6 0 5 0;
+}
+.scroll-pane > * > .scroll-bar:horizontal .thumb {
+    -fx-background-insets: 3 3 2 3;
+}
+.scroll-pane > * > .scroll-bar:vertical {
+    -fx-background-insets: 0, 0 0 0 1;
+    -fx-padding: 0;
+}
+.scroll-pane > * > .scroll-bar:vertical .increment-button ,.scroll-pane > * > .scroll-bar:vertical .decrement-button{
+    -fx-background-color: null;
+    -fx-padding: 0 5 0 6;
+}
+.scroll-pane > * > .scroll-bar:vertical .thumb {
+    -fx-background-insets: 3 2 3 3;
+}
+/* Scrolbars in TextArea */
+.text-area > * > .scroll-bar:horizontal {
+    -fx-background-insets: 0,1 0 0 0;
+    -fx-padding: 0;
+}
+.text-area > * > .scroll-bar:horizontal .increment-button ,.text-area > * > .scroll-bar:horizontal .decrement-button{
+    -fx-background-color: null;
+    -fx-padding: 6 0 5 0;
+}
+.text-area > * > .scroll-bar:horizontal .thumb {
+    -fx-background-insets: 3 3 2 3;
+}
+.text-area > * > .scroll-bar:vertical {
+    -fx-background-insets: 0, 0 0 0 1;
+    -fx-padding: 0;
+}
+.text-area > * > .scroll-bar:vertical .increment-button ,.text-area > * > .scroll-bar:vertical .decrement-button{
+    -fx-background-color: null;
+    -fx-padding: 0 5 0 6;
+}
+.text-area > * > .scroll-bar:vertical .thumb {
+    -fx-background-insets: 3 2 3 3;
+}
+/* Scrolbars in ListView */
+.list-view .scroll-bar:horizontal {
+    -fx-background-insets: 0,1 0 0 0;
+    -fx-padding: 0;
+}
+.list-view .scroll-bar:horizontal .increment-button ,.list-view .scroll-bar:horizontal .decrement-button{
+    -fx-background-color: null;
+    -fx-padding: 6 0 5 0;
+}
+.list-view .scroll-bar:horizontal .thumb {
+    -fx-background-insets: 3 3 2 3;
+}
+.list-view .scroll-bar:vertical {
+    -fx-background-insets: 0, 0 0 0 1;
+    -fx-padding: 0;
+}
+.list-view .scroll-bar:vertical .increment-button ,.list-view .scroll-bar:vertical .decrement-button{
+    -fx-background-color: null;
+    -fx-padding: 0 5 0 6;
+}
+.list-view .scroll-bar:vertical .thumb {
+    -fx-background-insets: 3 2 3 3;
+}
+/* Scrolbars in TreeView */
+.tree-view .scroll-bar:horizontal {
+    -fx-background-insets: 0,1 0 0 0;
+    -fx-padding: 0;
+}
+.tree-view .scroll-bar:horizontal .increment-button ,.tree-view .scroll-bar:horizontal .decrement-button{
+    -fx-background-color: null;
+    -fx-padding: 6 0 5 0;
+}
+.tree-view .scroll-bar:horizontal .thumb {
+    -fx-background-insets: 3 3 2 3;
+}
+.tree-view .scroll-bar:vertical {
+    -fx-background-insets: 0, 0 0 0 1;
+    -fx-padding: 0;
+}
+.tree-view .scroll-bar:vertical .increment-button ,.tree-view .scroll-bar:vertical .decrement-button{
+    -fx-background-color: null;
+    -fx-padding: 0 5 0 6;
+}
+.tree-view .scroll-bar:vertical .thumb {
+    -fx-background-insets: 3 2 3 3;
+}
+
+/* ============ LIST VIEW =================================================== */
+.list-view {
+    -fx-background-color: -fx-outer-border, -fx-control-inner-background;
+    -fx-background-insets: 0, 1;
+}
+.list-view:focused {
+    -fx-background-color: SB_focus-blur-color,-fx-focus-color,-fx-control-inner-background;
+    -fx-background-insets: -1.4, 0, 1;
+    -fx-background-radius: 1.4, 0, 0;
+}
+
+/* ============ TREE VIEW =================================================== */
+.tree-view {
+    -fx-background-color: -fx-outer-border, -fx-control-inner-background;
+    -fx-background-insets: 0, 1;
+}
+.tree-view:focused {
+    -fx-background-color: SB_focus-blur-color,-fx-focus-color,-fx-control-inner-background;
+    -fx-background-insets: -1.4, 0, 1;
+    -fx-background-radius: 1.4, 0, 0;
+}
+
+/* ============ MENUBAR & MENUS ============================================= */
+.menu-bar {
+    -fx-background-color: -fx-outer-border, -fx-body-color;
+    -fx-background-insets: 0, 0 0 1 0;
+}
+.menu-bar .menu .arrow {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+    -fx-shape: null;
+}
+.menu-bar .menu .arrow-button {
+    -fx-padding: 0;
+}
+/* Show nothing for background of normal menu button in a menu bar */
+.menu-bar .menu-button {
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+/* Change padding of menu buttons when in menu bar */
+.menu-bar .menu-button .label {
+    -fx-padding: 0.333em 0.5em 0.333em 0.5em;
+    -fx-effect: dropshadow( one-pass-box , derive(-fx-color, 90%), 0, 0.0 , 0 , 1 );
+}
+.menu-bar .menu-button:hover, .menu-bar .menu-button:focused, .menu-bar .menu-button.showing {
+    -fx-background: -fx-accent;
+    -fx-background-color: -fx-selection-bar;
+}
+.menu-bar .menu-button:hover .label, .menu-bar .menu-button:focused .label /*RT-23271 , .menu-bar .showing .label */{
+    -fx-text-fill: white;
+    -fx-effect: null;
+}
+
+/* RT-23271 workaround */
+.menu-bar .showing .label {
+    -fx-text-fill: white;
+    -fx-effect: null;
+}
+
+/* ============ TITLED PANES ================================================ */
+.titled-pane {
+    -fx-text-fill: -fx-text-base-color;
+}

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite failures="0" time="0.08" errors="0" skipped="0" tests="7" name="art.core.issue.SimpleDetectorTest">
+  <properties>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home/jre/lib"/>
+    <property name="java.vm.version" value="23.3-b01"/>
+    <property name="gopherProxySet" value="false"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="java.vendor.url" value="http://java.oracle.com/"/>
+    <property name="path.separator" value=":"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="user.country" value="NL"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.os.patch.level" value="unknown"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="/Users/Teun/Desktop/Minor/Project/AP-Refactoring/art-core"/>
+    <property name="java.runtime.version" value="1.7.0_07-b10"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.CGraphicsEnvironment"/>
+    <property name="basedir" value="/Users/Teun/Desktop/Minor/Project/AP-Refactoring/art-core"/>
+    <property name="java.endorsed.dirs" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home/jre/lib/endorsed"/>
+    <property name="os.arch" value="x86_64"/>
+    <property name="surefire.real.class.path" value="/Users/Teun/Desktop/Minor/Project/AP-Refactoring/art-core/target/surefire/surefirebooter56420028712922775.jar"/>
+    <property name="java.io.tmpdir" value="/var/folders/88/m9jvsrk1463cw8gz2dwt8hbr0000gn/T/"/>
+    <property name="line.separator" value="
+"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="os.name" value="Mac OS X"/>
+    <property name="sun.jnu.encoding" value="US-ASCII"/>
+    <property name="java.library.path" value="/Users/Teun/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="surefire.test.class.path" value="/Users/Teun/Desktop/Minor/Project/AP-Refactoring/art-core/target/test-classes:/Users/Teun/Desktop/Minor/Project/AP-Refactoring/art-core/target/classes:/Users/Teun/.m2/repository/log4j/log4j/1.2.17/log4j-1.2.17.jar:/Users/Teun/.m2/repository/javafx/javafx/2.2/javafx-2.2.jar:/Users/Teun/.m2/repository/org/mockito/mockito-core/1.9.0/mockito-core-1.9.0.jar:/Users/Teun/.m2/repository/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar:/Users/Teun/.m2/repository/org/objenesis/objenesis/1.0/objenesis-1.0.jar:/Users/Teun/.m2/repository/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar:/Users/Teun/.m2/repository/org/sonatype/tycho/org.eclipse.jdt.core/3.6.2.v_A76_R36x/org.eclipse.jdt.core-3.6.2.v_A76_R36x.jar:/Users/Teun/.m2/repository/org/eclipse/core/org.eclipse.core.runtime/3.6.0.v20100505/org.eclipse.core.runtime-3.6.0.v20100505.jar:/Users/Teun/.m2/repository/org/eclipse/equinox/org.eclipse.equinox.app/1.3.0.v20100512/org.eclipse.equinox.app-1.3.0.v20100512.jar:/Users/Teun/.m2/repository/org/eclipse/osgi/org.eclipse.osgi.services/3.2.100.v20100503/org.eclipse.osgi.services-3.2.100.v20100503.jar:/Users/Teun/.m2/repository/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar:/Users/Teun/.m2/repository/org/apache/felix/org.osgi.foundation/1.2.0/org.osgi.foundation-1.2.0.jar:/Users/Teun/.m2/repository/org/eclipse/equinox/org.eclipse.equinox.common/3.6.0.v20100503/org.eclipse.equinox.common-3.6.0.v20100503.jar:/Users/Teun/.m2/repository/org/eclipse/core/org.eclipse.core.jobs/3.5.0.v20100515/org.eclipse.core.jobs-3.5.0.v20100515.jar:/Users/Teun/.m2/repository/org/eclipse/core/org.eclipse.core.contenttype/3.4.100.v20100505-1235/org.eclipse.core.contenttype-3.4.100.v20100505-1235.jar:/Users/Teun/.m2/repository/org/eclipse/equinox/org.eclipse.equinox.registry/3.5.0.v20100503/org.eclipse.equinox.registry-3.5.0.v20100503.jar:/Users/Teun/.m2/repository/org/eclipse/core/org.eclipse.core.resources/3.6.0.v20100526-0737/org.eclipse.core.resources-3.6.0.v20100526-0737.jar:/Users/Teun/.m2/repository/org/eclipse/core/org.eclipse.core.expressions/3.4.200.v20100505/org.eclipse.core.expressions-3.4.200.v20100505.jar:/Users/Teun/.m2/repository/org/eclipse/core/org.eclipse.core.filesystem/1.3.0.v20100526-0737/org.eclipse.core.filesystem-1.3.0.v20100526-0737.jar:/Users/Teun/.m2/repository/org/eclipse/equinox/org.eclipse.equinox.preferences/3.3.0.v20100503/org.eclipse.equinox.preferences-3.3.0.v20100503.jar:/Users/Teun/.m2/repository/org/eclipse/osgi/org.eclipse.osgi/3.6.0.v20100517/org.eclipse.osgi-3.6.0.v20100517.jar:/Users/Teun/.m2/repository/org/eclipse/text/3.2.0-v20060605-1400/text-3.2.0-v20060605-1400.jar:/Users/Teun/.m2/repository/org/eclipse/core/commands/3.3.0-I20070605-0010/commands-3.3.0-I20070605-0010.jar:/Users/Teun/.m2/repository/org/eclipse/equinox/common/3.3.0-v20070426/common-3.3.0-v20070426.jar:/Users/Teun/.m2/repository/org/powermock/powermock-api-mockito/1.4.12/powermock-api-mockito-1.4.12.jar:/Users/Teun/.m2/repository/org/mockito/mockito-all/1.9.0/mockito-all-1.9.0.jar:/Users/Teun/.m2/repository/org/powermock/powermock-api-support/1.4.12/powermock-api-support-1.4.12.jar:/Users/Teun/.m2/repository/org/powermock/powermock-core/1.4.12/powermock-core-1.4.12.jar:/Users/Teun/.m2/repository/org/javassist/javassist/3.16.1-GA/javassist-3.16.1-GA.jar:/Users/Teun/.m2/repository/org/powermock/powermock-reflect/1.4.12/powermock-reflect-1.4.12.jar:/Users/Teun/.m2/repository/org/powermock/powermock-module-junit4/1.4.12/powermock-module-junit4-1.4.12.jar:/Users/Teun/.m2/repository/junit/junit/4.8.2/junit-4.8.2.jar:/Users/Teun/.m2/repository/org/powermock/powermock-module-junit4-common/1.4.12/powermock-module-junit4-common-1.4.12.jar:/Users/Teun/.m2/repository/com/googlecode/java-diff-utils/diffutils/1.2.1/diffutils-1.2.1.jar:"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.class.version" value="51.0"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="os.version" value="10.8.2"/>
+    <property name="user.home" value="/Users/Teun"/>
+    <property name="user.timezone" value=""/>
+    <property name="java.awt.printerjob" value="sun.lwawt.macosx.CPrinterJob"/>
+    <property name="java.specification.version" value="1.7"/>
+    <property name="file.encoding" value="US-ASCII"/>
+    <property name="user.name" value="Teun"/>
+    <property name="java.class.path" value="/Users/Teun/Desktop/Minor/Project/AP-Refactoring/art-core/target/test-classes:/Users/Teun/Desktop/Minor/Project/AP-Refactoring/art-core/target/classes:/Users/Teun/.m2/repository/log4j/log4j/1.2.17/log4j-1.2.17.jar:/Users/Teun/.m2/repository/javafx/javafx/2.2/javafx-2.2.jar:/Users/Teun/.m2/repository/org/mockito/mockito-core/1.9.0/mockito-core-1.9.0.jar:/Users/Teun/.m2/repository/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar:/Users/Teun/.m2/repository/org/objenesis/objenesis/1.0/objenesis-1.0.jar:/Users/Teun/.m2/repository/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar:/Users/Teun/.m2/repository/org/sonatype/tycho/org.eclipse.jdt.core/3.6.2.v_A76_R36x/org.eclipse.jdt.core-3.6.2.v_A76_R36x.jar:/Users/Teun/.m2/repository/org/eclipse/core/org.eclipse.core.runtime/3.6.0.v20100505/org.eclipse.core.runtime-3.6.0.v20100505.jar:/Users/Teun/.m2/repository/org/eclipse/equinox/org.eclipse.equinox.app/1.3.0.v20100512/org.eclipse.equinox.app-1.3.0.v20100512.jar:/Users/Teun/.m2/repository/org/eclipse/osgi/org.eclipse.osgi.services/3.2.100.v20100503/org.eclipse.osgi.services-3.2.100.v20100503.jar:/Users/Teun/.m2/repository/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar:/Users/Teun/.m2/repository/org/apache/felix/org.osgi.foundation/1.2.0/org.osgi.foundation-1.2.0.jar:/Users/Teun/.m2/repository/org/eclipse/equinox/org.eclipse.equinox.common/3.6.0.v20100503/org.eclipse.equinox.common-3.6.0.v20100503.jar:/Users/Teun/.m2/repository/org/eclipse/core/org.eclipse.core.jobs/3.5.0.v20100515/org.eclipse.core.jobs-3.5.0.v20100515.jar:/Users/Teun/.m2/repository/org/eclipse/core/org.eclipse.core.contenttype/3.4.100.v20100505-1235/org.eclipse.core.contenttype-3.4.100.v20100505-1235.jar:/Users/Teun/.m2/repository/org/eclipse/equinox/org.eclipse.equinox.registry/3.5.0.v20100503/org.eclipse.equinox.registry-3.5.0.v20100503.jar:/Users/Teun/.m2/repository/org/eclipse/core/org.eclipse.core.resources/3.6.0.v20100526-0737/org.eclipse.core.resources-3.6.0.v20100526-0737.jar:/Users/Teun/.m2/repository/org/eclipse/core/org.eclipse.core.expressions/3.4.200.v20100505/org.eclipse.core.expressions-3.4.200.v20100505.jar:/Users/Teun/.m2/repository/org/eclipse/core/org.eclipse.core.filesystem/1.3.0.v20100526-0737/org.eclipse.core.filesystem-1.3.0.v20100526-0737.jar:/Users/Teun/.m2/repository/org/eclipse/equinox/org.eclipse.equinox.preferences/3.3.0.v20100503/org.eclipse.equinox.preferences-3.3.0.v20100503.jar:/Users/Teun/.m2/repository/org/eclipse/osgi/org.eclipse.osgi/3.6.0.v20100517/org.eclipse.osgi-3.6.0.v20100517.jar:/Users/Teun/.m2/repository/org/eclipse/text/3.2.0-v20060605-1400/text-3.2.0-v20060605-1400.jar:/Users/Teun/.m2/repository/org/eclipse/core/commands/3.3.0-I20070605-0010/commands-3.3.0-I20070605-0010.jar:/Users/Teun/.m2/repository/org/eclipse/equinox/common/3.3.0-v20070426/common-3.3.0-v20070426.jar:/Users/Teun/.m2/repository/org/powermock/powermock-api-mockito/1.4.12/powermock-api-mockito-1.4.12.jar:/Users/Teun/.m2/repository/org/mockito/mockito-all/1.9.0/mockito-all-1.9.0.jar:/Users/Teun/.m2/repository/org/powermock/powermock-api-support/1.4.12/powermock-api-support-1.4.12.jar:/Users/Teun/.m2/repository/org/powermock/powermock-core/1.4.12/powermock-core-1.4.12.jar:/Users/Teun/.m2/repository/org/javassist/javassist/3.16.1-GA/javassist-3.16.1-GA.jar:/Users/Teun/.m2/repository/org/powermock/powermock-reflect/1.4.12/powermock-reflect-1.4.12.jar:/Users/Teun/.m2/repository/org/powermock/powermock-module-junit4/1.4.12/powermock-module-junit4-1.4.12.jar:/Users/Teun/.m2/repository/junit/junit/4.8.2/junit-4.8.2.jar:/Users/Teun/.m2/repository/org/powermock/powermock-module-junit4-common/1.4.12/powermock-module-junit4-common-1.4.12.jar:/Users/Teun/.m2/repository/com/googlecode/java-diff-utils/diffutils/1.2.1/diffutils-1.2.1.jar:"/>
+    <property name="java.vm.specification.version" value="1.7"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.home" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home/jre"/>
+    <property name="sun.java.command" value="/Users/Teun/Desktop/Minor/Project/AP-Refactoring/art-core/target/surefire/surefirebooter56420028712922775.jar /Users/Teun/Desktop/Minor/Project/AP-Refactoring/art-core/target/surefire/surefire7186027397101792489tmp /Users/Teun/Desktop/Minor/Project/AP-Refactoring/art-core/target/surefire/surefire5093047541947977214tmp"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="user.language" value="nl"/>
+    <property name="awt.toolkit" value="sun.lwawt.macosx.LWCToolkit"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.version" value="1.7.0_07"/>
+    <property name="java.ext.dirs" value="/Users/Teun/Library/Java/Extensions:/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home/jre/lib/ext:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java"/>
+    <property name="sun.boot.class.path" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home/jre/lib/sunrsasign.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home/jre/lib/JObjC.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_07.jdk/Contents/Home/jre/classes"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="localRepository" value="/Users/Teun/.m2/repository"/>
+    <property name="file.separator" value="/"/>
+    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="sun.cpu.isalist" value=""/>
+  </properties>
+  <testcase time="0.05" classname="art.core.issue.SimpleDetectorTest" name="testClearedIssueListAfterReset"/>
+  <testcase time="0.002" classname="art.core.issue.SimpleDetectorTest" name="testGetIssues"/>
+  <testcase time="0.003" classname="art.core.issue.SimpleDetectorTest" name="testThatIssueIsCreatedWithNoParameters"/>
+  <testcase time="0.002" classname="art.core.issue.SimpleDetectorTest" name="testThatIssueIsCreatedWithParameters"/>
+  <testcase time="0.004" classname="art.core.issue.SimpleDetectorTest" name="testThatIssuesAreCreated"/>
+  <testcase time="0.002" classname="art.core.issue.SimpleDetectorTest" name="testThatIssueListIsUnmodifiableWhenRemoving"/>
+  <testcase time="0.002" classname="art.core.issue.SimpleDetectorTest" name="testThatIssueListIsUnmodifiableWhenAdding"/>
+</testsuite>

@@ -1,0 +1,28 @@
+html, body, form, .CodeMirror, .CodeMirror-scroll {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.activeline { 
+  background: #e8f2ff !important;
+}
+
+.change-before {
+  background-color: #df8f8f !important;
+}
+
+.change {
+    background-color: yellow !important;
+}
+
+.delete {
+    background-color: #ff7479 !important;
+}
+
+.insert {
+    background-color: #5bff44 !important;
+}

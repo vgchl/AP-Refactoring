@@ -1,0 +1,77 @@
+.drop-source-files-pane {
+    -fx-background-image: url("../images/gray-bg.png");
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.5), 50, 0.0, 0, 0);
+}
+
+.gray-linnen {
+    -fx-background-image: url("../images/gray-bg.png");
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.5), 150, 0.0, 0, 0);
+}
+.light-gray-linnen {
+    -fx-background-image: url("../images/light-gray-bg.png");
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.5), 150, 0.0, 0, 0);
+}
+
+.editor-web-view {
+    -fx-background-color: white;
+    -fx-background-insets: 0, 1, 2;
+    -fx-background-radius: 0 0 0 0, 0 0 0 0, 0 0 0 0;
+}
+.editor-web-view > .title {
+    -fx-background-color: #f2f2f2;
+}
+.editor-web-view > .content {
+    -fx-padding: 0;
+}
+
+.border-pane {
+    -fx-background-color: red;
+    -fx-padding: 10;
+}
+
+.table-view {
+    -fx-background-color: #e3e7eb;
+}
+.table-view > .header {
+    -fx-background-color: red;
+}
+
+.titled-pane .title {
+    -fx-background-color: #888, linear-gradient(#f1f1f1 0%, #d0d0d0 100%);
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-background-radius: 0;
+    -fx-color: #ff0000;
+}
+.titled-pane:focused .title .text {
+  -fx-fill: #292929;
+  -fx-effect: dropshadow(one-pass-box, white, 1, 0, 0, 2);
+}
+
+.titled-pane > .content {
+    -fx-padding: 0;
+}
+.list-view {
+  -fx-padding: 0;
+}
+.split-pane {
+    -fx-background-color: white;
+    -fx-padding: 0;
+}
+
+.blue-panel {
+    -fx-background-color: #e3e7eb;
+}
+
+#issues-sidebar {
+    -fx-background-color: #888;
+    -fx-padding: 0 1 0 0;
+}
+
+#issue-actions-bar {
+    -fx-background-color: #989898, #e2e2e2;
+    -fx-background-insets: 0;
+}
+
+#issue-changes-container {
+    -fx-background-color: null;
+}
