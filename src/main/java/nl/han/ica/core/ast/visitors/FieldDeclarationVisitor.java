@@ -18,10 +18,12 @@ import java.util.List;
 public class FieldDeclarationVisitor extends ASTVisitor {
 
     private List<FieldDeclaration> fieldDeclarations = new ArrayList<>();
+    private boolean shouldResolveBinding = true;
 
     @Override
     public boolean visit(FieldDeclaration node) {
-        if (((VariableDeclarationFragment) node.fragments().get(0)).resolveBinding() != null) {
+        if (((VariableDeclarationFragment) node.fragments().get(0)).resolveBinding() != null
+                || !shouldResolveBinding) {
             fieldDeclarations.add(node);
         }
         return super.visit(node);
@@ -29,6 +31,10 @@ public class FieldDeclarationVisitor extends ASTVisitor {
 
     public final List<FieldDeclaration> getFieldDeclarations() {
         return fieldDeclarations;
+    }
+
+    public void setShouldResolveBinding(boolean shouldResolveBinding) {
+        this.shouldResolveBinding = shouldResolveBinding;
     }
 
     public boolean hasFieldName(String name) {

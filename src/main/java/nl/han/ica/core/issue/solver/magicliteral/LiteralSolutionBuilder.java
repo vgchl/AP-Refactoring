@@ -81,7 +81,9 @@ public abstract class LiteralSolutionBuilder {
     protected abstract Type getType(AST ast);
 
     protected boolean existingConstantExists(final String name) {
+        System.out.println(name);
         FieldDeclarationVisitor visitor = new FieldDeclarationVisitor();
+        visitor.setShouldResolveBinding(false);
         literalClass.accept(visitor);
         return visitor.hasFieldName(name);
     }
