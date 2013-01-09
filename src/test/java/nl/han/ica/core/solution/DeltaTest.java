@@ -1,5 +1,6 @@
-package nl.han.ica.core;
+package nl.han.ica.core.solution;
 
+import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.solution.Delta;
 import org.junit.Before;
 import org.junit.Test;

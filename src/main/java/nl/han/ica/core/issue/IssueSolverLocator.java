@@ -1,5 +1,6 @@
 package nl.han.ica.core.issue;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,6 +40,15 @@ public class IssueSolverLocator {
      */
     public void addSolver(IssueSolver issueSolver) {
         solvers.add(issueSolver);
+    }
+
+    /**
+     * Returns all solvers registered with this locator.
+     *
+     * @return The solvers registered with this locator.
+     */
+    public Set<IssueSolver> getSolvers() {
+        return Collections.unmodifiableSet(solvers);
     }
 
 }

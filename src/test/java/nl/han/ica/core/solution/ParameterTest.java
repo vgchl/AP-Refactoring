@@ -1,4 +1,4 @@
-package nl.han.ica.core;
+package nl.han.ica.core.solution;
 
 import nl.han.ica.core.solution.Parameter;
 import org.junit.Assert;
