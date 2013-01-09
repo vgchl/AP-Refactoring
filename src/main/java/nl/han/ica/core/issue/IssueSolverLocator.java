@@ -1,5 +1,7 @@
 package nl.han.ica.core.issue;
 
+import com.sun.javafx.collections.annotations.ReturnsUnmodifiableCollection;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -47,6 +49,7 @@ public class IssueSolverLocator {
      *
      * @return The solvers registered with this locator.
      */
+    @ReturnsUnmodifiableCollection
     public Set<IssueSolver> getSolvers() {
         return Collections.unmodifiableSet(solvers);
     }
