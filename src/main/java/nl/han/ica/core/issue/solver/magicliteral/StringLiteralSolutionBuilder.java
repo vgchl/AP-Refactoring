@@ -1,6 +1,6 @@
 package nl.han.ica.core.issue.solver.magicliteral;
 
-import nl.han.ica.core.Parameter;
+import nl.han.ica.core.solution.Parameter;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueSolver;
 import org.eclipse.jdt.core.dom.AST;
@@ -12,8 +12,7 @@ import java.util.Map;
 
 public class StringLiteralSolutionBuilder extends LiteralSolutionBuilder {
 
-    public StringLiteralSolutionBuilder(Issue issue, IssueSolver issueSolver,
-            Map<String, Parameter> parameters, String parameterConstantName) {
+    public StringLiteralSolutionBuilder(Issue issue, IssueSolver issueSolver, Map<String, Parameter> parameters, String parameterConstantName) {
         super(issue, issueSolver, parameters, parameterConstantName);
     }
 
@@ -24,7 +23,6 @@ public class StringLiteralSolutionBuilder extends LiteralSolutionBuilder {
 
     @Override
     protected Expression getInitializerExpression(String value, AST ast) {
-
         StringLiteral newStringLiteral = ast.newStringLiteral();
         newStringLiteral.setLiteralValue(value);
         return newStringLiteral;

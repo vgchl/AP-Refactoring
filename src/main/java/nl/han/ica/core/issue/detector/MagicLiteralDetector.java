@@ -4,6 +4,7 @@
  */
 package nl.han.ica.core.issue.detector;
 
+import nl.han.ica.core.Context;
 import nl.han.ica.core.issue.IssueDetector;
 import org.eclipse.jdt.core.dom.*;
 
@@ -23,7 +24,7 @@ public class MagicLiteralDetector extends IssueDetector {
     }
 
     @Override
-    public void detectIssues() {
+    public void internalDetectIssues(Context context) {
         MagicLiteralVisitor magicLiteralVisitor = new MagicLiteralVisitor();
         context.accept(magicLiteralVisitor);
         createIssues(magicLiteralVisitor.getMagicLiterals());
@@ -40,22 +41,18 @@ public class MagicLiteralDetector extends IssueDetector {
         @Override
         public boolean visit(NumberLiteral node) {
             addLiteralNode(node);
-
             return super.visit(node);
         }
 
         @Override
         public boolean visit(StringLiteral node) {
             addLiteralNode(node);
-
             return super.visit(node);
         }
 
         @Override
         public boolean visit(CharacterLiteral node) {
-
             addLiteralNode(node);
-
             return super.visit(node);
         }
 
@@ -68,5 +65,7 @@ public class MagicLiteralDetector extends IssueDetector {
         public Set<ASTNode> getMagicLiterals() {
             return magicLiterals;
         }
+
     }
+
 }

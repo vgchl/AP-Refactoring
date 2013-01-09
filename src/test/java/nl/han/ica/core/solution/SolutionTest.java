@@ -1,6 +1,9 @@
-package nl.han.ica.core;
+package nl.han.ica.core.solution;
 
+import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.issue.IssueSolver;
+import nl.han.ica.core.solution.Delta;
+import nl.han.ica.core.solution.Solution;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

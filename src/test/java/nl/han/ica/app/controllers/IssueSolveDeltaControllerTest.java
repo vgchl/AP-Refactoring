@@ -18,9 +18,9 @@
 //import static org.mockito.Mockito.when;
 //
 ///**
-// * @author: Wouter Konecny
-// * @created: 26-10-12
-// */
+//* @author: Wouter Konecny
+//* @created: 26-10-12
+//*/
 //@RunWith(PowerMockRunner.class)
 //@PrepareForTest({BaseController.class, URL.class})
 //public class IssueResolveChangeControllerTest {

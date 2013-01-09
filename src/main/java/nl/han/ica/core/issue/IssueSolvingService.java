@@ -1,7 +1,7 @@
 package nl.han.ica.core.issue;
 
-import nl.han.ica.core.Parameter;
-import nl.han.ica.core.Solution;
+import nl.han.ica.core.solution.Parameter;
+import nl.han.ica.core.solution.Solution;
 
 import java.util.Map;
 
@@ -21,12 +21,19 @@ public class IssueSolvingService {
     }
 
     /**
+     * Instantiate a new IssueSolvingService.
+     */
+    public IssueSolvingService(final IssueSolverLocator issueSolverLocator) {
+        this.issueSolverLocator = issueSolverLocator;
+    }
+
+    /**
      * Create a solution for an issue.
      *
      * @param issue The issue to createSolution.
      * @return The solution to the issue.
      */
-    public Solution createSolution(Issue issue) {
+    public Solution createSolution(final Issue issue) {
         return createSolution(issue, null);
     }
 
@@ -37,7 +44,7 @@ public class IssueSolvingService {
      * @param parameters The parameters to use in the solving process.
      * @return The solution to the issue.
      */
-    public Solution createSolution(Issue issue, Map<String, Parameter> parameters) {
+    public Solution createSolution(final Issue issue, final Map<String, Parameter> parameters) {
         IssueSolver solver = issueSolverLocator.solverForIssue(issue);
         if (null == solver) {
             throw new IllegalStateException("No suitable solver available.");
@@ -50,8 +57,12 @@ public class IssueSolvingService {
      *
      * @param solution The solution to apply.
      */
-    public void applySolution(Solution solution) {
-        solution.getIssueSolver().applySolution(solution);
+    public void applySolution(final Solution solution) {
+        IssueSolver solver = solution.getIssueSolver();
+        if (null == solver) {
+            throw new IllegalArgumentException("Solution has not been solved by a solver.");
+        }
+        solver.applySolution(solution);
     }
 
     /**
@@ -59,8 +70,26 @@ public class IssueSolvingService {
      *
      * @param issueSolver The issue solver to add.
      */
-    public void addSolver(IssueSolver issueSolver) {
+    public void addSolver(final IssueSolver issueSolver) {
         issueSolverLocator.addSolver(issueSolver);
+    }
+
+    /**
+     * Returns the locator used to find suitable solvers for issues.
+     *
+     * @return The locator used to find suitable solvers for issues.
+     */
+    public IssueSolverLocator getIssueSolverLocator() {
+        return issueSolverLocator;
+    }
+
+    /**
+     * Set the locator used to find suitable solvers for issues.
+     *
+     * @param issueSolverLocator the locator used to find suitable solvers for issues.
+     */
+    public void setIssueSolverLocator(final IssueSolverLocator issueSolverLocator) {
+        this.issueSolverLocator = issueSolverLocator;
     }
 
 }

@@ -1,11 +1,12 @@
 package nl.han.ica.core.issue.detector;
 
+import nl.han.ica.core.Context;
 import nl.han.ica.core.issue.IssueDetector;
 
 public class SimpleDetector extends IssueDetector {
 
     @Override
-    public void detectIssues() {
+    public void internalDetectIssues(Context context) {
 
     }
 

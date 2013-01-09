@@ -1,8 +1,8 @@
 package nl.han.ica.core.issue.solver;
 
-import nl.han.ica.core.Delta;
-import nl.han.ica.core.Parameter;
-import nl.han.ica.core.Solution;
+import nl.han.ica.core.solution.Delta;
+import nl.han.ica.core.solution.Parameter;
+import nl.han.ica.core.solution.Solution;
 import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueSolver;
@@ -19,9 +19,6 @@ import org.eclipse.text.edits.TextEdit;
 
 import java.io.IOException;
 import java.util.Map;
-
-import nl.han.ica.core.util.ASTUtil;
-import org.eclipse.jdt.core.dom.*;
 
 /**
  * Solver for Hide Method.

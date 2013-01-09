@@ -43,13 +43,13 @@ public class PullUpFieldDetectorTest {
 //
 //    @Test
 //    public void testDetectIssuesNotNull() {
-//        Set<Issue> issues = detector.detectIssues();
+//        Set<Issue> issues = detector.internalDetectIssues();
 //        assertNotNull(issues);
 //    }
 //
 //    @Test
 //    public void testDetectIssues() {
-//        assertEquals(1, detector.detectIssues().size());
+//        assertEquals(1, detector.internalDetectIssues().size());
 //    }
 //
 //    private File getSuperClassFile() throws IOException {

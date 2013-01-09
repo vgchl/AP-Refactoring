@@ -1,6 +1,6 @@
 package nl.han.ica.core.issue.solver.magicliteral;
 
-import nl.han.ica.core.Parameter;
+import nl.han.ica.core.solution.Parameter;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueSolver;
 import org.eclipse.jdt.core.dom.*;

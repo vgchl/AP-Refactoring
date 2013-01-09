@@ -9,9 +9,9 @@ import javafx.scene.layout.VBox;
 import nl.han.ica.app.models.IssueSolvingService;
 import nl.han.ica.app.models.parameter.ParameterChangeListener;
 import nl.han.ica.app.models.parameter.ParameterEvent;
-import nl.han.ica.core.Delta;
+import nl.han.ica.core.solution.Delta;
 import nl.han.ica.core.Job;
-import nl.han.ica.core.Solution;
+import nl.han.ica.core.solution.Solution;
 import nl.han.ica.core.issue.Issue;
 
 import java.io.IOException;

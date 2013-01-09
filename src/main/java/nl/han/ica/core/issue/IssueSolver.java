@@ -1,8 +1,8 @@
 package nl.han.ica.core.issue;
 
-import nl.han.ica.core.Delta;
-import nl.han.ica.core.Parameter;
-import nl.han.ica.core.Solution;
+import nl.han.ica.core.solution.Delta;
+import nl.han.ica.core.solution.Parameter;
+import nl.han.ica.core.solution.Solution;
 import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.util.FileUtil;
 import org.apache.log4j.Logger;

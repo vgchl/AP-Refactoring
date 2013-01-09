@@ -6,6 +6,8 @@ import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetectionService;
 import nl.han.ica.core.issue.IssueSolvingService;
 import nl.han.ica.core.parser.Parser;
+import nl.han.ica.core.solution.Parameter;
+import nl.han.ica.core.solution.Solution;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;

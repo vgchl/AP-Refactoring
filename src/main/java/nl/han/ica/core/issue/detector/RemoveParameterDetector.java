@@ -1,10 +1,10 @@
 package nl.han.ica.core.issue.detector;
 
+import nl.han.ica.core.Context;
 import nl.han.ica.core.ast.visitors.MethodDeclarationVisitor;
 import nl.han.ica.core.ast.visitors.MethodInvocationVisitor;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueDetector;
-
 import nl.han.ica.core.util.ASTUtil;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.*;
@@ -14,58 +14,58 @@ import java.util.List;
 
 public class RemoveParameterDetector extends IssueDetector {
 
-    private Logger log = Logger.getLogger(getClass().getName());
-
     private static final String STRATEGY_NAME = "Remove parameter";
     private static final String STRATEGY_DESCRIPTION = "Remove unused parameter from method.";
 
-    List<MethodDeclaration> methodDeclarations;
-    List<MethodInvocation> methodInvocations;
-    List<FieldAccess> fieldAccessList;
+    private Logger logger;
+    private List<MethodDeclaration> methodDeclarations;
+    private List<MethodInvocation> methodInvocations;
 
     public RemoveParameterDetector() {
+        logger = Logger.getLogger(getClass().getName());
         methodDeclarations = new ArrayList<>();
         methodInvocations = new ArrayList<>();
-        fieldAccessList = new ArrayList<>();
     }
 
     @Override
-    public void detectIssues() {
-        reset();
-        collectMethodDeclarations();
+    public void internalDetectIssues(Context context) {
+        collectMethodDeclarations(context);
         //TODO REFACTOR, Because not needed to combine invocations already with his declarations
-        collectMethodInvocations();
+        collectMethodInvocations(context);
 
         for (MethodDeclaration methodDeclaration : methodDeclarations) {
             if (!Modifier.isAbstract(methodDeclaration.getModifiers())
                     && !hasAnnotation(methodDeclaration)
                     && !ASTUtil.parent(TypeDeclaration.class, methodDeclaration).isInterface()
-                    && !ASTUtil.isMainMethod(methodDeclaration)) {
-                List<SingleVariableDeclaration> declaredVariables = methodDeclaration.parameters();
-
-                if (declaredVariables != null) {
-                    for (SingleVariableDeclaration variable : declaredVariables) {
-                        if (!usesVariable(methodDeclaration, variable)) {
-                            Issue issue = createIssue();
-                            issue.getNodes().add(methodDeclaration);
-                            issue.getNodes().add(variable);
-
-                            for (MethodInvocation methodInvocation : methodInvocations) {
-                                if (methodDeclaration.resolveBinding().isEqualTo(
-                                        methodInvocation.resolveMethodBinding())) {
-                                    issue.getNodes().add(methodInvocation);
-                                }
-                            }
-
-                        }
-                    }
-                }
+                    && !ASTUtil.isMainMethod(methodDeclaration)
+                    && methodDeclaration.parameters() != null) {
+                checkVariablesAndCreateIssue(methodDeclaration, methodDeclaration.parameters());
             }
         }
     }
 
-    private boolean usesVariable(MethodDeclaration methodDeclaration,
-                                 SingleVariableDeclaration variableDeclaration) {
+    private void checkVariablesAndCreateIssue(MethodDeclaration methodDeclaration, List<SingleVariableDeclaration> declaredVariables) {
+        for (SingleVariableDeclaration variable : declaredVariables) {
+            if (!usesVariable(methodDeclaration, variable)) {
+                Issue issue = createIssue();
+                issue.getNodes().add(methodDeclaration);
+                issue.getNodes().add(variable);
+
+                addCorrespondingInvocationsToIssue(methodDeclaration, issue);
+            }
+        }
+    }
+
+    private void addCorrespondingInvocationsToIssue(MethodDeclaration methodDeclaration, Issue issue) {
+        for (MethodInvocation methodInvocation : methodInvocations) {
+            if (methodDeclaration.resolveBinding().isEqualTo(
+                    methodInvocation.resolveMethodBinding())) {
+                issue.getNodes().add(methodInvocation);
+            }
+        }
+    }
+
+    private boolean usesVariable(MethodDeclaration methodDeclaration, SingleVariableDeclaration variableDeclaration) {
         String methodBlock = methodDeclaration.getBody().toString();
 
         return methodBlock.contains(variableDeclaration.getName().toString());
@@ -75,13 +75,13 @@ public class RemoveParameterDetector extends IssueDetector {
         return methodDeclaration.modifiers().get(0) instanceof Annotation;
     }
 
-    private void collectMethodDeclarations() {
+    private void collectMethodDeclarations(Context context) {
         MethodDeclarationVisitor visitor = new MethodDeclarationVisitor();
         context.accept(visitor);
         methodDeclarations = visitor.getMethodDeclarations();
     }
 
-    private void collectMethodInvocations() {
+    private void collectMethodInvocations(Context context) {
         MethodInvocationVisitor visitor = new MethodInvocationVisitor();
         context.accept(visitor);
         methodInvocations = visitor.getMethodInvocations();
@@ -90,6 +90,7 @@ public class RemoveParameterDetector extends IssueDetector {
     @Override
     public void reset() {
         methodDeclarations.clear();
+        methodInvocations.clear();
         super.reset();
     }
 
