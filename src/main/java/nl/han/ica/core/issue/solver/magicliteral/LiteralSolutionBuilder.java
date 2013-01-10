@@ -26,9 +26,9 @@ public abstract class LiteralSolutionBuilder {
     protected Issue issue;
     private IssueSolver issueSolver;
     protected Map<String, Parameter> parameters;
-    private ASTRewrite rewrite;
+    ASTRewrite rewrite;
     protected ASTNode literal;
-    private TypeDeclaration literalClass;
+    TypeDeclaration literalClass;
     private Logger logger;
     protected String parameterConstantName;
 
@@ -50,8 +50,13 @@ public abstract class LiteralSolutionBuilder {
         this.parameters = parameters;
         this.parameterConstantName = parameterConstantName;
 
+        literal = issue.getNodes().get(0);
+        literalClass = ASTUtil.parent(TypeDeclaration.class, literal);
+        rewrite = ASTRewrite.create(literalClass.getAST());
+
         //TODO: Get the magic literal from the issue
         //HINT: literal = "...";
+
 
         //TODO: Get the class from the literal, we do this so that we can rewrite this class later.
         //HINT: literalClass = ASTUtil.parent(..., ....);
@@ -87,6 +92,7 @@ public abstract class LiteralSolutionBuilder {
 
     protected boolean existingConstantExists(final String name) {
         FieldDeclarationVisitor visitor = new FieldDeclarationVisitor();
+        visitor.setShouldResolveBinding(false);
         literalClass.accept(visitor);
         return visitor.hasFieldName(name);
     }
@@ -96,7 +102,6 @@ public abstract class LiteralSolutionBuilder {
         AST ast = literalClass.getAST();
 
         //TODO: Create a ListRewrite, make sure to pass the class of the literal.
-        //Hint: use rewrite to create the ListRewrite
         //Hint: Look at the TypeDeclaration class ChildListPropertyDescriptor
 
         //TODO: Create a VariableDeclarationFragment
@@ -114,6 +119,7 @@ public abstract class LiteralSolutionBuilder {
 
         //TODO: insert the field in the list
         //Hint: TextEditGroup == null
+
     }
 
     /**
@@ -125,7 +131,6 @@ public abstract class LiteralSolutionBuilder {
     protected void replaceMagicLiteralWithConstant(final String name) {
         //TODO: Replace literal with name
         //Hint: Use rewrite
-        //Hint: Use SimpleName
     }
 
     /**

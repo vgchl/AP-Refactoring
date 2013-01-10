@@ -30,15 +30,17 @@ public class MagicLiteralDetector extends IssueDetector {
     }
 
     private class MagicLiteralVisitor extends ASTVisitor {
-        //All violated nodes
         private Set<ASTNode> magicLiterals;
+
+        public MagicLiteralVisitor() {
+            magicLiterals = new HashSet<>();
+        }
 
         //TODO: Implement number literal visitor and make sure it is added to the violated nodes.
         // Hint: Use the NumberLiteral class
 
         //TODO: Define if numberliteral is a magicnumber
         //Hint: Check the ASTNODE class for nodetypes
-
 
         public Set<ASTNode> getMagicLiterals() {
             return magicLiterals;
