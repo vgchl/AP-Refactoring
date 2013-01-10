@@ -74,7 +74,8 @@ public class LiteralSolutionBuilderTest {
         String constantName = "CONSTANT_NAME";
         lsb.replaceMagicLiteralWithConstant(constantName);
         if (lsb.literal.getParent() instanceof InfixExpression){
-            Assert.assertTrue( lsb.rewrite.get( lsb.literal.getParent(), InfixExpression.RIGHT_OPERAND_PROPERTY).toString().contains(constantName));
+            Assert.assertTrue( lsb.rewrite.get( lsb.literal.getParent(), InfixExpression.RIGHT_OPERAND_PROPERTY).toString().contains(constantName)
+                    || lsb.rewrite.get( lsb.literal.getParent(), InfixExpression.LEFT_OPERAND_PROPERTY).toString().contains(constantName)  );
         }else if(lsb.literal.getParent() instanceof MethodInvocation){
             Assert.assertTrue(lsb.rewrite.getListRewrite(lsb.literal.getParent(), MethodInvocation.ARGUMENTS_PROPERTY).getRewrittenList().get(0).toString().contains(constantName));
         }
