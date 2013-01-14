@@ -2,8 +2,10 @@ package nl.han.ica.core.issue;
 
 import nl.han.ica.core.Parameter;
 import nl.han.ica.core.Solution;
+import nl.han.ica.core.SourceFile;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Provides {@link Issue} solving functionality. Contains a set of {@link IssueSolver}s that can createSolution the issues. The
@@ -26,8 +28,8 @@ public class IssueSolvingService {
      * @param issue The issue to createSolution.
      * @return The solution to the issue.
      */
-    public Solution createSolution(Issue issue) {
-        return createSolution(issue, null);
+    public Solution createSolution(Issue issue, Set<SourceFile> sourceFiles) {
+        return createSolution(issue, null, sourceFiles);
     }
 
     /**
@@ -37,12 +39,12 @@ public class IssueSolvingService {
      * @param parameters The parameters to use in the solving process.
      * @return The solution to the issue.
      */
-    public Solution createSolution(Issue issue, Map<String, Parameter> parameters) {
+    public Solution createSolution(Issue issue, Map<String, Parameter> parameters, Set<SourceFile> sourceFiles) {
         IssueSolver solver = issueSolverLocator.solverForIssue(issue);
         if (null == solver) {
             throw new IllegalStateException("No suitable solver available.");
         }
-        return solver.createSolution(issue, parameters);
+        return solver.createSolution(issue, parameters, sourceFiles);
     }
 
     /**

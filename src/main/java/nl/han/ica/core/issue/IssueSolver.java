@@ -7,6 +7,7 @@ import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.util.FileUtil;
 import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.BadLocationException;
@@ -17,18 +18,21 @@ import org.eclipse.text.edits.TextEdit;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class IssueSolver {
 
     protected final Logger logger;
+    private final Map<AST, ASTRewrite> rewrites;
 
     public IssueSolver() {
         logger = Logger.getLogger(getClass().getName());
+        rewrites = new HashMap<>();
     }
 
     public abstract boolean canSolve(Issue issue);
 
-    public Solution createSolution(Issue issue, Map<String, Parameter> parameters) {
+    public Solution createSolution(Issue issue, Map<String, Parameter> parameters, Set<SourceFile> sourceFiles) {
         logger.info("Creating solution for issue " + issue);
         if (!canSolve(issue)) {
             throw new IllegalArgumentException("Cannot solve issue. This solver does not know how to solve that kind of issue.");
@@ -37,10 +41,10 @@ public abstract class IssueSolver {
             parameters = new HashMap<>();
         }
         mergeDefaultParameters(parameters);
-        return internalSolve(issue, parameters);
+        return internalSolve(issue, parameters, sourceFiles);
     }
 
-    protected abstract Solution internalSolve(Issue issue, Map<String, Parameter> parameters);
+    protected abstract Solution internalSolve(Issue issue, Map<String, Parameter> parameters, Set<SourceFile> sourceFiles);
 
     public void applySolution(Solution solution) {
         logger.info("Applying solution " + solution);
@@ -96,5 +100,14 @@ public abstract class IssueSolver {
         return delta;
     }
 
+    protected ASTRewrite rewriteFor(AST ast) {
+        if (!rewrites.containsKey(ast)) {
+            rewrites.put(ast, ASTRewrite.create(ast));
+        }
+        return rewrites.get(ast);
+    }
 
+    public Map<AST, ASTRewrite> getRewrites() {
+        return rewrites;
+    }
 }

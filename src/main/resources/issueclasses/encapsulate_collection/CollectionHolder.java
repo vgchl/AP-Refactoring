@@ -2,7 +2,7 @@ package issueclasses.encapsulate_collection;
 
 import java.util.*;
 
-public class PublicFieldCollection {
+public class CollectionHolder {
 
     public Collection<Object> objectCollection;
 
@@ -11,5 +11,7 @@ public class PublicFieldCollection {
 
     public Set<Object> objectSet;
     public HashSet<Object> objectHashSet;
+
+    public LinkedList<Object> objectLinkedList;
 
 }

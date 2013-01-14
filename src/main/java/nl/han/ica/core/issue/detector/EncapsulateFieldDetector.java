@@ -49,10 +49,10 @@ public class EncapsulateFieldDetector extends IssueDetector {
                     fieldDeclarationFieldAccessHashMap.put(declaration, new ArrayList<QualifiedName>());
                 }
                 IBinding binding = ((VariableDeclarationFragment) declaration.fragments().get(0)).resolveBinding();
-                log.fatal("Declaration " + declaration);
-                log.fatal("Declaration binding " + ((VariableDeclarationFragment) declaration.fragments().get(0)).resolveBinding());
-                log.fatal("Qualified Name " + qualifiedName);
-                log.fatal("Qualified Name binding " + qualifiedName.resolveBinding());
+//                log.fatal("Declaration " + declaration);
+//                log.fatal("Declaration binding " + ((VariableDeclarationFragment) declaration.fragments().get(0)).resolveBinding());
+//                log.fatal("Qualified Name " + qualifiedName);
+//                log.fatal("Qualified Name binding " + qualifiedName.resolveBinding());
                 if (binding.equals(qualifiedName.resolveBinding())) {
                     fieldDeclarationFieldAccessHashMap.get(declaration).add(qualifiedName);
                     break;

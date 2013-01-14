@@ -5,10 +5,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
 import javafx.scene.web.WebView;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
 
 /**
  * Wrapper around a WebView containing a JavaScript code editor plugin. Provides easy means of communication between the
@@ -118,16 +118,10 @@ public class CodeEditor {
      * @param script The script to run
      */
     protected void execute(final String script) {
-        logger.info("Executing javascript....");
-        
         if (webView.getEngine().getLoadWorker().getState() == Worker.State.SUCCEEDED) {
-            logger.info("Executing...  " + script);
             webView.getEngine().executeScript(script);
-            logger.info("Executed script");
         } else {
-            logger.info("Adding script to cache");
             scriptCache.add(script);
-            logger.info("Added script to cache");
         }
     }
 

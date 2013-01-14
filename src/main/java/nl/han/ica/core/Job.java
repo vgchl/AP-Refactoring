@@ -62,7 +62,7 @@ public class Job {
      * @return The solution that solves the issue.
      */
     public Solution createSolution(Issue issue) {
-        return issueSolvingService.createSolution(issue);
+        return issueSolvingService.createSolution(issue, sourceFiles);
     }
 
     /**
@@ -73,7 +73,7 @@ public class Job {
      * @return The solution that solves the issue.
      */
     public Solution createSolution(Issue issue, Map<String, Parameter> parameters) {
-        return issueSolvingService.createSolution(issue, parameters);
+        return issueSolvingService.createSolution(issue, parameters, sourceFiles);
     }
 
     /**

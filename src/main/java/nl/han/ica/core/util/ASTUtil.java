@@ -1,7 +1,8 @@
 package nl.han.ica.core.util;
 
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 
 /**
  * Helper functionality for common operations involving {@link ASTNode}s.
@@ -28,7 +29,7 @@ public final class ASTUtil {
         ASTNode parent = node;
         do {
             parent = parent.getParent();
-            if(parent == null){
+            if (parent == null) {
                 return null;
             }
         } while (parent.getClass() != klass);
@@ -41,5 +42,29 @@ public final class ASTUtil {
         }
         return 0;
     }
+
+    public static void setVisibility(FieldDeclaration field, Modifier.ModifierKeyword visibility, ASTRewrite rewrite) {
+        ListRewrite listRewrite = rewrite.getListRewrite(field, FieldDeclaration.MODIFIERS2_PROPERTY);
+        setVisibility(field, visibility, listRewrite);
+    }
+
+    public static void setVisibility(MethodDeclaration method, Modifier.ModifierKeyword visibility, ASTRewrite rewrite) {
+        ListRewrite listRewrite = rewrite.getListRewrite(method, MethodDeclaration.MODIFIERS2_PROPERTY);
+        setVisibility(method, visibility, listRewrite);
+    }
+
+    private static void setVisibility(BodyDeclaration body, Modifier.ModifierKeyword visibility, ListRewrite listRewrite) {
+        for (Object modifier : body.modifiers()) {
+            if (modifier instanceof Modifier) {
+                Modifier m = (Modifier) modifier;
+                if (m.isPublic() || m.isProtected() || m.isProtected()) {
+                    listRewrite.remove(m, null);
+                    break;
+                }
+            }
+        }
+        listRewrite.insertFirst(body.getAST().newModifier(visibility), null);
+    }
+
 
 }

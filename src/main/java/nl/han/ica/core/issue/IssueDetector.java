@@ -1,5 +1,6 @@
 package nl.han.ica.core.issue;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -20,6 +21,7 @@ public abstract class IssueDetector {
      * The set of detected issues.
      */
     protected Set<Issue> issues;
+    protected Logger logger;
 
     /**
      * Instantiate a new issue detector.
@@ -27,6 +29,7 @@ public abstract class IssueDetector {
     public IssueDetector() {
         compilationUnits = new HashSet<>();
         issues = new HashSet<>();
+        logger = Logger.getLogger(getClass());
     }
 
     /**

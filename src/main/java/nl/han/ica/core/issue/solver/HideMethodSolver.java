@@ -19,8 +19,7 @@ import org.eclipse.text.edits.TextEdit;
 
 import java.io.IOException;
 import java.util.Map;
-import nl.han.ica.core.util.ASTUtil;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
+import java.util.Set;
 
 /**
  * Solver for Hide Method.
@@ -40,7 +39,7 @@ public class HideMethodSolver extends IssueSolver {
 
     //TODO clean
     @Override
-    protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters) {
+    protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters, Set<SourceFile> sourceFiles) {
         ASTNode node = issue.getNodes().get(0);
         Solution solution = new Solution(issue, this, parameters);
         SourceFile sourceFile = (SourceFile) node.getRoot().getProperty(SourceFile.SOURCE_FILE_PROPERTY);

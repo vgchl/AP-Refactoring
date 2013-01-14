@@ -2,6 +2,7 @@ package nl.han.ica.core.issue.solver;
 
 import nl.han.ica.core.Parameter;
 import nl.han.ica.core.Solution;
+import nl.han.ica.core.SourceFile;
 import nl.han.ica.core.issue.Issue;
 import nl.han.ica.core.issue.IssueSolver;
 import nl.han.ica.core.issue.detector.PullUpFieldDetector;
@@ -11,6 +12,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 
 import java.util.Map;
+import java.util.Set;
 
 public class PullUpFieldSolver extends IssueSolver {
 
@@ -24,7 +26,7 @@ public class PullUpFieldSolver extends IssueSolver {
     }
 
     @Override
-    protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters) {
+    protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters, Set<SourceFile> sourceFiles) {
         VariableDeclarationFragment variableA = (VariableDeclarationFragment) issue.getNodes().get(VARIABLE_A_INDEX);
         VariableDeclarationFragment variableB = (VariableDeclarationFragment) issue.getNodes().get(VARIABLE_B_INDEX);
         TypeDeclaration supertype = (TypeDeclaration) issue.getNodes().get(SUPERTYPE_INDEX);

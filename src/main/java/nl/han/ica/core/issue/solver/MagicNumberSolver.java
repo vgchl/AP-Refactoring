@@ -22,6 +22,7 @@ import org.eclipse.text.edits.TextEdit;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Solver for the Replace Magic Number with Constant violation.
@@ -36,7 +37,7 @@ public class MagicNumberSolver extends IssueSolver {
     }
 
     @Override
-    protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters) {
+    protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters, Set<SourceFile> sourceFiles) {
         SolutionBuilder solutionBuilder = new SolutionBuilder(issue, this, parameters);
         return solutionBuilder.build();
     }

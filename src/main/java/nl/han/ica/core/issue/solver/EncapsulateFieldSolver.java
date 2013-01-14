@@ -24,6 +24,7 @@ import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class EncapsulateFieldSolver extends IssueSolver {
 
@@ -41,7 +42,7 @@ public class EncapsulateFieldSolver extends IssueSolver {
     }
 
     @Override
-    protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters) {
+    protected Solution internalSolve(Issue issue, Map<String, Parameter> parameters, Set<SourceFile> sourceFiles) {
         solution = new Solution(issue, this, parameters);
         refactorNodes(issue.getNodes());
         return solution;
