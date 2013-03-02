@@ -1,3 +1,17 @@
+/**
+ * Copyright 2013 
+ * 
+ * HAN University of Applied Sciences
+ * Maik Diepenbroek
+ * Wouter Konecny
+ * Sjoerd van den Top
+ * Teun van Vegchel
+ * Niek Versteege
+ *
+ * See the file MIT-license.txt for copying permission.
+ */
+
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.

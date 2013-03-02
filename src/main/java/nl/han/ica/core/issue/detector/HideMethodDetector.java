@@ -1,3 +1,17 @@
+/**
+ * Copyright 2013 
+ * 
+ * HAN University of Applied Sciences
+ * Maik Diepenbroek
+ * Wouter Konecny
+ * Sjoerd van den Top
+ * Teun van Vegchel
+ * Niek Versteege
+ *
+ * See the file MIT-license.txt for copying permission.
+ */
+
+
 package nl.han.ica.core.issue.detector;
 
 import nl.han.ica.core.ast.visitors.MethodDeclarationVisitor;
